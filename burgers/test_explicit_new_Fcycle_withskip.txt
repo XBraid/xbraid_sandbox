@@ -1,0 +1,4083 @@
+Parameters are  
+-eps 0 -prob 0 -a 0.24 -xL 2 -xR 1 -st 0 -skip 1
+-nu 1 -mi 50 -ml 25 -fmg 1 -tol 1e-10
+ 
+ 
+---------------------------------------------------------------------- 
+---------------------------------------------------------------------- 
+Setup:  Two-level, No spatial coarsening tests
+ 
+ 
+Problem size:  -nx 128  -nt 128 
+  Braid: Begin simulation, 128 time steps
+
+  Braid: || r_0 || not available, wall time = 9.02e-04
+  Braid: || r_1 || = 8.733776e-03, conv factor = 1.00e+00, wall time = 3.17e-03
+  Braid: || r_2 || = 1.316664e-03, conv factor = 1.51e-01, wall time = 5.40e-03
+  Braid: || r_3 || = 3.300348e-04, conv factor = 2.51e-01, wall time = 7.63e-03
+  Braid: || r_4 || = 8.901695e-05, conv factor = 2.70e-01, wall time = 9.85e-03
+  Braid: || r_5 || = 2.397944e-05, conv factor = 2.69e-01, wall time = 1.21e-02
+  Braid: || r_6 || = 6.317506e-06, conv factor = 2.63e-01, wall time = 1.43e-02
+  Braid: || r_7 || = 1.605908e-06, conv factor = 2.54e-01, wall time = 1.65e-02
+  Braid: || r_8 || = 3.878154e-07, conv factor = 2.41e-01, wall time = 1.87e-02
+  Braid: || r_9 || = 8.864423e-08, conv factor = 2.29e-01, wall time = 2.10e-02
+  Braid: || r_10 || = 1.917444e-08, conv factor = 2.16e-01, wall time = 2.32e-02
+  Braid: || r_11 || = 3.895264e-09, conv factor = 2.03e-01, wall time = 2.54e-02
+  Braid: || r_12 || = 7.351131e-10, conv factor = 1.89e-01, wall time = 2.77e-02
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 128
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 2.540000e-09
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 13
+  residual norm         = 7.351131e-10
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 1
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 2
+  min coarse            = 2
+  number of levels      = 2
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0       128        2        1
+      1        64  
+
+  wall time = 0.042680
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   3.91e-02    3.91e-02    2.40e-01    6.14e+00
+  1   |   3.91e-02    7.81e-02    4.80e-01    1.23e+01
+
+ 
+ 
+Problem size:  -nx 256  -nt 256 
+  Braid: Begin simulation, 256 time steps
+
+  Braid: || r_0 || not available, wall time = 6.14e-01
+  Braid: || r_1 || = 5.337570e-03, conv factor = 1.00e+00, wall time = 6.22e-01
+  Braid: || r_2 || = 8.816904e-04, conv factor = 1.65e-01, wall time = 6.31e-01
+  Braid: || r_3 || = 2.466675e-04, conv factor = 2.80e-01, wall time = 6.40e-01
+  Braid: || r_4 || = 7.589519e-05, conv factor = 3.08e-01, wall time = 6.48e-01
+  Braid: || r_5 || = 2.404686e-05, conv factor = 3.17e-01, wall time = 6.57e-01
+  Braid: || r_6 || = 7.662726e-06, conv factor = 3.19e-01, wall time = 6.65e-01
+  Braid: || r_7 || = 2.427535e-06, conv factor = 3.17e-01, wall time = 6.74e-01
+  Braid: || r_8 || = 7.593936e-07, conv factor = 3.13e-01, wall time = 6.82e-01
+  Braid: || r_9 || = 2.335381e-07, conv factor = 3.08e-01, wall time = 6.91e-01
+  Braid: || r_10 || = 7.037746e-08, conv factor = 3.01e-01, wall time = 7.00e-01
+  Braid: || r_11 || = 2.073233e-08, conv factor = 2.95e-01, wall time = 7.08e-01
+  Braid: || r_12 || = 5.958499e-09, conv factor = 2.87e-01, wall time = 7.17e-01
+  Braid: || r_13 || = 1.667866e-09, conv factor = 2.80e-01, wall time = 7.25e-01
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 256
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 5.100000e-09
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 14
+  residual norm         = 1.667866e-09
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 1
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 2
+  min coarse            = 2
+  number of levels      = 2
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0       256        2        1
+      1       128  
+
+  wall time = 0.769800
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   1.95e-02    1.95e-02    2.40e-01    1.23e+01
+  1   |   1.95e-02    3.91e-02    4.80e-01    2.46e+01
+
+ 
+ 
+Problem size:  -nx 512  -nt 512 
+  Braid: Begin simulation, 512 time steps
+
+  Braid: || r_0 || not available, wall time = 1.01e-02
+  Braid: || r_1 || = 3.234509e-03, conv factor = 1.00e+00, wall time = 4.39e-02
+  Braid: || r_2 || = 5.673169e-04, conv factor = 1.75e-01, wall time = 7.75e-02
+  Braid: || r_3 || = 1.697302e-04, conv factor = 2.99e-01, wall time = 1.11e-01
+  Braid: || r_4 || = 5.644593e-05, conv factor = 3.33e-01, wall time = 1.45e-01
+  Braid: || r_5 || = 1.956151e-05, conv factor = 3.47e-01, wall time = 1.78e-01
+  Braid: || r_6 || = 6.905333e-06, conv factor = 3.53e-01, wall time = 2.12e-01
+  Braid: || r_7 || = 2.456288e-06, conv factor = 3.56e-01, wall time = 2.45e-01
+  Braid: || r_8 || = 8.750691e-07, conv factor = 3.56e-01, wall time = 2.79e-01
+  Braid: || r_9 || = 3.110377e-07, conv factor = 3.55e-01, wall time = 3.13e-01
+  Braid: || r_10 || = 1.100175e-07, conv factor = 3.54e-01, wall time = 3.46e-01
+  Braid: || r_11 || = 3.865212e-08, conv factor = 3.51e-01, wall time = 3.80e-01
+  Braid: || r_12 || = 1.346885e-08, conv factor = 3.48e-01, wall time = 4.13e-01
+  Braid: || r_13 || = 4.649958e-09, conv factor = 3.45e-01, wall time = 4.47e-01
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 512
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 1.022000e-08
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 14
+  residual norm         = 4.649958e-09
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 1
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 2
+  min coarse            = 2
+  number of levels      = 2
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0       512        2        1
+      1       256  
+
+  wall time = 0.594485
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   9.77e-03    9.77e-03    2.40e-01    2.46e+01
+  1   |   9.77e-03    1.95e-02    4.80e-01    4.92e+01
+
+---------------------------------------------------------------------- 
+---------------------------------------------------------------------- 
+Setup:  No spatial coarsening tests
+ 
+ 
+Problem size:  -nx 128  -nt 128 
+  Braid: Begin simulation, 128 time steps
+
+  Braid: || r_0 || = 2.259870e+03, conv factor = 1.00e+00, wall time = 9.47e-03
+  Braid: || r_1 || = 1.378624e+01, conv factor = 6.10e-03, wall time = 2.22e-02
+  Braid: || r_2 || = 2.902353e-01, conv factor = 2.11e-02, wall time = 3.49e-02
+  Braid: || r_3 || = 6.500985e-03, conv factor = 2.24e-02, wall time = 4.76e-02
+  Braid: || r_4 || = 1.448221e-04, conv factor = 2.23e-02, wall time = 6.03e-02
+  Braid: || r_5 || = 2.292713e-06, conv factor = 1.58e-02, wall time = 7.30e-02
+  Braid: || r_6 || = 2.904971e-08, conv factor = 1.27e-02, wall time = 8.57e-02
+  Braid: || r_7 || = 3.415713e-10, conv factor = 1.18e-02, wall time = 9.84e-02
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 128
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 2.540000e-09
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 8
+  residual norm         = 3.415713e-10
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 1
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 25
+  min coarse            = 2
+  number of levels      = 7
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0       128        2        1
+      1        64        2        1
+      2        32        2        1
+      3        16        2        1
+      4         8        2        1
+      5         4        2        1
+      6         2  
+
+  wall time = 0.116035
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   3.91e-02    3.91e-02    2.40e-01    6.14e+00
+  1   |   3.91e-02    7.81e-02    4.80e-01    1.23e+01
+  2   |   3.91e-02    1.56e-01    9.60e-01    2.46e+01
+  3   |   3.91e-02    3.12e-01    1.92e+00    4.92e+01
+  4   |   3.91e-02    6.25e-01    3.84e+00    9.83e+01
+  5   |   3.91e-02    1.25e+00    7.68e+00    1.97e+02
+  6   |   3.91e-02    2.50e+00    1.54e+01    3.93e+02
+
+ 
+ 
+Problem size:  -nx 256  -nt 256 
+  Braid: Begin simulation, 256 time steps
+
+  Braid: || r_0 || = 5.661932e+09, conv factor = 1.00e+00, wall time = 4.85e-02
+  Braid: || r_1 || = 4.070136e+07, conv factor = 7.19e-03, wall time = 9.82e-02
+  Braid: || r_2 || = 4.402890e+05, conv factor = 1.08e-02, wall time = 1.48e-01
+  Braid: || r_3 || = 1.199034e+04, conv factor = 2.72e-02, wall time = 1.98e-01
+  Braid: || r_4 || = 2.492616e+02, conv factor = 2.08e-02, wall time = 2.47e-01
+  Braid: || r_5 || = 4.347135e+00, conv factor = 1.74e-02, wall time = 2.97e-01
+  Braid: || r_6 || = 1.106830e-01, conv factor = 2.55e-02, wall time = 3.47e-01
+  Braid: || r_7 || = 3.676582e-03, conv factor = 3.32e-02, wall time = 3.96e-01
+  Braid: || r_8 || = 1.011158e-04, conv factor = 2.75e-02, wall time = 4.46e-01
+  Braid: || r_9 || = 2.352889e-06, conv factor = 2.33e-02, wall time = 4.95e-01
+  Braid: || r_10 || = 6.133018e-08, conv factor = 2.61e-02, wall time = 5.45e-01
+  Braid: || r_11 || = 1.555380e-08, conv factor = 2.54e-01, wall time = 5.95e-01
+  Braid: || r_12 || = 5.032716e-09, conv factor = 3.24e-01, wall time = 6.44e-01
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 256
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 5.100000e-09
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 13
+  residual norm         = 5.032716e-09
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 1
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 25
+  min coarse            = 2
+  number of levels      = 8
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0       256        2        1
+      1       128        2        1
+      2        64        2        1
+      3        32        2        1
+      4        16        2        1
+      5         8        2        1
+      6         4        2        1
+      7         2  
+
+  wall time = 0.695559
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   1.95e-02    1.95e-02    2.40e-01    1.23e+01
+  1   |   1.95e-02    3.91e-02    4.80e-01    2.46e+01
+  2   |   1.95e-02    7.81e-02    9.60e-01    4.92e+01
+  3   |   1.95e-02    1.56e-01    1.92e+00    9.83e+01
+  4   |   1.95e-02    3.12e-01    3.84e+00    1.97e+02
+  5   |   1.95e-02    6.25e-01    7.68e+00    3.93e+02
+  6   |   1.95e-02    1.25e+00    1.54e+01    7.86e+02
+  7   |   1.95e-02    2.50e+00    3.07e+01    1.57e+03
+
+ 
+ 
+Problem size:  -nx 512  -nt 512 
+  Braid: Begin simulation, 512 time steps
+
+  Braid: || r_0 || = 1.651619e+20, conv factor = 1.00e+00, wall time = 1.43e-01
+  Braid: || r_1 || = 4.026400e+20, conv factor = 2.44e+00, wall time = 3.40e-01
+  Braid: || r_2 || = 2.710701e+18, conv factor = 6.73e-03, wall time = 5.36e-01
+  Braid: || r_3 || = 2.920529e+16, conv factor = 1.08e-02, wall time = 7.33e-01
+  Braid: || r_4 || = 8.674597e+14, conv factor = 2.97e-02, wall time = 9.30e-01
+  Braid: || r_5 || = 3.393518e+13, conv factor = 3.91e-02, wall time = 1.13e+00
+  Braid: || r_6 || = 1.164089e+12, conv factor = 3.43e-02, wall time = 1.32e+00
+  Braid: || r_7 || = 3.507303e+10, conv factor = 3.01e-02, wall time = 1.52e+00
+  Braid: || r_8 || = 8.685032e+08, conv factor = 2.48e-02, wall time = 1.72e+00
+  Braid: || r_9 || = 1.967178e+07, conv factor = 2.27e-02, wall time = 1.91e+00
+  Braid: || r_10 || = 5.150039e+05, conv factor = 2.62e-02, wall time = 2.11e+00
+  Braid: || r_11 || = 3.500511e+04, conv factor = 6.80e-02, wall time = 2.31e+00
+  Braid: || r_12 || = 1.038333e+04, conv factor = 2.97e-01, wall time = 2.50e+00
+  Braid: || r_13 || = 6.173430e+03, conv factor = 5.95e-01, wall time = 2.70e+00
+  Braid: || r_14 || = 1.931178e+03, conv factor = 3.13e-01, wall time = 2.90e+00
+  Braid: || r_15 || = 1.153634e+03, conv factor = 5.97e-01, wall time = 3.10e+00
+  Braid: || r_16 || = 8.273908e+02, conv factor = 7.17e-01, wall time = 3.29e+00
+  Braid: || r_17 || = 3.912187e+02, conv factor = 4.73e-01, wall time = 3.49e+00
+  Braid: || r_18 || = 1.577939e+02, conv factor = 4.03e-01, wall time = 3.69e+00
+  Braid: || r_19 || = 8.416323e+01, conv factor = 5.33e-01, wall time = 3.88e+00
+  Braid: || r_20 || = 2.562843e+01, conv factor = 3.05e-01, wall time = 4.08e+00
+  Braid: || r_21 || = 1.849367e+01, conv factor = 7.22e-01, wall time = 4.28e+00
+  Braid: || r_22 || = 7.758351e+00, conv factor = 4.20e-01, wall time = 4.47e+00
+  Braid: || r_23 || = 3.974202e+00, conv factor = 5.12e-01, wall time = 4.67e+00
+  Braid: || r_24 || = 1.017988e+00, conv factor = 2.56e-01, wall time = 4.87e+00
+  Braid: || r_25 || = 6.053028e-01, conv factor = 5.95e-01, wall time = 5.06e+00
+  Braid: || r_26 || = 2.616994e-01, conv factor = 4.32e-01, wall time = 5.26e+00
+  Braid: || r_27 || = 9.007314e-02, conv factor = 3.44e-01, wall time = 5.46e+00
+  Braid: || r_28 || = 3.032294e-02, conv factor = 3.37e-01, wall time = 5.65e+00
+  Braid: || r_29 || = 1.052177e-02, conv factor = 3.47e-01, wall time = 5.85e+00
+  Braid: || r_30 || = 7.029499e-03, conv factor = 6.68e-01, wall time = 6.05e+00
+  Braid: || r_31 || = 1.991108e-03, conv factor = 2.83e-01, wall time = 6.24e+00
+  Braid: || r_32 || = 1.090091e-03, conv factor = 5.47e-01, wall time = 6.44e+00
+  Braid: || r_33 || = 3.476535e-04, conv factor = 3.19e-01, wall time = 6.64e+00
+  Braid: || r_34 || = 1.225827e-04, conv factor = 3.53e-01, wall time = 6.83e+00
+  Braid: || r_35 || = 5.850546e-05, conv factor = 4.77e-01, wall time = 7.03e+00
+  Braid: || r_36 || = 1.995732e-05, conv factor = 3.41e-01, wall time = 7.23e+00
+  Braid: || r_37 || = 4.546184e-06, conv factor = 2.28e-01, wall time = 7.42e+00
+  Braid: || r_38 || = 2.642559e-06, conv factor = 5.81e-01, wall time = 7.62e+00
+  Braid: || r_39 || = 3.860711e-07, conv factor = 1.46e-01, wall time = 7.82e+00
+  Braid: || r_40 || = 1.787071e-07, conv factor = 4.63e-01, wall time = 8.01e+00
+  Braid: || r_41 || = 5.674894e-08, conv factor = 3.18e-01, wall time = 8.21e+00
+  Braid: || r_42 || = 1.022742e-08, conv factor = 1.80e-01, wall time = 8.41e+00
+  Braid: || r_43 || = 4.148032e-09, conv factor = 4.06e-01, wall time = 8.61e+00
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 512
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 1.022000e-08
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 44
+  residual norm         = 4.148032e-09
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 1
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 25
+  min coarse            = 2
+  number of levels      = 9
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0       512        2        1
+      1       256        2        1
+      2       128        2        1
+      3        64        2        1
+      4        32        2        1
+      5        16        2        1
+      6         8        2        1
+      7         4        2        1
+      8         2  
+
+  wall time = 8.747492
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   9.77e-03    9.77e-03    2.40e-01    2.46e+01
+  1   |   9.77e-03    1.95e-02    4.80e-01    4.92e+01
+  2   |   9.77e-03    3.91e-02    9.60e-01    9.83e+01
+  3   |   9.77e-03    7.81e-02    1.92e+00    1.97e+02
+  4   |   9.77e-03    1.56e-01    3.84e+00    3.93e+02
+  5   |   9.77e-03    3.12e-01    7.68e+00    7.86e+02
+  6   |   9.77e-03    6.25e-01    1.54e+01    1.57e+03
+  7   |   9.77e-03    1.25e+00    3.07e+01    3.15e+03
+  8   |   9.77e-03    2.50e+00    6.14e+01    6.29e+03
+
+ 
+ 
+Problem size:  -nx 1024 -nt 1024 
+  Braid: Begin simulation, 1024 time steps
+
+  Braid: || r_0 || = 6.692635e+36, conv factor = 1.00e+00, wall time = 5.72e-01
+  Braid: || r_1 || = 1.462730e+42, conv factor = 2.19e+05, wall time = 1.36e+00
+  Braid: || r_2 || = 7.666508e+41, conv factor = 5.24e-01, wall time = 2.16e+00
+  Braid: || r_3 || = 5.802464e+42, conv factor = 7.57e+00, wall time = 2.95e+00
+  Braid: || r_4 || = 8.566990e+40, conv factor = 1.48e-02, wall time = 3.74e+00
+  Braid: || r_5 || = 1.392862e+39, conv factor = 1.63e-02, wall time = 4.53e+00
+  Braid: || r_6 || = 1.486242e+37, conv factor = 1.07e-02, wall time = 5.32e+00
+  Braid: || r_7 || = 1.641075e+35, conv factor = 1.10e-02, wall time = 6.11e+00
+  Braid: || r_8 || = 8.431620e+33, conv factor = 5.14e-02, wall time = 6.90e+00
+  Braid: || r_9 || = 4.754541e+32, conv factor = 5.64e-02, wall time = 7.69e+00
+  Braid: || r_10 || = 2.324699e+31, conv factor = 4.89e-02, wall time = 8.48e+00
+  Braid: || r_11 || = 1.004905e+30, conv factor = 4.32e-02, wall time = 9.24e+00
+  Braid: || r_12 || = 3.919344e+28, conv factor = 3.90e-02, wall time = 1.00e+01
+  Braid: || r_13 || = 1.543914e+27, conv factor = 3.94e-02, wall time = 1.08e+01
+  Braid: || r_14 || = 2.760556e+26, conv factor = 1.79e-01, wall time = 1.15e+01
+  Braid: || r_15 || = 9.830009e+25, conv factor = 3.56e-01, wall time = 1.23e+01
+  Braid: || r_16 || = 2.622752e+25, conv factor = 2.67e-01, wall time = 1.31e+01
+  Braid: || r_17 || = 2.354669e+25, conv factor = 8.98e-01, wall time = 1.38e+01
+  Braid: || r_18 || = 1.246574e+25, conv factor = 5.29e-01, wall time = 1.46e+01
+  Braid: || r_19 || = 4.124559e+24, conv factor = 3.31e-01, wall time = 1.53e+01
+  Braid: || r_20 || = 1.563865e+24, conv factor = 3.79e-01, wall time = 1.61e+01
+  Braid: || r_21 || = 6.260960e+23, conv factor = 4.00e-01, wall time = 1.69e+01
+  Braid: || r_22 || = 3.202380e+23, conv factor = 5.11e-01, wall time = 1.76e+01
+  Braid: || r_23 || = 1.988889e+23, conv factor = 6.21e-01, wall time = 1.84e+01
+  Braid: || r_24 || = 5.573941e+22, conv factor = 2.80e-01, wall time = 1.92e+01
+  Braid: || r_25 || = 2.315898e+22, conv factor = 4.15e-01, wall time = 1.99e+01
+  Braid: || r_26 || = 9.185394e+21, conv factor = 3.97e-01, wall time = 2.07e+01
+  Braid: || r_27 || = 3.822164e+21, conv factor = 4.16e-01, wall time = 2.14e+01
+  Braid: || r_28 || = 1.437866e+21, conv factor = 3.76e-01, wall time = 2.22e+01
+  Braid: || r_29 || = 5.069314e+20, conv factor = 3.53e-01, wall time = 2.30e+01
+  Braid: || r_30 || = 1.904340e+20, conv factor = 3.76e-01, wall time = 2.37e+01
+  Braid: || r_31 || = 6.839910e+19, conv factor = 3.59e-01, wall time = 2.45e+01
+  Braid: || r_32 || = 3.119635e+19, conv factor = 4.56e-01, wall time = 2.52e+01
+  Braid: || r_33 || = 1.601120e+19, conv factor = 5.13e-01, wall time = 2.60e+01
+  Braid: || r_34 || = 3.351383e+18, conv factor = 2.09e-01, wall time = 2.68e+01
+  Braid: || r_35 || = 1.880898e+18, conv factor = 5.61e-01, wall time = 2.75e+01
+  Braid: || r_36 || = 6.089773e+17, conv factor = 3.24e-01, wall time = 2.83e+01
+  Braid: || r_37 || = 3.602894e+17, conv factor = 5.92e-01, wall time = 2.91e+01
+  Braid: || r_38 || = 1.007852e+17, conv factor = 2.80e-01, wall time = 2.98e+01
+  Braid: || r_39 || = 3.443493e+16, conv factor = 3.42e-01, wall time = 3.06e+01
+  Braid: || r_40 || = 1.668476e+16, conv factor = 4.85e-01, wall time = 3.13e+01
+  Braid: || r_41 || = 6.264147e+15, conv factor = 3.75e-01, wall time = 3.21e+01
+  Braid: || r_42 || = 2.825254e+15, conv factor = 4.51e-01, wall time = 3.29e+01
+  Braid: || r_43 || = 1.639603e+15, conv factor = 5.80e-01, wall time = 3.36e+01
+  Braid: || r_44 || = 4.528913e+14, conv factor = 2.76e-01, wall time = 3.44e+01
+  Braid: || r_45 || = 2.784764e+14, conv factor = 6.15e-01, wall time = 3.52e+01
+  Braid: || r_46 || = 1.177887e+14, conv factor = 4.23e-01, wall time = 3.59e+01
+  Braid: || r_47 || = 6.770886e+13, conv factor = 5.75e-01, wall time = 3.67e+01
+  Braid: || r_48 || = 2.219759e+13, conv factor = 3.28e-01, wall time = 3.75e+01
+  Braid: || r_49 || = 8.949240e+12, conv factor = 4.03e-01, wall time = 3.83e+01
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 1024
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 2.046000e-08
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 50
+  residual norm         = 8.949240e+12
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 1
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 25
+  min coarse            = 2
+  number of levels      = 10
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0      1024        2        1
+      1       512        2        1
+      2       256        2        1
+      3       128        2        1
+      4        64        2        1
+      5        32        2        1
+      6        16        2        1
+      7         8        2        1
+      8         4        2        1
+      9         2  
+
+  wall time = 38.855674
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   4.88e-03    4.88e-03    2.40e-01    4.92e+01
+  1   |   4.88e-03    9.77e-03    4.80e-01    9.83e+01
+  2   |   4.88e-03    1.95e-02    9.60e-01    1.97e+02
+  3   |   4.88e-03    3.91e-02    1.92e+00    3.93e+02
+  4   |   4.88e-03    7.81e-02    3.84e+00    7.86e+02
+  5   |   4.88e-03    1.56e-01    7.68e+00    1.57e+03
+  6   |   4.88e-03    3.12e-01    1.54e+01    3.15e+03
+  7   |   4.88e-03    6.25e-01    3.07e+01    6.29e+03
+  8   |   4.88e-03    1.25e+00    6.14e+01    1.26e+04
+  9   |   4.88e-03    2.50e+00    1.23e+02    2.52e+04
+
+---------------------------------------------------------------------- 
+---------------------------------------------------------------------- 
+ 
+Setup:  Spatial coarsen on every level, append -sc 1
+ 
+ 
+Problem size:  -nx 128  -nt 128 
+  Braid: Begin simulation, 128 time steps
+
+  Braid: || r_0 || = 6.226250e+00, conv factor = 1.00e+00, wall time = 4.36e-03
+  Braid: || r_1 || = 1.283017e+00, conv factor = 2.06e-01, wall time = 1.04e-02
+  Braid: || r_2 || = 2.456451e-01, conv factor = 1.91e-01, wall time = 1.65e-02
+  Braid: || r_3 || = 6.158927e-02, conv factor = 2.51e-01, wall time = 2.25e-02
+  Braid: || r_4 || = 1.358664e-02, conv factor = 2.21e-01, wall time = 2.85e-02
+  Braid: || r_5 || = 3.735226e-03, conv factor = 2.75e-01, wall time = 3.45e-02
+  Braid: || r_6 || = 1.072692e-03, conv factor = 2.87e-01, wall time = 4.05e-02
+  Braid: || r_7 || = 3.587541e-04, conv factor = 3.34e-01, wall time = 4.66e-02
+  Braid: || r_8 || = 1.238160e-04, conv factor = 3.45e-01, wall time = 5.26e-02
+  Braid: || r_9 || = 4.539971e-05, conv factor = 3.67e-01, wall time = 5.86e-02
+  Braid: || r_10 || = 1.680804e-05, conv factor = 3.70e-01, wall time = 6.46e-02
+  Braid: || r_11 || = 6.145733e-06, conv factor = 3.66e-01, wall time = 7.07e-02
+  Braid: || r_12 || = 2.078519e-06, conv factor = 3.38e-01, wall time = 7.67e-02
+  Braid: || r_13 || = 6.413316e-07, conv factor = 3.09e-01, wall time = 8.27e-02
+  Braid: || r_14 || = 1.858776e-07, conv factor = 2.90e-01, wall time = 8.87e-02
+  Braid: || r_15 || = 5.083986e-08, conv factor = 2.74e-01, wall time = 9.47e-02
+  Braid: || r_16 || = 1.261752e-08, conv factor = 2.48e-01, wall time = 1.01e-01
+  Braid: || r_17 || = 2.793439e-09, conv factor = 2.21e-01, wall time = 1.07e-01
+  Braid: || r_18 || = 5.912581e-10, conv factor = 2.12e-01, wall time = 1.13e-01
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 128
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 2.540000e-09
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 19
+  residual norm         = 5.912581e-10
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 1
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 25
+  min coarse            = 2
+  number of levels      = 7
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0       128        2        1
+      1        64        2        1
+      2        32        2        1
+      3        16        2        1
+      4         8        2        1
+      5         4        2        1
+      6         2  
+
+  wall time = 0.129813
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   3.91e-02    3.91e-02    2.40e-01    6.14e+00
+  1   |   7.81e-02    7.81e-02    2.40e-01    3.07e+00
+  2   |   1.56e-01    1.56e-01    2.40e-01    1.54e+00
+  3   |   3.12e-01    3.12e-01    2.40e-01    7.68e-01
+  4   |   6.25e-01    6.25e-01    2.40e-01    3.84e-01
+  5   |   1.25e+00    1.25e+00    2.40e-01    1.92e-01
+  6   |   2.50e+00    2.50e+00    2.40e-01    9.60e-02
+
+ 
+ 
+Problem size:  -nx 256  -nt 256 
+  Braid: Begin simulation, 256 time steps
+
+  Braid: || r_0 || = 1.215198e+01, conv factor = 1.00e+00, wall time = 1.52e-02
+  Braid: || r_1 || = 2.423326e+00, conv factor = 1.99e-01, wall time = 3.75e-02
+  Braid: || r_2 || = 4.728841e-01, conv factor = 1.95e-01, wall time = 5.98e-02
+  Braid: || r_3 || = 1.182572e-01, conv factor = 2.50e-01, wall time = 8.20e-02
+  Braid: || r_4 || = 2.650270e-02, conv factor = 2.24e-01, wall time = 1.04e-01
+  Braid: || r_5 || = 7.227454e-03, conv factor = 2.73e-01, wall time = 1.27e-01
+  Braid: || r_6 || = 2.171727e-03, conv factor = 3.00e-01, wall time = 1.49e-01
+  Braid: || r_7 || = 8.345493e-04, conv factor = 3.84e-01, wall time = 1.71e-01
+  Braid: || r_8 || = 3.577354e-04, conv factor = 4.29e-01, wall time = 1.93e-01
+  Braid: || r_9 || = 1.588276e-04, conv factor = 4.44e-01, wall time = 2.16e-01
+  Braid: || r_10 || = 6.964064e-05, conv factor = 4.38e-01, wall time = 2.38e-01
+  Braid: || r_11 || = 2.988898e-05, conv factor = 4.29e-01, wall time = 2.60e-01
+  Braid: || r_12 || = 1.267582e-05, conv factor = 4.24e-01, wall time = 2.82e-01
+  Braid: || r_13 || = 5.332425e-06, conv factor = 4.21e-01, wall time = 3.05e-01
+  Braid: || r_14 || = 2.124927e-06, conv factor = 3.98e-01, wall time = 3.27e-01
+  Braid: || r_15 || = 7.733742e-07, conv factor = 3.64e-01, wall time = 3.49e-01
+  Braid: || r_16 || = 2.662074e-07, conv factor = 3.44e-01, wall time = 3.71e-01
+  Braid: || r_17 || = 9.457924e-08, conv factor = 3.55e-01, wall time = 3.94e-01
+  Braid: || r_18 || = 3.600745e-08, conv factor = 3.81e-01, wall time = 4.16e-01
+  Braid: || r_19 || = 1.419779e-08, conv factor = 3.94e-01, wall time = 4.38e-01
+  Braid: || r_20 || = 5.579833e-09, conv factor = 3.93e-01, wall time = 4.60e-01
+  Braid: || r_21 || = 2.107547e-09, conv factor = 3.78e-01, wall time = 4.83e-01
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 256
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 5.100000e-09
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 22
+  residual norm         = 2.107547e-09
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 1
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 25
+  min coarse            = 2
+  number of levels      = 8
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0       256        2        1
+      1       128        2        1
+      2        64        2        1
+      3        32        2        1
+      4        16        2        1
+      5         8        2        1
+      6         4        2        1
+      7         2  
+
+  wall time = 0.531771
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   1.95e-02    1.95e-02    2.40e-01    1.23e+01
+  1   |   3.91e-02    3.91e-02    2.40e-01    6.14e+00
+  2   |   7.81e-02    7.81e-02    2.40e-01    3.07e+00
+  3   |   1.56e-01    1.56e-01    2.40e-01    1.54e+00
+  4   |   3.12e-01    3.12e-01    2.40e-01    7.68e-01
+  5   |   6.25e-01    6.25e-01    2.40e-01    3.84e-01
+  6   |   1.25e+00    1.25e+00    2.40e-01    1.92e-01
+  7   |   2.50e+00    2.50e+00    2.40e-01    9.60e-02
+
+ 
+ 
+Problem size:  -nx 512  -nt 512 
+  Braid: Begin simulation, 512 time steps
+
+  Braid: || r_0 || = 2.404512e+01, conv factor = 1.00e+00, wall time = 1.47e-01
+  Braid: || r_1 || = 5.212111e+00, conv factor = 2.17e-01, wall time = 2.34e-01
+  Braid: || r_2 || = 9.753778e-01, conv factor = 1.87e-01, wall time = 3.20e-01
+  Braid: || r_3 || = 2.616174e-01, conv factor = 2.68e-01, wall time = 4.05e-01
+  Braid: || r_4 || = 5.436077e-02, conv factor = 2.08e-01, wall time = 4.90e-01
+  Braid: || r_5 || = 1.528015e-02, conv factor = 2.81e-01, wall time = 5.76e-01
+  Braid: || r_6 || = 4.335679e-03, conv factor = 2.84e-01, wall time = 6.61e-01
+  Braid: || r_7 || = 1.781829e-03, conv factor = 4.11e-01, wall time = 7.46e-01
+  Braid: || r_8 || = 8.056468e-04, conv factor = 4.52e-01, wall time = 8.31e-01
+  Braid: || r_9 || = 3.818991e-04, conv factor = 4.74e-01, wall time = 9.17e-01
+  Braid: || r_10 || = 1.867842e-04, conv factor = 4.89e-01, wall time = 1.00e+00
+  Braid: || r_11 || = 9.351801e-05, conv factor = 5.01e-01, wall time = 1.09e+00
+  Braid: || r_12 || = 4.732104e-05, conv factor = 5.06e-01, wall time = 1.17e+00
+  Braid: || r_13 || = 2.392001e-05, conv factor = 5.05e-01, wall time = 1.26e+00
+  Braid: || r_14 || = 1.206847e-05, conv factor = 5.05e-01, wall time = 1.34e+00
+  Braid: || r_15 || = 6.036284e-06, conv factor = 5.00e-01, wall time = 1.43e+00
+  Braid: || r_16 || = 2.920886e-06, conv factor = 4.84e-01, wall time = 1.51e+00
+  Braid: || r_17 || = 1.359750e-06, conv factor = 4.66e-01, wall time = 1.60e+00
+  Braid: || r_18 || = 6.227527e-07, conv factor = 4.58e-01, wall time = 1.68e+00
+  Braid: || r_19 || = 2.846215e-07, conv factor = 4.57e-01, wall time = 1.77e+00
+  Braid: || r_20 || = 1.300378e-07, conv factor = 4.57e-01, wall time = 1.85e+00
+  Braid: || r_21 || = 5.893015e-08, conv factor = 4.53e-01, wall time = 1.94e+00
+  Braid: || r_22 || = 2.602610e-08, conv factor = 4.42e-01, wall time = 2.02e+00
+  Braid: || r_23 || = 1.112925e-08, conv factor = 4.28e-01, wall time = 2.11e+00
+  Braid: || r_24 || = 4.699013e-09, conv factor = 4.22e-01, wall time = 2.20e+00
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 512
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 1.022000e-08
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 25
+  residual norm         = 4.699013e-09
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 1
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 25
+  min coarse            = 2
+  number of levels      = 9
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0       512        2        1
+      1       256        2        1
+      2       128        2        1
+      3        64        2        1
+      4        32        2        1
+      5        16        2        1
+      6         8        2        1
+      7         4        2        1
+      8         2  
+
+  wall time = 2.397905
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   9.77e-03    9.77e-03    2.40e-01    2.46e+01
+  1   |   1.95e-02    1.95e-02    2.40e-01    1.23e+01
+  2   |   3.91e-02    3.91e-02    2.40e-01    6.14e+00
+  3   |   7.81e-02    7.81e-02    2.40e-01    3.07e+00
+  4   |   1.56e-01    1.56e-01    2.40e-01    1.54e+00
+  5   |   3.12e-01    3.12e-01    2.40e-01    7.68e-01
+  6   |   6.25e-01    6.25e-01    2.40e-01    3.84e-01
+  7   |   1.25e+00    1.25e+00    2.40e-01    1.92e-01
+  8   |   2.50e+00    2.50e+00    2.40e-01    9.60e-02
+
+ 
+ 
+Problem size:  -nx 1024 -nt 1024 
+  Braid: Begin simulation, 1024 time steps
+
+  Braid: || r_0 || = 4.784791e+01, conv factor = 1.00e+00, wall time = 3.31e-01
+  Braid: || r_1 || = 1.064248e+01, conv factor = 2.22e-01, wall time = 6.65e-01
+  Braid: || r_2 || = 1.944294e+00, conv factor = 1.83e-01, wall time = 9.99e-01
+  Braid: || r_3 || = 5.301666e-01, conv factor = 2.73e-01, wall time = 1.33e+00
+  Braid: || r_4 || = 1.071508e-01, conv factor = 2.02e-01, wall time = 1.67e+00
+  Braid: || r_5 || = 3.036675e-02, conv factor = 2.83e-01, wall time = 2.00e+00
+  Braid: || r_6 || = 8.450848e-03, conv factor = 2.78e-01, wall time = 2.34e+00
+  Braid: || r_7 || = 3.819625e-03, conv factor = 4.52e-01, wall time = 2.67e+00
+  Braid: || r_8 || = 2.054080e-03, conv factor = 5.38e-01, wall time = 3.00e+00
+  Braid: || r_9 || = 1.219476e-03, conv factor = 5.94e-01, wall time = 3.34e+00
+  Braid: || r_10 || = 7.409434e-04, conv factor = 6.08e-01, wall time = 3.67e+00
+  Braid: || r_11 || = 4.372607e-04, conv factor = 5.90e-01, wall time = 4.01e+00
+  Braid: || r_12 || = 2.447482e-04, conv factor = 5.60e-01, wall time = 4.34e+00
+  Braid: || r_13 || = 1.376035e-04, conv factor = 5.62e-01, wall time = 4.67e+00
+  Braid: || r_14 || = 7.776818e-05, conv factor = 5.65e-01, wall time = 5.01e+00
+  Braid: || r_15 || = 4.328634e-05, conv factor = 5.57e-01, wall time = 5.34e+00
+  Braid: || r_16 || = 2.321392e-05, conv factor = 5.36e-01, wall time = 5.68e+00
+  Braid: || r_17 || = 1.231797e-05, conv factor = 5.31e-01, wall time = 6.01e+00
+  Braid: || r_18 || = 6.665229e-06, conv factor = 5.41e-01, wall time = 6.34e+00
+  Braid: || r_19 || = 3.635507e-06, conv factor = 5.45e-01, wall time = 6.68e+00
+  Braid: || r_20 || = 1.985532e-06, conv factor = 5.46e-01, wall time = 7.01e+00
+  Braid: || r_21 || = 1.091137e-06, conv factor = 5.50e-01, wall time = 7.35e+00
+  Braid: || r_22 || = 6.009859e-07, conv factor = 5.51e-01, wall time = 7.68e+00
+  Braid: || r_23 || = 3.282540e-07, conv factor = 5.46e-01, wall time = 8.02e+00
+  Braid: || r_24 || = 1.762276e-07, conv factor = 5.37e-01, wall time = 8.35e+00
+  Braid: || r_25 || = 9.274632e-08, conv factor = 5.26e-01, wall time = 8.69e+00
+  Braid: || r_26 || = 4.799046e-08, conv factor = 5.17e-01, wall time = 9.02e+00
+  Braid: || r_27 || = 2.448528e-08, conv factor = 5.10e-01, wall time = 9.35e+00
+  Braid: || r_28 || = 1.230192e-08, conv factor = 5.02e-01, wall time = 9.69e+00
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 1024
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 2.046000e-08
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 29
+  residual norm         = 1.230192e-08
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 1
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 25
+  min coarse            = 2
+  number of levels      = 10
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0      1024        2        1
+      1       512        2        1
+      2       256        2        1
+      3       128        2        1
+      4        64        2        1
+      5        32        2        1
+      6        16        2        1
+      7         8        2        1
+      8         4        2        1
+      9         2  
+
+  wall time = 10.297873
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   4.88e-03    4.88e-03    2.40e-01    4.92e+01
+  1   |   9.77e-03    9.77e-03    2.40e-01    2.46e+01
+  2   |   1.95e-02    1.95e-02    2.40e-01    1.23e+01
+  3   |   3.91e-02    3.91e-02    2.40e-01    6.14e+00
+  4   |   7.81e-02    7.81e-02    2.40e-01    3.07e+00
+  5   |   1.56e-01    1.56e-01    2.40e-01    1.54e+00
+  6   |   3.12e-01    3.12e-01    2.40e-01    7.68e-01
+  7   |   6.25e-01    6.25e-01    2.40e-01    3.84e-01
+  8   |   1.25e+00    1.25e+00    2.40e-01    1.92e-01
+  9   |   2.50e+00    2.50e+00    2.40e-01    9.60e-02
+
+ 
+ 
+Problem size:  -nx 2048 -nt 2048 
+  Braid: Begin simulation, 2048 time steps
+
+  Braid: || r_0 || = 9.873094e+01, conv factor = 1.00e+00, wall time = 8.75e-01
+  Braid: || r_1 || = 2.269800e+01, conv factor = 2.30e-01, wall time = 2.21e+00
+  Braid: || r_2 || = 4.080568e+00, conv factor = 1.80e-01, wall time = 3.55e+00
+  Braid: || r_3 || = 1.131746e+00, conv factor = 2.77e-01, wall time = 4.89e+00
+  Braid: || r_4 || = 2.246798e-01, conv factor = 1.99e-01, wall time = 6.22e+00
+  Braid: || r_5 || = 6.287655e-02, conv factor = 2.80e-01, wall time = 7.56e+00
+  Braid: || r_6 || = 1.639741e-02, conv factor = 2.61e-01, wall time = 8.89e+00
+  Braid: || r_7 || = 7.679951e-03, conv factor = 4.68e-01, wall time = 1.02e+01
+  Braid: || r_8 || = 4.639018e-03, conv factor = 6.04e-01, wall time = 1.16e+01
+  Braid: || r_9 || = 3.043335e-03, conv factor = 6.56e-01, wall time = 1.29e+01
+  Braid: || r_10 || = 1.967792e-03, conv factor = 6.47e-01, wall time = 1.42e+01
+  Braid: || r_11 || = 1.267640e-03, conv factor = 6.44e-01, wall time = 1.56e+01
+  Braid: || r_12 || = 8.083698e-04, conv factor = 6.38e-01, wall time = 1.69e+01
+  Braid: || r_13 || = 5.247675e-04, conv factor = 6.49e-01, wall time = 1.83e+01
+  Braid: || r_14 || = 3.491112e-04, conv factor = 6.65e-01, wall time = 1.96e+01
+  Braid: || r_15 || = 2.336612e-04, conv factor = 6.69e-01, wall time = 2.09e+01
+  Braid: || r_16 || = 1.546545e-04, conv factor = 6.62e-01, wall time = 2.23e+01
+  Braid: || r_17 || = 1.017312e-04, conv factor = 6.58e-01, wall time = 2.36e+01
+  Braid: || r_18 || = 6.644368e-05, conv factor = 6.53e-01, wall time = 2.49e+01
+  Braid: || r_19 || = 4.294703e-05, conv factor = 6.46e-01, wall time = 2.63e+01
+  Braid: || r_20 || = 2.778116e-05, conv factor = 6.47e-01, wall time = 2.76e+01
+  Braid: || r_21 || = 1.798154e-05, conv factor = 6.47e-01, wall time = 2.89e+01
+  Braid: || r_22 || = 1.133065e-05, conv factor = 6.30e-01, wall time = 3.03e+01
+  Braid: || r_23 || = 6.926659e-06, conv factor = 6.11e-01, wall time = 3.16e+01
+  Braid: || r_24 || = 4.136302e-06, conv factor = 5.97e-01, wall time = 3.30e+01
+  Braid: || r_25 || = 2.422153e-06, conv factor = 5.86e-01, wall time = 3.43e+01
+  Braid: || r_26 || = 1.424366e-06, conv factor = 5.88e-01, wall time = 3.56e+01
+  Braid: || r_27 || = 8.485996e-07, conv factor = 5.96e-01, wall time = 3.70e+01
+  Braid: || r_28 || = 5.049342e-07, conv factor = 5.95e-01, wall time = 3.83e+01
+  Braid: || r_29 || = 2.952654e-07, conv factor = 5.85e-01, wall time = 3.96e+01
+  Braid: || r_30 || = 1.676493e-07, conv factor = 5.68e-01, wall time = 4.10e+01
+  Braid: || r_31 || = 9.203090e-08, conv factor = 5.49e-01, wall time = 4.23e+01
+  Braid: || r_32 || = 4.935214e-08, conv factor = 5.36e-01, wall time = 4.37e+01
+  Braid: || r_33 || = 2.651880e-08, conv factor = 5.37e-01, wall time = 4.50e+01
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 2048
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 4.094000e-08
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 34
+  residual norm         = 2.651880e-08
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 1
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 25
+  min coarse            = 2
+  number of levels      = 11
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0      2048        2        1
+      1      1024        2        1
+      2       512        2        1
+      3       256        2        1
+      4       128        2        1
+      5        64        2        1
+      6        32        2        1
+      7        16        2        1
+      8         8        2        1
+      9         4        2        1
+     10         2  
+
+  wall time = 46.939678
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   2.44e-03    2.44e-03    2.40e-01    9.83e+01
+  1   |   4.88e-03    4.88e-03    2.40e-01    4.92e+01
+  2   |   9.77e-03    9.77e-03    2.40e-01    2.46e+01
+  3   |   1.95e-02    1.95e-02    2.40e-01    1.23e+01
+  4   |   3.91e-02    3.91e-02    2.40e-01    6.14e+00
+  5   |   7.81e-02    7.81e-02    2.40e-01    3.07e+00
+  6   |   1.56e-01    1.56e-01    2.40e-01    1.54e+00
+  7   |   3.12e-01    3.12e-01    2.40e-01    7.68e-01
+  8   |   6.25e-01    6.25e-01    2.40e-01    3.84e-01
+  9   |   1.25e+00    1.25e+00    2.40e-01    1.92e-01
+ 10   |   2.50e+00    2.50e+00    2.40e-01    9.60e-02
+
+ 
+ 
+Problem size:  -nx 4096 -nt 4096 
+  Braid: Begin simulation, 4096 time steps
+
+  Braid: || r_0 || = 1.986805e+02, conv factor = 1.00e+00, wall time = 3.48e+00
+  Braid: || r_1 || = 4.570475e+01, conv factor = 2.30e-01, wall time = 8.80e+00
+  Braid: || r_2 || = 8.232857e+00, conv factor = 1.80e-01, wall time = 1.41e+01
+  Braid: || r_3 || = 2.291938e+00, conv factor = 2.78e-01, wall time = 1.94e+01
+  Braid: || r_4 || = 4.499972e-01, conv factor = 1.96e-01, wall time = 2.47e+01
+  Braid: || r_5 || = 1.249931e-01, conv factor = 2.78e-01, wall time = 3.00e+01
+  Braid: || r_6 || = 3.015531e-02, conv factor = 2.41e-01, wall time = 3.54e+01
+  Braid: || r_7 || = 1.322229e-02, conv factor = 4.38e-01, wall time = 4.07e+01
+  Braid: || r_8 || = 8.045932e-03, conv factor = 6.09e-01, wall time = 4.62e+01
+  Braid: || r_9 || = 5.673903e-03, conv factor = 7.05e-01, wall time = 5.17e+01
+  Braid: || r_10 || = 4.079032e-03, conv factor = 7.19e-01, wall time = 5.72e+01
+  Braid: || r_11 || = 2.966859e-03, conv factor = 7.27e-01, wall time = 6.27e+01
+  Braid: || r_12 || = 2.200267e-03, conv factor = 7.42e-01, wall time = 6.83e+01
+  Braid: || r_13 || = 1.631859e-03, conv factor = 7.42e-01, wall time = 7.38e+01
+  Braid: || r_14 || = 1.205322e-03, conv factor = 7.39e-01, wall time = 7.93e+01
+  Braid: || r_15 || = 8.851431e-04, conv factor = 7.34e-01, wall time = 8.48e+01
+  Braid: || r_16 || = 6.519077e-04, conv factor = 7.36e-01, wall time = 9.03e+01
+  Braid: || r_17 || = 4.848679e-04, conv factor = 7.44e-01, wall time = 9.58e+01
+  Braid: || r_18 || = 3.604995e-04, conv factor = 7.44e-01, wall time = 1.01e+02
+  Braid: || r_19 || = 2.661466e-04, conv factor = 7.38e-01, wall time = 1.07e+02
+  Braid: || r_20 || = 1.936022e-04, conv factor = 7.27e-01, wall time = 1.12e+02
+  Braid: || r_21 || = 1.375011e-04, conv factor = 7.10e-01, wall time = 1.18e+02
+  Braid: || r_22 || = 9.418335e-05, conv factor = 6.85e-01, wall time = 1.23e+02
+  Braid: || r_23 || = 6.178180e-05, conv factor = 6.56e-01, wall time = 1.29e+02
+  Braid: || r_24 || = 3.977891e-05, conv factor = 6.44e-01, wall time = 1.34e+02
+  Braid: || r_25 || = 2.629061e-05, conv factor = 6.61e-01, wall time = 1.40e+02
+  Braid: || r_26 || = 1.809938e-05, conv factor = 6.88e-01, wall time = 1.45e+02
+  Braid: || r_27 || = 1.272060e-05, conv factor = 7.03e-01, wall time = 1.51e+02
+  Braid: || r_28 || = 8.973583e-06, conv factor = 7.05e-01, wall time = 1.57e+02
+  Braid: || r_29 || = 6.315494e-06, conv factor = 7.04e-01, wall time = 1.62e+02
+  Braid: || r_30 || = 4.417905e-06, conv factor = 7.00e-01, wall time = 1.68e+02
+  Braid: || r_31 || = 3.060014e-06, conv factor = 6.93e-01, wall time = 1.73e+02
+  Braid: || r_32 || = 2.093810e-06, conv factor = 6.84e-01, wall time = 1.79e+02
+  Braid: || r_33 || = 1.416780e-06, conv factor = 6.77e-01, wall time = 1.84e+02
+  Braid: || r_34 || = 9.505230e-07, conv factor = 6.71e-01, wall time = 1.90e+02
+  Braid: || r_35 || = 6.329217e-07, conv factor = 6.66e-01, wall time = 1.95e+02
+  Braid: || r_36 || = 4.181851e-07, conv factor = 6.61e-01, wall time = 2.01e+02
+  Braid: || r_37 || = 2.746227e-07, conv factor = 6.57e-01, wall time = 2.06e+02
+  Braid: || r_38 || = 1.797770e-07, conv factor = 6.55e-01, wall time = 2.12e+02
+  Braid: || r_39 || = 1.172728e-07, conv factor = 6.52e-01, wall time = 2.17e+02
+  Braid: || r_40 || = 7.593187e-08, conv factor = 6.47e-01, wall time = 2.23e+02
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 4096
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 8.190000e-08
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 41
+  residual norm         = 7.593187e-08
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 1
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 25
+  min coarse            = 2
+  number of levels      = 12
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0      4096        2        1
+      1      2048        2        1
+      2      1024        2        1
+      3       512        2        1
+      4       256        2        1
+      5       128        2        1
+      6        64        2        1
+      7        32        2        1
+      8        16        2        1
+      9         8        2        1
+     10         4        2        1
+     11         2  
+
+  wall time = 231.094381
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   1.22e-03    1.22e-03    2.40e-01    1.97e+02
+  1   |   2.44e-03    2.44e-03    2.40e-01    9.83e+01
+  2   |   4.88e-03    4.88e-03    2.40e-01    4.92e+01
+  3   |   9.77e-03    9.77e-03    2.40e-01    2.46e+01
+  4   |   1.95e-02    1.95e-02    2.40e-01    1.23e+01
+  5   |   3.91e-02    3.91e-02    2.40e-01    6.14e+00
+  6   |   7.81e-02    7.81e-02    2.40e-01    3.07e+00
+  7   |   1.56e-01    1.56e-01    2.40e-01    1.54e+00
+  8   |   3.12e-01    3.12e-01    2.40e-01    7.68e-01
+  9   |   6.25e-01    6.25e-01    2.40e-01    3.84e-01
+ 10   |   1.25e+00    1.25e+00    2.40e-01    1.92e-01
+ 11   |   2.50e+00    2.50e+00    2.40e-01    9.60e-02
+
+---------------------------------------------------------------------- 
+---------------------------------------------------------------------- 
+ 
+Setup:  Spatial coarsen every OTHER level, First in time and then space, append -sc 1, -asc 1
+ 
+ 
+Problem size:  -nx 128  -nt 128 
+  Braid: Begin simulation, 128 time steps
+
+  Braid: || r_0 || = 3.004603e+00, conv factor = 1.00e+00, wall time = 1.16e-02
+  Braid: || r_1 || = 6.850065e-02, conv factor = 2.28e-02, wall time = 2.62e-02
+  Braid: || r_2 || = 2.632685e-03, conv factor = 3.84e-02, wall time = 4.09e-02
+  Braid: || r_3 || = 1.941799e-04, conv factor = 7.38e-02, wall time = 5.56e-02
+  Braid: || r_4 || = 1.691294e-05, conv factor = 8.71e-02, wall time = 7.03e-02
+  Braid: || r_5 || = 1.279325e-06, conv factor = 7.56e-02, wall time = 8.51e-02
+  Braid: || r_6 || = 6.787977e-08, conv factor = 5.31e-02, wall time = 9.98e-02
+  Braid: || r_7 || = 2.715128e-09, conv factor = 4.00e-02, wall time = 1.15e-01
+  Braid: || r_8 || = 9.313678e-11, conv factor = 3.43e-02, wall time = 1.29e-01
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 128
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 2.540000e-09
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 9
+  residual norm         = 9.313678e-11
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 1
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 25
+  min coarse            = 2
+  number of levels      = 13
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0       128        2        1
+      1        64        1        1
+      2        64        2        1
+      3        32        1        1
+      4        32        2        1
+      5        16        1        1
+      6        16        2        1
+      7         8        1        1
+      8         8        2        1
+      9         4        1        1
+     10         4        2        1
+     11         2        1        1
+     12         2  
+
+  wall time = 0.147525
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   3.91e-02    3.91e-02    2.40e-01    6.14e+00
+  1   |   3.91e-02    7.81e-02    4.80e-01    1.23e+01
+  2   |   7.81e-02    7.81e-02    2.40e-01    3.07e+00
+  3   |   7.81e-02    1.56e-01    4.80e-01    6.14e+00
+  4   |   1.56e-01    1.56e-01    2.40e-01    1.54e+00
+  5   |   1.56e-01    3.12e-01    4.80e-01    3.07e+00
+  6   |   3.12e-01    3.12e-01    2.40e-01    7.68e-01
+  7   |   3.12e-01    6.25e-01    4.80e-01    1.54e+00
+  8   |   6.25e-01    6.25e-01    2.40e-01    3.84e-01
+  9   |   6.25e-01    1.25e+00    4.80e-01    7.68e-01
+ 10   |   1.25e+00    1.25e+00    2.40e-01    1.92e-01
+ 11   |   1.25e+00    2.50e+00    4.80e-01    3.84e-01
+ 12   |   2.50e+00    2.50e+00    2.40e-01    9.60e-02
+
+ 
+ 
+Problem size:  -nx 256  -nt 256 
+  Braid: Begin simulation, 256 time steps
+
+  Braid: || r_0 || = 5.526509e+00, conv factor = 1.00e+00, wall time = 4.00e-02
+  Braid: || r_1 || = 1.275265e-01, conv factor = 2.31e-02, wall time = 9.27e-02
+  Braid: || r_2 || = 4.839695e-03, conv factor = 3.80e-02, wall time = 1.46e-01
+  Braid: || r_3 || = 4.333529e-04, conv factor = 8.95e-02, wall time = 1.98e-01
+  Braid: || r_4 || = 6.858831e-05, conv factor = 1.58e-01, wall time = 2.51e-01
+  Braid: || r_5 || = 1.086273e-05, conv factor = 1.58e-01, wall time = 3.04e-01
+  Braid: || r_6 || = 1.438663e-06, conv factor = 1.32e-01, wall time = 3.59e-01
+  Braid: || r_7 || = 1.216875e-07, conv factor = 8.46e-02, wall time = 4.12e-01
+  Braid: || r_8 || = 1.054131e-08, conv factor = 8.66e-02, wall time = 4.65e-01
+  Braid: || r_9 || = 9.201521e-10, conv factor = 8.73e-02, wall time = 5.18e-01
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 256
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 5.100000e-09
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 10
+  residual norm         = 9.201521e-10
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 1
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 25
+  min coarse            = 2
+  number of levels      = 15
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0       256        2        1
+      1       128        1        1
+      2       128        2        1
+      3        64        1        1
+      4        64        2        1
+      5        32        1        1
+      6        32        2        1
+      7        16        1        1
+      8        16        2        1
+      9         8        1        1
+     10         8        2        1
+     11         4        1        1
+     12         4        2        1
+     13         2        1        1
+     14         2  
+
+  wall time = 0.772493
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   1.95e-02    1.95e-02    2.40e-01    1.23e+01
+  1   |   1.95e-02    3.91e-02    4.80e-01    2.46e+01
+  2   |   3.91e-02    3.91e-02    2.40e-01    6.14e+00
+  3   |   3.91e-02    7.81e-02    4.80e-01    1.23e+01
+  4   |   7.81e-02    7.81e-02    2.40e-01    3.07e+00
+  5   |   7.81e-02    1.56e-01    4.80e-01    6.14e+00
+  6   |   1.56e-01    1.56e-01    2.40e-01    1.54e+00
+  7   |   1.56e-01    3.12e-01    4.80e-01    3.07e+00
+  8   |   3.12e-01    3.12e-01    2.40e-01    7.68e-01
+  9   |   3.12e-01    6.25e-01    4.80e-01    1.54e+00
+ 10   |   6.25e-01    6.25e-01    2.40e-01    3.84e-01
+ 11   |   6.25e-01    1.25e+00    4.80e-01    7.68e-01
+ 12   |   1.25e+00    1.25e+00    2.40e-01    1.92e-01
+ 13   |   1.25e+00    2.50e+00    4.80e-01    3.84e-01
+ 14   |   2.50e+00    2.50e+00    2.40e-01    9.60e-02
+
+ 
+ 
+Problem size:  -nx 512  -nt 512 
+  Braid: Begin simulation, 512 time steps
+
+  Braid: || r_0 || = 1.156163e+01, conv factor = 1.00e+00, wall time = 1.50e-01
+  Braid: || r_1 || = 2.673593e-01, conv factor = 2.31e-02, wall time = 3.51e-01
+  Braid: || r_2 || = 9.059509e-03, conv factor = 3.39e-02, wall time = 5.53e-01
+  Braid: || r_3 || = 7.150453e-04, conv factor = 7.89e-02, wall time = 7.54e-01
+  Braid: || r_4 || = 1.286636e-04, conv factor = 1.80e-01, wall time = 9.55e-01
+  Braid: || r_5 || = 2.793505e-05, conv factor = 2.17e-01, wall time = 1.16e+00
+  Braid: || r_6 || = 6.424188e-06, conv factor = 2.30e-01, wall time = 1.36e+00
+  Braid: || r_7 || = 1.337339e-06, conv factor = 2.08e-01, wall time = 1.56e+00
+  Braid: || r_8 || = 2.354158e-07, conv factor = 1.76e-01, wall time = 1.77e+00
+  Braid: || r_9 || = 4.063809e-08, conv factor = 1.73e-01, wall time = 1.98e+00
+  Braid: || r_10 || = 6.454578e-09, conv factor = 1.59e-01, wall time = 2.19e+00
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 512
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 1.022000e-08
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 11
+  residual norm         = 6.454578e-09
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 1
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 25
+  min coarse            = 2
+  number of levels      = 17
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0       512        2        1
+      1       256        1        1
+      2       256        2        1
+      3       128        1        1
+      4       128        2        1
+      5        64        1        1
+      6        64        2        1
+      7        32        1        1
+      8        32        2        1
+      9        16        1        1
+     10        16        2        1
+     11         8        1        1
+     12         8        2        1
+     13         4        1        1
+     14         4        2        1
+     15         2        1        1
+     16         2  
+
+  wall time = 2.741888
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   9.77e-03    9.77e-03    2.40e-01    2.46e+01
+  1   |   9.77e-03    1.95e-02    4.80e-01    4.92e+01
+  2   |   1.95e-02    1.95e-02    2.40e-01    1.23e+01
+  3   |   1.95e-02    3.91e-02    4.80e-01    2.46e+01
+  4   |   3.91e-02    3.91e-02    2.40e-01    6.14e+00
+  5   |   3.91e-02    7.81e-02    4.80e-01    1.23e+01
+  6   |   7.81e-02    7.81e-02    2.40e-01    3.07e+00
+  7   |   7.81e-02    1.56e-01    4.80e-01    6.14e+00
+  8   |   1.56e-01    1.56e-01    2.40e-01    1.54e+00
+  9   |   1.56e-01    3.12e-01    4.80e-01    3.07e+00
+ 10   |   3.12e-01    3.12e-01    2.40e-01    7.68e-01
+ 11   |   3.12e-01    6.25e-01    4.80e-01    1.54e+00
+ 12   |   6.25e-01    6.25e-01    2.40e-01    3.84e-01
+ 13   |   6.25e-01    1.25e+00    4.80e-01    7.68e-01
+ 14   |   1.25e+00    1.25e+00    2.40e-01    1.92e-01
+ 15   |   1.25e+00    2.50e+00    4.80e-01    3.84e-01
+ 16   |   2.50e+00    2.50e+00    2.40e-01    9.60e-02
+
+ 
+ 
+Problem size:  -nx 1024 -nt 1024 
+  Braid: Begin simulation, 1024 time steps
+
+  Braid: || r_0 || = 2.346365e+01, conv factor = 1.00e+00, wall time = 7.11e-01
+  Braid: || r_1 || = 5.354577e-01, conv factor = 2.28e-02, wall time = 1.53e+00
+  Braid: || r_2 || = 1.890264e-02, conv factor = 3.53e-02, wall time = 2.35e+00
+  Braid: || r_3 || = 2.452522e-03, conv factor = 1.30e-01, wall time = 3.16e+00
+  Braid: || r_4 || = 5.467299e-04, conv factor = 2.23e-01, wall time = 3.96e+00
+  Braid: || r_5 || = 1.164222e-04, conv factor = 2.13e-01, wall time = 4.75e+00
+  Braid: || r_6 || = 2.842971e-05, conv factor = 2.44e-01, wall time = 5.54e+00
+  Braid: || r_7 || = 7.532539e-06, conv factor = 2.65e-01, wall time = 6.33e+00
+  Braid: || r_8 || = 2.024403e-06, conv factor = 2.69e-01, wall time = 7.12e+00
+  Braid: || r_9 || = 5.368795e-07, conv factor = 2.65e-01, wall time = 7.91e+00
+  Braid: || r_10 || = 1.392616e-07, conv factor = 2.59e-01, wall time = 8.70e+00
+  Braid: || r_11 || = 3.488866e-08, conv factor = 2.51e-01, wall time = 9.48e+00
+  Braid: || r_12 || = 8.317954e-09, conv factor = 2.38e-01, wall time = 1.03e+01
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 1024
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 2.046000e-08
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 13
+  residual norm         = 8.317954e-09
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 1
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 25
+  min coarse            = 2
+  number of levels      = 19
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0      1024        2        1
+      1       512        1        1
+      2       512        2        1
+      3       256        1        1
+      4       256        2        1
+      5       128        1        1
+      6       128        2        1
+      7        64        1        1
+      8        64        2        1
+      9        32        1        1
+     10        32        2        1
+     11        16        1        1
+     12        16        2        1
+     13         8        1        1
+     14         8        2        1
+     15         4        1        1
+     16         4        2        1
+     17         2        1        1
+     18         2  
+
+  wall time = 10.915253
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   4.88e-03    4.88e-03    2.40e-01    4.92e+01
+  1   |   4.88e-03    9.77e-03    4.80e-01    9.83e+01
+  2   |   9.77e-03    9.77e-03    2.40e-01    2.46e+01
+  3   |   9.77e-03    1.95e-02    4.80e-01    4.92e+01
+  4   |   1.95e-02    1.95e-02    2.40e-01    1.23e+01
+  5   |   1.95e-02    3.91e-02    4.80e-01    2.46e+01
+  6   |   3.91e-02    3.91e-02    2.40e-01    6.14e+00
+  7   |   3.91e-02    7.81e-02    4.80e-01    1.23e+01
+  8   |   7.81e-02    7.81e-02    2.40e-01    3.07e+00
+  9   |   7.81e-02    1.56e-01    4.80e-01    6.14e+00
+ 10   |   1.56e-01    1.56e-01    2.40e-01    1.54e+00
+ 11   |   1.56e-01    3.12e-01    4.80e-01    3.07e+00
+ 12   |   3.12e-01    3.12e-01    2.40e-01    7.68e-01
+ 13   |   3.12e-01    6.25e-01    4.80e-01    1.54e+00
+ 14   |   6.25e-01    6.25e-01    2.40e-01    3.84e-01
+ 15   |   6.25e-01    1.25e+00    4.80e-01    7.68e-01
+ 16   |   1.25e+00    1.25e+00    2.40e-01    1.92e-01
+ 17   |   1.25e+00    2.50e+00    4.80e-01    3.84e-01
+ 18   |   2.50e+00    2.50e+00    2.40e-01    9.60e-02
+
+ 
+ 
+Problem size:  -nx 2048 -nt 2048 
+  Braid: Begin simulation, 2048 time steps
+
+  Braid: || r_0 || = 4.971464e+01, conv factor = 1.00e+00, wall time = 2.30e+00
+  Braid: || r_1 || = 1.160654e+00, conv factor = 2.33e-02, wall time = 5.44e+00
+  Braid: || r_2 || = 4.112707e-02, conv factor = 3.54e-02, wall time = 8.58e+00
+  Braid: || r_3 || = 1.050900e-02, conv factor = 2.56e-01, wall time = 1.17e+01
+  Braid: || r_4 || = 7.117183e-03, conv factor = 6.77e-01, wall time = 1.49e+01
+  Braid: || r_5 || = 3.260509e-03, conv factor = 4.58e-01, wall time = 1.80e+01
+  Braid: || r_6 || = 1.128879e-03, conv factor = 3.46e-01, wall time = 2.11e+01
+  Braid: || r_7 || = 3.163024e-04, conv factor = 2.80e-01, wall time = 2.43e+01
+  Braid: || r_8 || = 7.459307e-05, conv factor = 2.36e-01, wall time = 2.74e+01
+  Braid: || r_9 || = 1.540014e-05, conv factor = 2.06e-01, wall time = 3.05e+01
+  Braid: || r_10 || = 3.030530e-06, conv factor = 1.97e-01, wall time = 3.37e+01
+  Braid: || r_11 || = 6.704854e-07, conv factor = 2.21e-01, wall time = 3.68e+01
+  Braid: || r_12 || = 1.847920e-07, conv factor = 2.76e-01, wall time = 3.99e+01
+  Braid: || r_13 || = 5.491293e-08, conv factor = 2.97e-01, wall time = 4.31e+01
+  Braid: || r_14 || = 1.551366e-08, conv factor = 2.83e-01, wall time = 4.62e+01
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 2048
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 4.094000e-08
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 15
+  residual norm         = 1.551366e-08
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 1
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 25
+  min coarse            = 2
+  number of levels      = 21
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0      2048        2        1
+      1      1024        1        1
+      2      1024        2        1
+      3       512        1        1
+      4       512        2        1
+      5       256        1        1
+      6       256        2        1
+      7       128        1        1
+      8       128        2        1
+      9        64        1        1
+     10        64        2        1
+     11        32        1        1
+     12        32        2        1
+     13        16        1        1
+     14        16        2        1
+     15         8        1        1
+     16         8        2        1
+     17         4        1        1
+     18         4        2        1
+     19         2        1        1
+     20         2  
+
+  wall time = 48.253747
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   2.44e-03    2.44e-03    2.40e-01    9.83e+01
+  1   |   2.44e-03    4.88e-03    4.80e-01    1.97e+02
+  2   |   4.88e-03    4.88e-03    2.40e-01    4.92e+01
+  3   |   4.88e-03    9.77e-03    4.80e-01    9.83e+01
+  4   |   9.77e-03    9.77e-03    2.40e-01    2.46e+01
+  5   |   9.77e-03    1.95e-02    4.80e-01    4.92e+01
+  6   |   1.95e-02    1.95e-02    2.40e-01    1.23e+01
+  7   |   1.95e-02    3.91e-02    4.80e-01    2.46e+01
+  8   |   3.91e-02    3.91e-02    2.40e-01    6.14e+00
+  9   |   3.91e-02    7.81e-02    4.80e-01    1.23e+01
+ 10   |   7.81e-02    7.81e-02    2.40e-01    3.07e+00
+ 11   |   7.81e-02    1.56e-01    4.80e-01    6.14e+00
+ 12   |   1.56e-01    1.56e-01    2.40e-01    1.54e+00
+ 13   |   1.56e-01    3.12e-01    4.80e-01    3.07e+00
+ 14   |   3.12e-01    3.12e-01    2.40e-01    7.68e-01
+ 15   |   3.12e-01    6.25e-01    4.80e-01    1.54e+00
+ 16   |   6.25e-01    6.25e-01    2.40e-01    3.84e-01
+ 17   |   6.25e-01    1.25e+00    4.80e-01    7.68e-01
+ 18   |   1.25e+00    1.25e+00    2.40e-01    1.92e-01
+ 19   |   1.25e+00    2.50e+00    4.80e-01    3.84e-01
+ 20   |   2.50e+00    2.50e+00    2.40e-01    9.60e-02
+
+ 
+ 
+Problem size:  -nx 4096 -nt 4096 
+  Braid: Begin simulation, 4096 time steps
+
+  Braid: || r_0 || = 1.013480e+02, conv factor = 1.00e+00, wall time = 9.25e+00
+  Braid: || r_1 || = 2.523974e+00, conv factor = 2.49e-02, wall time = 2.19e+01
+  Braid: || r_2 || = 8.814306e-01, conv factor = 3.49e-01, wall time = 3.46e+01
+  Braid: || r_3 || = 5.930137e-01, conv factor = 6.73e-01, wall time = 4.72e+01
+  Braid: || r_4 || = 3.026807e-01, conv factor = 5.10e-01, wall time = 5.99e+01
+  Braid: || r_5 || = 1.120806e-01, conv factor = 3.70e-01, wall time = 7.26e+01
+  Braid: || r_6 || = 2.712639e-02, conv factor = 2.42e-01, wall time = 8.52e+01
+  Braid: || r_7 || = 1.580169e-02, conv factor = 5.83e-01, wall time = 9.79e+01
+  Braid: || r_8 || = 1.341911e-02, conv factor = 8.49e-01, wall time = 1.11e+02
+  Braid: || r_9 || = 7.883920e-03, conv factor = 5.88e-01, wall time = 1.23e+02
+  Braid: || r_10 || = 3.690420e-03, conv factor = 4.68e-01, wall time = 1.36e+02
+  Braid: || r_11 || = 1.469627e-03, conv factor = 3.98e-01, wall time = 1.49e+02
+  Braid: || r_12 || = 5.142565e-04, conv factor = 3.50e-01, wall time = 1.61e+02
+  Braid: || r_13 || = 1.611075e-04, conv factor = 3.13e-01, wall time = 1.74e+02
+  Braid: || r_14 || = 4.573795e-05, conv factor = 2.84e-01, wall time = 1.87e+02
+  Braid: || r_15 || = 1.186732e-05, conv factor = 2.59e-01, wall time = 1.99e+02
+  Braid: || r_16 || = 2.831979e-06, conv factor = 2.39e-01, wall time = 2.12e+02
+  Braid: || r_17 || = 6.246889e-07, conv factor = 2.21e-01, wall time = 2.25e+02
+  Braid: || r_18 || = 1.279495e-07, conv factor = 2.05e-01, wall time = 2.38e+02
+  Braid: || r_19 || = 2.448040e-08, conv factor = 1.91e-01, wall time = 2.50e+02
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 4096
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 8.190000e-08
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 20
+  residual norm         = 2.448040e-08
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 1
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 25
+  min coarse            = 2
+  number of levels      = 23
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0      4096        2        1
+      1      2048        1        1
+      2      2048        2        1
+      3      1024        1        1
+      4      1024        2        1
+      5       512        1        1
+      6       512        2        1
+      7       256        1        1
+      8       256        2        1
+      9       128        1        1
+     10       128        2        1
+     11        64        1        1
+     12        64        2        1
+     13        32        1        1
+     14        32        2        1
+     15        16        1        1
+     16        16        2        1
+     17         8        1        1
+     18         8        2        1
+     19         4        1        1
+     20         4        2        1
+     21         2        1        1
+     22         2  
+
+  wall time = 258.203985
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   1.22e-03    1.22e-03    2.40e-01    1.97e+02
+  1   |   1.22e-03    2.44e-03    4.80e-01    3.93e+02
+  2   |   2.44e-03    2.44e-03    2.40e-01    9.83e+01
+  3   |   2.44e-03    4.88e-03    4.80e-01    1.97e+02
+  4   |   4.88e-03    4.88e-03    2.40e-01    4.92e+01
+  5   |   4.88e-03    9.77e-03    4.80e-01    9.83e+01
+  6   |   9.77e-03    9.77e-03    2.40e-01    2.46e+01
+  7   |   9.77e-03    1.95e-02    4.80e-01    4.92e+01
+  8   |   1.95e-02    1.95e-02    2.40e-01    1.23e+01
+  9   |   1.95e-02    3.91e-02    4.80e-01    2.46e+01
+ 10   |   3.91e-02    3.91e-02    2.40e-01    6.14e+00
+ 11   |   3.91e-02    7.81e-02    4.80e-01    1.23e+01
+ 12   |   7.81e-02    7.81e-02    2.40e-01    3.07e+00
+ 13   |   7.81e-02    1.56e-01    4.80e-01    6.14e+00
+ 14   |   1.56e-01    1.56e-01    2.40e-01    1.54e+00
+ 15   |   1.56e-01    3.12e-01    4.80e-01    3.07e+00
+ 16   |   3.12e-01    3.12e-01    2.40e-01    7.68e-01
+ 17   |   3.12e-01    6.25e-01    4.80e-01    1.54e+00
+ 18   |   6.25e-01    6.25e-01    2.40e-01    3.84e-01
+ 19   |   6.25e-01    1.25e+00    4.80e-01    7.68e-01
+ 20   |   1.25e+00    1.25e+00    2.40e-01    1.92e-01
+ 21   |   1.25e+00    2.50e+00    4.80e-01    3.84e-01
+ 22   |   2.50e+00    2.50e+00    2.40e-01    9.60e-02
+
+---------------------------------------------------------------------- 
+---------------------------------------------------------------------- 
+ 
+Setup:  Spatial coarsen every OTHER level, First in time and then space, add more relaxation on coarse levels, append  -sc 1 -asc 1 -nu 2 -nu0 1 
+ 
+ 
+Problem size:  -nx 128  -nt 128 
+  Braid: Begin simulation, 128 time steps
+
+  Braid: || r_0 || = 1.376979e+00, conv factor = 1.00e+00, wall time = 1.37e-02
+  Braid: || r_1 || = 2.824342e-02, conv factor = 2.05e-02, wall time = 3.13e-02
+  Braid: || r_2 || = 6.357406e-04, conv factor = 2.25e-02, wall time = 4.88e-02
+  Braid: || r_3 || = 2.037431e-05, conv factor = 3.20e-02, wall time = 6.64e-02
+  Braid: || r_4 || = 8.202798e-07, conv factor = 4.03e-02, wall time = 8.39e-02
+  Braid: || r_5 || = 4.152381e-08, conv factor = 5.06e-02, wall time = 1.02e-01
+  Braid: || r_6 || = 2.503502e-09, conv factor = 6.03e-02, wall time = 1.19e-01
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 128
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 2.540000e-09
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 7
+  residual norm         = 2.503502e-09
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 1
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 25
+  min coarse            = 2
+  number of levels      = 13
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0       128        2        1
+      1        64        1        2
+      2        64        2        2
+      3        32        1        2
+      4        32        2        2
+      5        16        1        2
+      6        16        2        2
+      7         8        1        2
+      8         8        2        2
+      9         4        1        2
+     10         4        2        2
+     11         2        1        2
+     12         2  
+
+  wall time = 0.137527
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   3.91e-02    3.91e-02    2.40e-01    6.14e+00
+  1   |   3.91e-02    7.81e-02    4.80e-01    1.23e+01
+  2   |   7.81e-02    7.81e-02    2.40e-01    3.07e+00
+  3   |   7.81e-02    1.56e-01    4.80e-01    6.14e+00
+  4   |   1.56e-01    1.56e-01    2.40e-01    1.54e+00
+  5   |   1.56e-01    3.12e-01    4.80e-01    3.07e+00
+  6   |   3.12e-01    3.12e-01    2.40e-01    7.68e-01
+  7   |   3.12e-01    6.25e-01    4.80e-01    1.54e+00
+  8   |   6.25e-01    6.25e-01    2.40e-01    3.84e-01
+  9   |   6.25e-01    1.25e+00    4.80e-01    7.68e-01
+ 10   |   1.25e+00    1.25e+00    2.40e-01    1.92e-01
+ 11   |   1.25e+00    2.50e+00    4.80e-01    3.84e-01
+ 12   |   2.50e+00    2.50e+00    2.40e-01    9.60e-02
+
+ 
+ 
+Problem size:  -nx 256  -nt 256 
+  Braid: Begin simulation, 256 time steps
+
+  Braid: || r_0 || = 2.638314e+00, conv factor = 1.00e+00, wall time = 4.96e-02
+  Braid: || r_1 || = 5.744252e-02, conv factor = 2.18e-02, wall time = 1.13e-01
+  Braid: || r_2 || = 1.333942e-03, conv factor = 2.32e-02, wall time = 1.77e-01
+  Braid: || r_3 || = 4.522768e-05, conv factor = 3.39e-02, wall time = 2.40e-01
+  Braid: || r_4 || = 2.163633e-06, conv factor = 4.78e-02, wall time = 3.04e-01
+  Braid: || r_5 || = 9.413467e-08, conv factor = 4.35e-02, wall time = 3.68e-01
+  Braid: || r_6 || = 4.560579e-09, conv factor = 4.84e-02, wall time = 4.31e-01
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 256
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 5.100000e-09
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 7
+  residual norm         = 4.560579e-09
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 1
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 25
+  min coarse            = 2
+  number of levels      = 15
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0       256        2        1
+      1       128        1        2
+      2       128        2        2
+      3        64        1        2
+      4        64        2        2
+      5        32        1        2
+      6        32        2        2
+      7        16        1        2
+      8        16        2        2
+      9         8        1        2
+     10         8        2        2
+     11         4        1        2
+     12         4        2        2
+     13         2        1        2
+     14         2  
+
+  wall time = 0.480496
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   1.95e-02    1.95e-02    2.40e-01    1.23e+01
+  1   |   1.95e-02    3.91e-02    4.80e-01    2.46e+01
+  2   |   3.91e-02    3.91e-02    2.40e-01    6.14e+00
+  3   |   3.91e-02    7.81e-02    4.80e-01    1.23e+01
+  4   |   7.81e-02    7.81e-02    2.40e-01    3.07e+00
+  5   |   7.81e-02    1.56e-01    4.80e-01    6.14e+00
+  6   |   1.56e-01    1.56e-01    2.40e-01    1.54e+00
+  7   |   1.56e-01    3.12e-01    4.80e-01    3.07e+00
+  8   |   3.12e-01    3.12e-01    2.40e-01    7.68e-01
+  9   |   3.12e-01    6.25e-01    4.80e-01    1.54e+00
+ 10   |   6.25e-01    6.25e-01    2.40e-01    3.84e-01
+ 11   |   6.25e-01    1.25e+00    4.80e-01    7.68e-01
+ 12   |   1.25e+00    1.25e+00    2.40e-01    1.92e-01
+ 13   |   1.25e+00    2.50e+00    4.80e-01    3.84e-01
+ 14   |   2.50e+00    2.50e+00    2.40e-01    9.60e-02
+
+ 
+ 
+Problem size:  -nx 512  -nt 512 
+  Braid: Begin simulation, 512 time steps
+
+  Braid: || r_0 || = 5.716128e+00, conv factor = 1.00e+00, wall time = 1.86e-01
+  Braid: || r_1 || = 1.358978e-01, conv factor = 2.38e-02, wall time = 4.32e-01
+  Braid: || r_2 || = 2.979852e-03, conv factor = 2.19e-02, wall time = 6.74e-01
+  Braid: || r_3 || = 9.537020e-05, conv factor = 3.20e-02, wall time = 9.17e-01
+  Braid: || r_4 || = 6.140903e-06, conv factor = 6.44e-02, wall time = 1.16e+00
+  Braid: || r_5 || = 6.210120e-07, conv factor = 1.01e-01, wall time = 1.40e+00
+  Braid: || r_6 || = 5.432636e-08, conv factor = 8.75e-02, wall time = 1.64e+00
+  Braid: || r_7 || = 4.240835e-09, conv factor = 7.81e-02, wall time = 1.89e+00
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 512
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 1.022000e-08
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 8
+  residual norm         = 4.240835e-09
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 1
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 25
+  min coarse            = 2
+  number of levels      = 17
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0       512        2        1
+      1       256        1        2
+      2       256        2        2
+      3       128        1        2
+      4       128        2        2
+      5        64        1        2
+      6        64        2        2
+      7        32        1        2
+      8        32        2        2
+      9        16        1        2
+     10        16        2        2
+     11         8        1        2
+     12         8        2        2
+     13         4        1        2
+     14         4        2        2
+     15         2        1        2
+     16         2  
+
+  wall time = 2.039472
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   9.77e-03    9.77e-03    2.40e-01    2.46e+01
+  1   |   9.77e-03    1.95e-02    4.80e-01    4.92e+01
+  2   |   1.95e-02    1.95e-02    2.40e-01    1.23e+01
+  3   |   1.95e-02    3.91e-02    4.80e-01    2.46e+01
+  4   |   3.91e-02    3.91e-02    2.40e-01    6.14e+00
+  5   |   3.91e-02    7.81e-02    4.80e-01    1.23e+01
+  6   |   7.81e-02    7.81e-02    2.40e-01    3.07e+00
+  7   |   7.81e-02    1.56e-01    4.80e-01    6.14e+00
+  8   |   1.56e-01    1.56e-01    2.40e-01    1.54e+00
+  9   |   1.56e-01    3.12e-01    4.80e-01    3.07e+00
+ 10   |   3.12e-01    3.12e-01    2.40e-01    7.68e-01
+ 11   |   3.12e-01    6.25e-01    4.80e-01    1.54e+00
+ 12   |   6.25e-01    6.25e-01    2.40e-01    3.84e-01
+ 13   |   6.25e-01    1.25e+00    4.80e-01    7.68e-01
+ 14   |   1.25e+00    1.25e+00    2.40e-01    1.92e-01
+ 15   |   1.25e+00    2.50e+00    4.80e-01    3.84e-01
+ 16   |   2.50e+00    2.50e+00    2.40e-01    9.60e-02
+
+ 
+ 
+Problem size:  -nx 1024 -nt 1024 
+  Braid: Begin simulation, 1024 time steps
+
+  Braid: || r_0 || = 1.149850e+01, conv factor = 1.00e+00, wall time = 7.09e-01
+  Braid: || r_1 || = 2.793309e-01, conv factor = 2.43e-02, wall time = 1.66e+00
+  Braid: || r_2 || = 6.099117e-03, conv factor = 2.18e-02, wall time = 2.61e+00
+  Braid: || r_3 || = 1.995738e-04, conv factor = 3.27e-02, wall time = 3.56e+00
+  Braid: || r_4 || = 2.077280e-05, conv factor = 1.04e-01, wall time = 4.51e+00
+  Braid: || r_5 || = 3.539233e-06, conv factor = 1.70e-01, wall time = 5.47e+00
+  Braid: || r_6 || = 5.453535e-07, conv factor = 1.54e-01, wall time = 6.42e+00
+  Braid: || r_7 || = 8.234873e-08, conv factor = 1.51e-01, wall time = 7.38e+00
+  Braid: || r_8 || = 1.150735e-08, conv factor = 1.40e-01, wall time = 8.33e+00
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 1024
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 2.046000e-08
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 9
+  residual norm         = 1.150735e-08
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 1
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 25
+  min coarse            = 2
+  number of levels      = 19
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0      1024        2        1
+      1       512        1        2
+      2       512        2        2
+      3       256        1        2
+      4       256        2        2
+      5       128        1        2
+      6       128        2        2
+      7        64        1        2
+      8        64        2        2
+      9        32        1        2
+     10        32        2        2
+     11        16        1        2
+     12        16        2        2
+     13         8        1        2
+     14         8        2        2
+     15         4        1        2
+     16         4        2        2
+     17         2        1        2
+     18         2  
+
+  wall time = 8.849587
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   4.88e-03    4.88e-03    2.40e-01    4.92e+01
+  1   |   4.88e-03    9.77e-03    4.80e-01    9.83e+01
+  2   |   9.77e-03    9.77e-03    2.40e-01    2.46e+01
+  3   |   9.77e-03    1.95e-02    4.80e-01    4.92e+01
+  4   |   1.95e-02    1.95e-02    2.40e-01    1.23e+01
+  5   |   1.95e-02    3.91e-02    4.80e-01    2.46e+01
+  6   |   3.91e-02    3.91e-02    2.40e-01    6.14e+00
+  7   |   3.91e-02    7.81e-02    4.80e-01    1.23e+01
+  8   |   7.81e-02    7.81e-02    2.40e-01    3.07e+00
+  9   |   7.81e-02    1.56e-01    4.80e-01    6.14e+00
+ 10   |   1.56e-01    1.56e-01    2.40e-01    1.54e+00
+ 11   |   1.56e-01    3.12e-01    4.80e-01    3.07e+00
+ 12   |   3.12e-01    3.12e-01    2.40e-01    7.68e-01
+ 13   |   3.12e-01    6.25e-01    4.80e-01    1.54e+00
+ 14   |   6.25e-01    6.25e-01    2.40e-01    3.84e-01
+ 15   |   6.25e-01    1.25e+00    4.80e-01    7.68e-01
+ 16   |   1.25e+00    1.25e+00    2.40e-01    1.92e-01
+ 17   |   1.25e+00    2.50e+00    4.80e-01    3.84e-01
+ 18   |   2.50e+00    2.50e+00    2.40e-01    9.60e-02
+
+ 
+ 
+Problem size:  -nx 2048 -nt 2048 
+  Braid: Begin simulation, 2048 time steps
+
+  Braid: || r_0 || = 2.446108e+01, conv factor = 1.00e+00, wall time = 2.77e+00
+  Braid: || r_1 || = 5.984928e-01, conv factor = 2.45e-02, wall time = 6.55e+00
+  Braid: || r_2 || = 1.314254e-02, conv factor = 2.20e-02, wall time = 1.04e+01
+  Braid: || r_3 || = 4.209393e-04, conv factor = 3.20e-02, wall time = 1.41e+01
+  Braid: || r_4 || = 5.262062e-05, conv factor = 1.25e-01, wall time = 1.79e+01
+  Braid: || r_5 || = 1.353037e-05, conv factor = 2.57e-01, wall time = 2.17e+01
+  Braid: || r_6 || = 3.540132e-06, conv factor = 2.62e-01, wall time = 2.55e+01
+  Braid: || r_7 || = 8.797046e-07, conv factor = 2.48e-01, wall time = 2.93e+01
+  Braid: || r_8 || = 2.008926e-07, conv factor = 2.28e-01, wall time = 3.31e+01
+  Braid: || r_9 || = 4.252361e-08, conv factor = 2.12e-01, wall time = 3.69e+01
+  Braid: || r_10 || = 7.895012e-09, conv factor = 1.86e-01, wall time = 4.07e+01
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 2048
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 4.094000e-08
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 11
+  residual norm         = 7.895012e-09
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 1
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 25
+  min coarse            = 2
+  number of levels      = 21
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0      2048        2        1
+      1      1024        1        2
+      2      1024        2        2
+      3       512        1        2
+      4       512        2        2
+      5       256        1        2
+      6       256        2        2
+      7       128        1        2
+      8       128        2        2
+      9        64        1        2
+     10        64        2        2
+     11        32        1        2
+     12        32        2        2
+     13        16        1        2
+     14        16        2        2
+     15         8        1        2
+     16         8        2        2
+     17         4        1        2
+     18         4        2        2
+     19         2        1        2
+     20         2  
+
+  wall time = 42.920534
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   2.44e-03    2.44e-03    2.40e-01    9.83e+01
+  1   |   2.44e-03    4.88e-03    4.80e-01    1.97e+02
+  2   |   4.88e-03    4.88e-03    2.40e-01    4.92e+01
+  3   |   4.88e-03    9.77e-03    4.80e-01    9.83e+01
+  4   |   9.77e-03    9.77e-03    2.40e-01    2.46e+01
+  5   |   9.77e-03    1.95e-02    4.80e-01    4.92e+01
+  6   |   1.95e-02    1.95e-02    2.40e-01    1.23e+01
+  7   |   1.95e-02    3.91e-02    4.80e-01    2.46e+01
+  8   |   3.91e-02    3.91e-02    2.40e-01    6.14e+00
+  9   |   3.91e-02    7.81e-02    4.80e-01    1.23e+01
+ 10   |   7.81e-02    7.81e-02    2.40e-01    3.07e+00
+ 11   |   7.81e-02    1.56e-01    4.80e-01    6.14e+00
+ 12   |   1.56e-01    1.56e-01    2.40e-01    1.54e+00
+ 13   |   1.56e-01    3.12e-01    4.80e-01    3.07e+00
+ 14   |   3.12e-01    3.12e-01    2.40e-01    7.68e-01
+ 15   |   3.12e-01    6.25e-01    4.80e-01    1.54e+00
+ 16   |   6.25e-01    6.25e-01    2.40e-01    3.84e-01
+ 17   |   6.25e-01    1.25e+00    4.80e-01    7.68e-01
+ 18   |   1.25e+00    1.25e+00    2.40e-01    1.92e-01
+ 19   |   1.25e+00    2.50e+00    4.80e-01    3.84e-01
+ 20   |   2.50e+00    2.50e+00    2.40e-01    9.60e-02
+
+ 
+ 
+Problem size:  -nx 4096 -nt 4096 
+  Braid: Begin simulation, 4096 time steps
+
+  Braid: || r_0 || = 4.874934e+01, conv factor = 1.00e+00, wall time = 1.10e+01
+  Braid: || r_1 || = 1.219909e+00, conv factor = 2.50e-02, wall time = 2.60e+01
+  Braid: || r_2 || = 2.716041e-02, conv factor = 2.23e-02, wall time = 4.10e+01
+  Braid: || r_3 || = 8.482521e-04, conv factor = 3.12e-02, wall time = 5.61e+01
+  Braid: || r_4 || = 1.252955e-04, conv factor = 1.48e-01, wall time = 7.11e+01
+  Braid: || r_5 || = 4.210114e-05, conv factor = 3.36e-01, wall time = 8.62e+01
+  Braid: || r_6 || = 1.523221e-05, conv factor = 3.62e-01, wall time = 1.01e+02
+  Braid: || r_7 || = 5.019593e-06, conv factor = 3.30e-01, wall time = 1.16e+02
+  Braid: || r_8 || = 1.431395e-06, conv factor = 2.85e-01, wall time = 1.31e+02
+  Braid: || r_9 || = 4.474677e-07, conv factor = 3.13e-01, wall time = 1.46e+02
+  Braid: || r_10 || = 1.423836e-07, conv factor = 3.18e-01, wall time = 1.61e+02
+  Braid: || r_11 || = 4.167577e-08, conv factor = 2.93e-01, wall time = 1.76e+02
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 4096
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 8.190000e-08
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 12
+  residual norm         = 4.167577e-08
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 1
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 25
+  min coarse            = 2
+  number of levels      = 23
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0      4096        2        1
+      1      2048        1        2
+      2      2048        2        2
+      3      1024        1        2
+      4      1024        2        2
+      5       512        1        2
+      6       512        2        2
+      7       256        1        2
+      8       256        2        2
+      9       128        1        2
+     10       128        2        2
+     11        64        1        2
+     12        64        2        2
+     13        32        1        2
+     14        32        2        2
+     15        16        1        2
+     16        16        2        2
+     17         8        1        2
+     18         8        2        2
+     19         4        1        2
+     20         4        2        2
+     21         2        1        2
+     22         2  
+
+  wall time = 183.844542
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   1.22e-03    1.22e-03    2.40e-01    1.97e+02
+  1   |   1.22e-03    2.44e-03    4.80e-01    3.93e+02
+  2   |   2.44e-03    2.44e-03    2.40e-01    9.83e+01
+  3   |   2.44e-03    4.88e-03    4.80e-01    1.97e+02
+  4   |   4.88e-03    4.88e-03    2.40e-01    4.92e+01
+  5   |   4.88e-03    9.77e-03    4.80e-01    9.83e+01
+  6   |   9.77e-03    9.77e-03    2.40e-01    2.46e+01
+  7   |   9.77e-03    1.95e-02    4.80e-01    4.92e+01
+  8   |   1.95e-02    1.95e-02    2.40e-01    1.23e+01
+  9   |   1.95e-02    3.91e-02    4.80e-01    2.46e+01
+ 10   |   3.91e-02    3.91e-02    2.40e-01    6.14e+00
+ 11   |   3.91e-02    7.81e-02    4.80e-01    1.23e+01
+ 12   |   7.81e-02    7.81e-02    2.40e-01    3.07e+00
+ 13   |   7.81e-02    1.56e-01    4.80e-01    6.14e+00
+ 14   |   1.56e-01    1.56e-01    2.40e-01    1.54e+00
+ 15   |   1.56e-01    3.12e-01    4.80e-01    3.07e+00
+ 16   |   3.12e-01    3.12e-01    2.40e-01    7.68e-01
+ 17   |   3.12e-01    6.25e-01    4.80e-01    1.54e+00
+ 18   |   6.25e-01    6.25e-01    2.40e-01    3.84e-01
+ 19   |   6.25e-01    1.25e+00    4.80e-01    7.68e-01
+ 20   |   1.25e+00    1.25e+00    2.40e-01    1.92e-01
+ 21   |   1.25e+00    2.50e+00    4.80e-01    3.84e-01
+ 22   |   2.50e+00    2.50e+00    2.40e-01    9.60e-02
+
+---------------------------------------------------------------------- 
+---------------------------------------------------------------------- 
+ 
+Setup:  Spatial coarsen every OTHER level, First in time and then space, add more powerful FMG, nfmg_Vcyc=2, append  -sc 1 -asc 1 -fmg 2 
+ 
+ 
+Problem size:  -nx 128  -nt 128 
+  Braid: Begin simulation, 128 time steps
+
+  Braid: || r_0 || = 3.761930e-01, conv factor = 1.00e+00, wall time = 2.14e-02
+  Braid: || r_1 || = 4.204458e-03, conv factor = 1.12e-02, wall time = 4.61e-02
+  Braid: || r_2 || = 8.314465e-05, conv factor = 1.98e-02, wall time = 7.08e-02
+  Braid: || r_3 || = 1.545439e-06, conv factor = 1.86e-02, wall time = 9.55e-02
+  Braid: || r_4 || = 1.749119e-08, conv factor = 1.13e-02, wall time = 1.20e-01
+  Braid: || r_5 || = 1.705792e-10, conv factor = 9.75e-03, wall time = 1.45e-01
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 128
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 2.540000e-09
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 6
+  residual norm         = 1.705792e-10
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 2
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 25
+  min coarse            = 2
+  number of levels      = 13
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0       128        2        1
+      1        64        1        1
+      2        64        2        1
+      3        32        1        1
+      4        32        2        1
+      5        16        1        1
+      6        16        2        1
+      7         8        1        1
+      8         8        2        1
+      9         4        1        1
+     10         4        2        1
+     11         2        1        1
+     12         2  
+
+  wall time = 0.162997
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   3.91e-02    3.91e-02    2.40e-01    6.14e+00
+  1   |   3.91e-02    7.81e-02    4.80e-01    1.23e+01
+  2   |   7.81e-02    7.81e-02    2.40e-01    3.07e+00
+  3   |   7.81e-02    1.56e-01    4.80e-01    6.14e+00
+  4   |   1.56e-01    1.56e-01    2.40e-01    1.54e+00
+  5   |   1.56e-01    3.12e-01    4.80e-01    3.07e+00
+  6   |   3.12e-01    3.12e-01    2.40e-01    7.68e-01
+  7   |   3.12e-01    6.25e-01    4.80e-01    1.54e+00
+  8   |   6.25e-01    6.25e-01    2.40e-01    3.84e-01
+  9   |   6.25e-01    1.25e+00    4.80e-01    7.68e-01
+ 10   |   1.25e+00    1.25e+00    2.40e-01    1.92e-01
+ 11   |   1.25e+00    2.50e+00    4.80e-01    3.84e-01
+ 12   |   2.50e+00    2.50e+00    2.40e-01    9.60e-02
+
+ 
+ 
+Problem size:  -nx 256  -nt 256 
+  Braid: Begin simulation, 256 time steps
+
+  Braid: || r_0 || = 7.119304e-01, conv factor = 1.00e+00, wall time = 7.57e-02
+  Braid: || r_1 || = 8.542631e-03, conv factor = 1.20e-02, wall time = 1.65e-01
+  Braid: || r_2 || = 2.147544e-04, conv factor = 2.51e-02, wall time = 2.53e-01
+  Braid: || r_3 || = 1.021249e-05, conv factor = 4.76e-02, wall time = 3.42e-01
+  Braid: || r_4 || = 4.716036e-07, conv factor = 4.62e-02, wall time = 4.31e-01
+  Braid: || r_5 || = 1.332662e-08, conv factor = 2.83e-02, wall time = 5.20e-01
+  Braid: || r_6 || = 2.657712e-10, conv factor = 1.99e-02, wall time = 6.09e-01
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 256
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 5.100000e-09
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 7
+  residual norm         = 2.657712e-10
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 2
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 25
+  min coarse            = 2
+  number of levels      = 15
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0       256        2        1
+      1       128        1        1
+      2       128        2        1
+      3        64        1        1
+      4        64        2        1
+      5        32        1        1
+      6        32        2        1
+      7        16        1        1
+      8        16        2        1
+      9         8        1        1
+     10         8        2        1
+     11         4        1        1
+     12         4        2        1
+     13         2        1        1
+     14         2  
+
+  wall time = 0.660538
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   1.95e-02    1.95e-02    2.40e-01    1.23e+01
+  1   |   1.95e-02    3.91e-02    4.80e-01    2.46e+01
+  2   |   3.91e-02    3.91e-02    2.40e-01    6.14e+00
+  3   |   3.91e-02    7.81e-02    4.80e-01    1.23e+01
+  4   |   7.81e-02    7.81e-02    2.40e-01    3.07e+00
+  5   |   7.81e-02    1.56e-01    4.80e-01    6.14e+00
+  6   |   1.56e-01    1.56e-01    2.40e-01    1.54e+00
+  7   |   1.56e-01    3.12e-01    4.80e-01    3.07e+00
+  8   |   3.12e-01    3.12e-01    2.40e-01    7.68e-01
+  9   |   3.12e-01    6.25e-01    4.80e-01    1.54e+00
+ 10   |   6.25e-01    6.25e-01    2.40e-01    3.84e-01
+ 11   |   6.25e-01    1.25e+00    4.80e-01    7.68e-01
+ 12   |   1.25e+00    1.25e+00    2.40e-01    1.92e-01
+ 13   |   1.25e+00    2.50e+00    4.80e-01    3.84e-01
+ 14   |   2.50e+00    2.50e+00    2.40e-01    9.60e-02
+
+ 
+ 
+Problem size:  -nx 512  -nt 512 
+  Braid: Begin simulation, 512 time steps
+
+  Braid: || r_0 || = 1.537145e+00, conv factor = 1.00e+00, wall time = 2.84e-01
+  Braid: || r_1 || = 1.686043e-02, conv factor = 1.10e-02, wall time = 6.21e-01
+  Braid: || r_2 || = 3.702171e-04, conv factor = 2.20e-02, wall time = 9.57e-01
+  Braid: || r_3 || = 1.815570e-05, conv factor = 4.90e-02, wall time = 1.29e+00
+  Braid: || r_4 || = 1.465107e-06, conv factor = 8.07e-02, wall time = 1.63e+00
+  Braid: || r_5 || = 1.103362e-07, conv factor = 7.53e-02, wall time = 1.97e+00
+  Braid: || r_6 || = 7.360853e-09, conv factor = 6.67e-02, wall time = 2.30e+00
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 512
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 1.022000e-08
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 7
+  residual norm         = 7.360853e-09
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 2
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 25
+  min coarse            = 2
+  number of levels      = 17
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0       512        2        1
+      1       256        1        1
+      2       256        2        1
+      3       128        1        1
+      4       128        2        1
+      5        64        1        1
+      6        64        2        1
+      7        32        1        1
+      8        32        2        1
+      9        16        1        1
+     10        16        2        1
+     11         8        1        1
+     12         8        2        1
+     13         4        1        1
+     14         4        2        1
+     15         2        1        1
+     16         2  
+
+  wall time = 2.473599
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   9.77e-03    9.77e-03    2.40e-01    2.46e+01
+  1   |   9.77e-03    1.95e-02    4.80e-01    4.92e+01
+  2   |   1.95e-02    1.95e-02    2.40e-01    1.23e+01
+  3   |   1.95e-02    3.91e-02    4.80e-01    2.46e+01
+  4   |   3.91e-02    3.91e-02    2.40e-01    6.14e+00
+  5   |   3.91e-02    7.81e-02    4.80e-01    1.23e+01
+  6   |   7.81e-02    7.81e-02    2.40e-01    3.07e+00
+  7   |   7.81e-02    1.56e-01    4.80e-01    6.14e+00
+  8   |   1.56e-01    1.56e-01    2.40e-01    1.54e+00
+  9   |   1.56e-01    3.12e-01    4.80e-01    3.07e+00
+ 10   |   3.12e-01    3.12e-01    2.40e-01    7.68e-01
+ 11   |   3.12e-01    6.25e-01    4.80e-01    1.54e+00
+ 12   |   6.25e-01    6.25e-01    2.40e-01    3.84e-01
+ 13   |   6.25e-01    1.25e+00    4.80e-01    7.68e-01
+ 14   |   1.25e+00    1.25e+00    2.40e-01    1.92e-01
+ 15   |   1.25e+00    2.50e+00    4.80e-01    3.84e-01
+ 16   |   2.50e+00    2.50e+00    2.40e-01    9.60e-02
+
+ 
+ 
+Problem size:  -nx 1024 -nt 1024 
+  Braid: Begin simulation, 1024 time steps
+
+  Braid: || r_0 || = 3.139394e+00, conv factor = 1.00e+00, wall time = 1.11e+00
+  Braid: || r_1 || = 3.650098e-02, conv factor = 1.16e-02, wall time = 2.43e+00
+  Braid: || r_2 || = 1.262890e-03, conv factor = 3.46e-02, wall time = 3.76e+00
+  Braid: || r_3 || = 4.716501e-05, conv factor = 3.73e-02, wall time = 5.08e+00
+  Braid: || r_4 || = 4.241887e-06, conv factor = 8.99e-02, wall time = 6.40e+00
+  Braid: || r_5 || = 4.871377e-07, conv factor = 1.15e-01, wall time = 7.73e+00
+  Braid: || r_6 || = 5.491538e-08, conv factor = 1.13e-01, wall time = 9.05e+00
+  Braid: || r_7 || = 6.406019e-09, conv factor = 1.17e-01, wall time = 1.04e+01
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 1024
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 2.046000e-08
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 8
+  residual norm         = 6.406019e-09
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 2
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 25
+  min coarse            = 2
+  number of levels      = 19
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0      1024        2        1
+      1       512        1        1
+      2       512        2        1
+      3       256        1        1
+      4       256        2        1
+      5       128        1        1
+      6       128        2        1
+      7        64        1        1
+      8        64        2        1
+      9        32        1        1
+     10        32        2        1
+     11        16        1        1
+     12        16        2        1
+     13         8        1        1
+     14         8        2        1
+     15         4        1        1
+     16         4        2        1
+     17         2        1        1
+     18         2  
+
+  wall time = 10.894316
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   4.88e-03    4.88e-03    2.40e-01    4.92e+01
+  1   |   4.88e-03    9.77e-03    4.80e-01    9.83e+01
+  2   |   9.77e-03    9.77e-03    2.40e-01    2.46e+01
+  3   |   9.77e-03    1.95e-02    4.80e-01    4.92e+01
+  4   |   1.95e-02    1.95e-02    2.40e-01    1.23e+01
+  5   |   1.95e-02    3.91e-02    4.80e-01    2.46e+01
+  6   |   3.91e-02    3.91e-02    2.40e-01    6.14e+00
+  7   |   3.91e-02    7.81e-02    4.80e-01    1.23e+01
+  8   |   7.81e-02    7.81e-02    2.40e-01    3.07e+00
+  9   |   7.81e-02    1.56e-01    4.80e-01    6.14e+00
+ 10   |   1.56e-01    1.56e-01    2.40e-01    1.54e+00
+ 11   |   1.56e-01    3.12e-01    4.80e-01    3.07e+00
+ 12   |   3.12e-01    3.12e-01    2.40e-01    7.68e-01
+ 13   |   3.12e-01    6.25e-01    4.80e-01    1.54e+00
+ 14   |   6.25e-01    6.25e-01    2.40e-01    3.84e-01
+ 15   |   6.25e-01    1.25e+00    4.80e-01    7.68e-01
+ 16   |   1.25e+00    1.25e+00    2.40e-01    1.92e-01
+ 17   |   1.25e+00    2.50e+00    4.80e-01    3.84e-01
+ 18   |   2.50e+00    2.50e+00    2.40e-01    9.60e-02
+
+ 
+ 
+Problem size:  -nx 2048 -nt 2048 
+  Braid: Begin simulation, 2048 time steps
+
+  Braid: || r_0 || = 6.665137e+00, conv factor = 1.00e+00, wall time = 4.39e+00
+  Braid: || r_1 || = 8.748392e-02, conv factor = 1.31e-02, wall time = 9.64e+00
+  Braid: || r_2 || = 2.250284e-02, conv factor = 2.57e-01, wall time = 1.49e+01
+  Braid: || r_3 || = 4.567013e-03, conv factor = 2.03e-01, wall time = 2.01e+01
+  Braid: || r_4 || = 5.022759e-04, conv factor = 1.10e-01, wall time = 2.54e+01
+  Braid: || r_5 || = 3.154628e-05, conv factor = 6.28e-02, wall time = 3.07e+01
+  Braid: || r_6 || = 1.184047e-06, conv factor = 3.75e-02, wall time = 3.60e+01
+  Braid: || r_7 || = 8.115125e-08, conv factor = 6.85e-02, wall time = 4.12e+01
+  Braid: || r_8 || = 1.162833e-08, conv factor = 1.43e-01, wall time = 4.65e+01
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 2048
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 4.094000e-08
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 9
+  residual norm         = 1.162833e-08
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 2
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 25
+  min coarse            = 2
+  number of levels      = 21
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0      2048        2        1
+      1      1024        1        1
+      2      1024        2        1
+      3       512        1        1
+      4       512        2        1
+      5       256        1        1
+      6       256        2        1
+      7       128        1        1
+      8       128        2        1
+      9        64        1        1
+     10        64        2        1
+     11        32        1        1
+     12        32        2        1
+     13        16        1        1
+     14        16        2        1
+     15         8        1        1
+     16         8        2        1
+     17         4        1        1
+     18         4        2        1
+     19         2        1        1
+     20         2  
+
+  wall time = 48.429832
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   2.44e-03    2.44e-03    2.40e-01    9.83e+01
+  1   |   2.44e-03    4.88e-03    4.80e-01    1.97e+02
+  2   |   4.88e-03    4.88e-03    2.40e-01    4.92e+01
+  3   |   4.88e-03    9.77e-03    4.80e-01    9.83e+01
+  4   |   9.77e-03    9.77e-03    2.40e-01    2.46e+01
+  5   |   9.77e-03    1.95e-02    4.80e-01    4.92e+01
+  6   |   1.95e-02    1.95e-02    2.40e-01    1.23e+01
+  7   |   1.95e-02    3.91e-02    4.80e-01    2.46e+01
+  8   |   3.91e-02    3.91e-02    2.40e-01    6.14e+00
+  9   |   3.91e-02    7.81e-02    4.80e-01    1.23e+01
+ 10   |   7.81e-02    7.81e-02    2.40e-01    3.07e+00
+ 11   |   7.81e-02    1.56e-01    4.80e-01    6.14e+00
+ 12   |   1.56e-01    1.56e-01    2.40e-01    1.54e+00
+ 13   |   1.56e-01    3.12e-01    4.80e-01    3.07e+00
+ 14   |   3.12e-01    3.12e-01    2.40e-01    7.68e-01
+ 15   |   3.12e-01    6.25e-01    4.80e-01    1.54e+00
+ 16   |   6.25e-01    6.25e-01    2.40e-01    3.84e-01
+ 17   |   6.25e-01    1.25e+00    4.80e-01    7.68e-01
+ 18   |   1.25e+00    1.25e+00    2.40e-01    1.92e-01
+ 19   |   1.25e+00    2.50e+00    4.80e-01    3.84e-01
+ 20   |   2.50e+00    2.50e+00    2.40e-01    9.60e-02
+
+ 
+ 
+Problem size:  -nx 4096 -nt 4096 
+  Braid: Begin simulation, 4096 time steps
+
+  Braid: || r_0 || = 1.369375e+01, conv factor = 1.00e+00, wall time = 1.74e+01
+  Braid: || r_1 || = 8.412852e-01, conv factor = 6.14e-02, wall time = 3.83e+01
+  Braid: || r_2 || = 1.735104e-01, conv factor = 2.06e-01, wall time = 5.91e+01
+  Braid: || r_3 || = 1.334030e-01, conv factor = 7.69e-01, wall time = 8.00e+01
+  Braid: || r_4 || = 8.562882e-02, conv factor = 6.42e-01, wall time = 1.01e+02
+  Braid: || r_5 || = 2.928827e-02, conv factor = 3.42e-01, wall time = 1.22e+02
+  Braid: || r_6 || = 6.676642e-03, conv factor = 2.28e-01, wall time = 1.43e+02
+  Braid: || r_7 || = 1.095709e-03, conv factor = 1.64e-01, wall time = 1.64e+02
+  Braid: || r_8 || = 1.338296e-04, conv factor = 1.22e-01, wall time = 1.84e+02
+  Braid: || r_9 || = 1.232987e-05, conv factor = 9.21e-02, wall time = 2.05e+02
+  Braid: || r_10 || = 8.575552e-07, conv factor = 6.96e-02, wall time = 2.26e+02
+  Braid: || r_11 || = 4.458249e-08, conv factor = 5.20e-02, wall time = 2.47e+02
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 4096
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 8.190000e-08
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 12
+  residual norm         = 4.458249e-08
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 2
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 25
+  min coarse            = 2
+  number of levels      = 23
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0      4096        2        1
+      1      2048        1        1
+      2      2048        2        1
+      3      1024        1        1
+      4      1024        2        1
+      5       512        1        1
+      6       512        2        1
+      7       256        1        1
+      8       256        2        1
+      9       128        1        1
+     10       128        2        1
+     11        64        1        1
+     12        64        2        1
+     13        32        1        1
+     14        32        2        1
+     15        16        1        1
+     16        16        2        1
+     17         8        1        1
+     18         8        2        1
+     19         4        1        1
+     20         4        2        1
+     21         2        1        1
+     22         2  
+
+  wall time = 254.812784
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   1.22e-03    1.22e-03    2.40e-01    1.97e+02
+  1   |   1.22e-03    2.44e-03    4.80e-01    3.93e+02
+  2   |   2.44e-03    2.44e-03    2.40e-01    9.83e+01
+  3   |   2.44e-03    4.88e-03    4.80e-01    1.97e+02
+  4   |   4.88e-03    4.88e-03    2.40e-01    4.92e+01
+  5   |   4.88e-03    9.77e-03    4.80e-01    9.83e+01
+  6   |   9.77e-03    9.77e-03    2.40e-01    2.46e+01
+  7   |   9.77e-03    1.95e-02    4.80e-01    4.92e+01
+  8   |   1.95e-02    1.95e-02    2.40e-01    1.23e+01
+  9   |   1.95e-02    3.91e-02    4.80e-01    2.46e+01
+ 10   |   3.91e-02    3.91e-02    2.40e-01    6.14e+00
+ 11   |   3.91e-02    7.81e-02    4.80e-01    1.23e+01
+ 12   |   7.81e-02    7.81e-02    2.40e-01    3.07e+00
+ 13   |   7.81e-02    1.56e-01    4.80e-01    6.14e+00
+ 14   |   1.56e-01    1.56e-01    2.40e-01    1.54e+00
+ 15   |   1.56e-01    3.12e-01    4.80e-01    3.07e+00
+ 16   |   3.12e-01    3.12e-01    2.40e-01    7.68e-01
+ 17   |   3.12e-01    6.25e-01    4.80e-01    1.54e+00
+ 18   |   6.25e-01    6.25e-01    2.40e-01    3.84e-01
+ 19   |   6.25e-01    1.25e+00    4.80e-01    7.68e-01
+ 20   |   1.25e+00    1.25e+00    2.40e-01    1.92e-01
+ 21   |   1.25e+00    2.50e+00    4.80e-01    3.84e-01
+ 22   |   2.50e+00    2.50e+00    2.40e-01    9.60e-02
+
+---------------------------------------------------------------------- 
+---------------------------------------------------------------------- 
+ 
+Setup:  Two-level, Spatial coarsen every OTHER level, First in space and then time, append -sc 1, -asc 1
+ 
+ 
+Problem size:  -nx 128  -nt 128 
+  Braid: Begin simulation, 128 time steps
+
+  Braid: || r_0 || not available, wall time = 1.35e-03
+  Braid: || r_1 || = 7.322248e+00, conv factor = 1.00e+00, wall time = 3.93e-03
+  Braid: || r_2 || = 4.964034e+00, conv factor = 6.78e-01, wall time = 6.51e-03
+  Braid: || r_3 || = 3.248768e+00, conv factor = 6.54e-01, wall time = 9.04e-03
+  Braid: || r_4 || = 1.924951e+00, conv factor = 5.93e-01, wall time = 1.16e-02
+  Braid: || r_5 || = 1.059355e+00, conv factor = 5.50e-01, wall time = 1.41e-02
+  Braid: || r_6 || = 5.728853e-01, conv factor = 5.41e-01, wall time = 1.67e-02
+  Braid: || r_7 || = 3.259158e-01, conv factor = 5.69e-01, wall time = 1.92e-02
+  Braid: || r_8 || = 1.996056e-01, conv factor = 6.12e-01, wall time = 2.18e-02
+  Braid: || r_9 || = 1.266278e-01, conv factor = 6.34e-01, wall time = 2.43e-02
+  Braid: || r_10 || = 8.003388e-02, conv factor = 6.32e-01, wall time = 2.69e-02
+  Braid: || r_11 || = 4.989897e-02, conv factor = 6.23e-01, wall time = 2.94e-02
+  Braid: || r_12 || = 3.098930e-02, conv factor = 6.21e-01, wall time = 3.19e-02
+  Braid: || r_13 || = 1.946541e-02, conv factor = 6.28e-01, wall time = 3.45e-02
+  Braid: || r_14 || = 1.248595e-02, conv factor = 6.41e-01, wall time = 3.70e-02
+  Braid: || r_15 || = 8.176756e-03, conv factor = 6.55e-01, wall time = 3.96e-02
+  Braid: || r_16 || = 5.434635e-03, conv factor = 6.65e-01, wall time = 4.21e-02
+  Braid: || r_17 || = 3.646060e-03, conv factor = 6.71e-01, wall time = 4.47e-02
+  Braid: || r_18 || = 2.462965e-03, conv factor = 6.76e-01, wall time = 4.72e-02
+  Braid: || r_19 || = 1.674610e-03, conv factor = 6.80e-01, wall time = 4.98e-02
+  Braid: || r_20 || = 1.146156e-03, conv factor = 6.84e-01, wall time = 5.23e-02
+  Braid: || r_21 || = 7.894059e-04, conv factor = 6.89e-01, wall time = 5.48e-02
+  Braid: || r_22 || = 5.466295e-04, conv factor = 6.92e-01, wall time = 5.74e-02
+  Braid: || r_23 || = 3.801311e-04, conv factor = 6.95e-01, wall time = 5.99e-02
+  Braid: || r_24 || = 2.651990e-04, conv factor = 6.98e-01, wall time = 6.25e-02
+  Braid: || r_25 || = 1.854623e-04, conv factor = 6.99e-01, wall time = 6.50e-02
+  Braid: || r_26 || = 1.299345e-04, conv factor = 7.01e-01, wall time = 6.76e-02
+  Braid: || r_27 || = 9.115595e-05, conv factor = 7.02e-01, wall time = 7.01e-02
+  Braid: || r_28 || = 6.401633e-05, conv factor = 7.02e-01, wall time = 7.27e-02
+  Braid: || r_29 || = 4.499148e-05, conv factor = 7.03e-01, wall time = 7.52e-02
+  Braid: || r_30 || = 3.163890e-05, conv factor = 7.03e-01, wall time = 7.77e-02
+  Braid: || r_31 || = 2.225901e-05, conv factor = 7.04e-01, wall time = 8.03e-02
+  Braid: || r_32 || = 1.566543e-05, conv factor = 7.04e-01, wall time = 8.28e-02
+  Braid: || r_33 || = 1.102807e-05, conv factor = 7.04e-01, wall time = 8.54e-02
+  Braid: || r_34 || = 7.765105e-06, conv factor = 7.04e-01, wall time = 8.79e-02
+  Braid: || r_35 || = 5.468322e-06, conv factor = 7.04e-01, wall time = 9.05e-02
+  Braid: || r_36 || = 3.851063e-06, conv factor = 7.04e-01, wall time = 9.30e-02
+  Braid: || r_37 || = 2.711941e-06, conv factor = 7.04e-01, wall time = 9.55e-02
+  Braid: || r_38 || = 1.909411e-06, conv factor = 7.04e-01, wall time = 9.81e-02
+  Braid: || r_39 || = 1.343940e-06, conv factor = 7.04e-01, wall time = 1.01e-01
+  Braid: || r_40 || = 9.455024e-07, conv factor = 7.04e-01, wall time = 1.03e-01
+  Braid: || r_41 || = 6.648036e-07, conv factor = 7.03e-01, wall time = 1.06e-01
+  Braid: || r_42 || = 4.671186e-07, conv factor = 7.03e-01, wall time = 1.08e-01
+  Braid: || r_43 || = 3.279696e-07, conv factor = 7.02e-01, wall time = 1.11e-01
+  Braid: || r_44 || = 2.300919e-07, conv factor = 7.02e-01, wall time = 1.13e-01
+  Braid: || r_45 || = 1.613025e-07, conv factor = 7.01e-01, wall time = 1.16e-01
+  Braid: || r_46 || = 1.130023e-07, conv factor = 7.01e-01, wall time = 1.18e-01
+  Braid: || r_47 || = 7.912206e-08, conv factor = 7.00e-01, wall time = 1.21e-01
+  Braid: || r_48 || = 5.537964e-08, conv factor = 7.00e-01, wall time = 1.24e-01
+  Braid: || r_49 || = 3.875606e-08, conv factor = 7.00e-01, wall time = 1.26e-01
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 128
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 2.540000e-09
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 50
+  residual norm         = 3.875606e-08
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 1
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 2
+  min coarse            = 2
+  number of levels      = 2
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0       128        1        1
+      1       128  
+
+  wall time = 0.144516
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   3.91e-02    3.91e-02    2.40e-01    6.14e+00
+  1   |   7.81e-02    3.91e-02    1.20e-01    1.54e+00
+
+ 
+ 
+Problem size:  -nx 256  -nt 256 
+  Braid: Begin simulation, 256 time steps
+
+  Braid: || r_0 || not available, wall time = 3.96e-03
+  Braid: || r_1 || = 1.476163e+01, conv factor = 1.00e+00, wall time = 1.38e-02
+  Braid: || r_2 || = 9.627983e+00, conv factor = 6.52e-01, wall time = 2.35e-02
+  Braid: || r_3 || = 6.160920e+00, conv factor = 6.40e-01, wall time = 3.33e-02
+  Braid: || r_4 || = 3.614838e+00, conv factor = 5.87e-01, wall time = 4.30e-02
+  Braid: || r_5 || = 1.975903e+00, conv factor = 5.47e-01, wall time = 5.28e-02
+  Braid: || r_6 || = 1.055692e+00, conv factor = 5.34e-01, wall time = 6.25e-02
+  Braid: || r_7 || = 5.894275e-01, conv factor = 5.58e-01, wall time = 7.23e-02
+  Braid: || r_8 || = 3.550980e-01, conv factor = 6.02e-01, wall time = 8.20e-02
+  Braid: || r_9 || = 2.227042e-01, conv factor = 6.27e-01, wall time = 9.18e-02
+  Braid: || r_10 || = 1.388617e-01, conv factor = 6.24e-01, wall time = 1.02e-01
+  Braid: || r_11 || = 8.469936e-02, conv factor = 6.10e-01, wall time = 1.11e-01
+  Braid: || r_12 || = 5.098733e-02, conv factor = 6.02e-01, wall time = 1.21e-01
+  Braid: || r_13 || = 3.092185e-02, conv factor = 6.06e-01, wall time = 1.31e-01
+  Braid: || r_14 || = 1.922930e-02, conv factor = 6.22e-01, wall time = 1.41e-01
+  Braid: || r_15 || = 1.230347e-02, conv factor = 6.40e-01, wall time = 1.50e-01
+  Braid: || r_16 || = 8.031086e-03, conv factor = 6.53e-01, wall time = 1.60e-01
+  Braid: || r_17 || = 5.299423e-03, conv factor = 6.60e-01, wall time = 1.70e-01
+  Braid: || r_18 || = 3.522371e-03, conv factor = 6.65e-01, wall time = 1.80e-01
+  Braid: || r_19 || = 2.360211e-03, conv factor = 6.70e-01, wall time = 1.89e-01
+  Braid: || r_20 || = 1.596814e-03, conv factor = 6.77e-01, wall time = 1.99e-01
+  Braid: || r_21 || = 1.090754e-03, conv factor = 6.83e-01, wall time = 2.09e-01
+  Braid: || r_22 || = 7.509756e-04, conv factor = 6.88e-01, wall time = 2.19e-01
+  Braid: || r_23 || = 5.199726e-04, conv factor = 6.92e-01, wall time = 2.28e-01
+  Braid: || r_24 || = 3.614130e-04, conv factor = 6.95e-01, wall time = 2.38e-01
+  Braid: || r_25 || = 2.518838e-04, conv factor = 6.97e-01, wall time = 2.48e-01
+  Braid: || r_26 || = 1.759057e-04, conv factor = 6.98e-01, wall time = 2.58e-01
+  Braid: || r_27 || = 1.230390e-04, conv factor = 6.99e-01, wall time = 2.67e-01
+  Braid: || r_28 || = 8.616221e-05, conv factor = 7.00e-01, wall time = 2.77e-01
+  Braid: || r_29 || = 6.038769e-05, conv factor = 7.01e-01, wall time = 2.87e-01
+  Braid: || r_30 || = 4.234589e-05, conv factor = 7.01e-01, wall time = 2.97e-01
+  Braid: || r_31 || = 2.970401e-05, conv factor = 7.01e-01, wall time = 3.06e-01
+  Braid: || r_32 || = 2.084031e-05, conv factor = 7.02e-01, wall time = 3.16e-01
+  Braid: || r_33 || = 1.462345e-05, conv factor = 7.02e-01, wall time = 3.26e-01
+  Braid: || r_34 || = 1.026231e-05, conv factor = 7.02e-01, wall time = 3.36e-01
+  Braid: || r_35 || = 7.202723e-06, conv factor = 7.02e-01, wall time = 3.45e-01
+  Braid: || r_36 || = 5.056206e-06, conv factor = 7.02e-01, wall time = 3.55e-01
+  Braid: || r_37 || = 3.550242e-06, conv factor = 7.02e-01, wall time = 3.65e-01
+  Braid: || r_38 || = 2.493625e-06, conv factor = 7.02e-01, wall time = 3.75e-01
+  Braid: || r_39 || = 1.752191e-06, conv factor = 7.03e-01, wall time = 3.85e-01
+  Braid: || r_40 || = 1.231813e-06, conv factor = 7.03e-01, wall time = 3.94e-01
+  Braid: || r_41 || = 8.664648e-07, conv factor = 7.03e-01, wall time = 4.04e-01
+  Braid: || r_42 || = 6.098473e-07, conv factor = 7.04e-01, wall time = 4.14e-01
+  Braid: || r_43 || = 4.295020e-07, conv factor = 7.04e-01, wall time = 4.24e-01
+  Braid: || r_44 || = 3.026773e-07, conv factor = 7.05e-01, wall time = 4.33e-01
+  Braid: || r_45 || = 2.134267e-07, conv factor = 7.05e-01, wall time = 4.43e-01
+  Braid: || r_46 || = 1.505715e-07, conv factor = 7.05e-01, wall time = 4.53e-01
+  Braid: || r_47 || = 1.062729e-07, conv factor = 7.06e-01, wall time = 4.63e-01
+  Braid: || r_48 || = 7.503081e-08, conv factor = 7.06e-01, wall time = 4.72e-01
+  Braid: || r_49 || = 5.298370e-08, conv factor = 7.06e-01, wall time = 4.82e-01
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 256
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 5.100000e-09
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 50
+  residual norm         = 5.298370e-08
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 1
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 2
+  min coarse            = 2
+  number of levels      = 2
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0       256        1        1
+      1       256  
+
+  wall time = 0.529206
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   1.95e-02    1.95e-02    2.40e-01    1.23e+01
+  1   |   3.91e-02    1.95e-02    1.20e-01    3.07e+00
+
+ 
+ 
+Problem size:  -nx 512  -nt 512 
+  Braid: Begin simulation, 512 time steps
+
+  Braid: || r_0 || not available, wall time = 1.42e-02
+  Braid: || r_1 || = 2.801017e+01, conv factor = 1.00e+00, wall time = 5.25e-02
+  Braid: || r_2 || = 1.868786e+01, conv factor = 6.67e-01, wall time = 9.03e-02
+  Braid: || r_3 || = 1.230797e+01, conv factor = 6.59e-01, wall time = 1.28e-01
+  Braid: || r_4 || = 7.373849e+00, conv factor = 5.99e-01, wall time = 1.66e-01
+  Braid: || r_5 || = 4.061361e+00, conv factor = 5.51e-01, wall time = 2.04e-01
+  Braid: || r_6 || = 2.144014e+00, conv factor = 5.28e-01, wall time = 2.41e-01
+  Braid: || r_7 || = 1.166317e+00, conv factor = 5.44e-01, wall time = 2.79e-01
+  Braid: || r_8 || = 6.928852e-01, conv factor = 5.94e-01, wall time = 3.17e-01
+  Braid: || r_9 || = 4.374602e-01, conv factor = 6.31e-01, wall time = 3.55e-01
+  Braid: || r_10 || = 2.758663e-01, conv factor = 6.31e-01, wall time = 3.92e-01
+  Braid: || r_11 || = 1.687252e-01, conv factor = 6.12e-01, wall time = 4.30e-01
+  Braid: || r_12 || = 1.004584e-01, conv factor = 5.95e-01, wall time = 4.68e-01
+  Braid: || r_13 || = 5.955019e-02, conv factor = 5.93e-01, wall time = 5.06e-01
+  Braid: || r_14 || = 3.608617e-02, conv factor = 6.06e-01, wall time = 5.44e-01
+  Braid: || r_15 || = 2.262455e-02, conv factor = 6.27e-01, wall time = 5.81e-01
+  Braid: || r_16 || = 1.455808e-02, conv factor = 6.43e-01, wall time = 6.19e-01
+  Braid: || r_17 || = 9.479420e-03, conv factor = 6.51e-01, wall time = 6.57e-01
+  Braid: || r_18 || = 6.202885e-03, conv factor = 6.54e-01, wall time = 6.95e-01
+  Braid: || r_19 || = 4.084538e-03, conv factor = 6.58e-01, wall time = 7.32e-01
+  Braid: || r_20 || = 2.718601e-03, conv factor = 6.66e-01, wall time = 7.70e-01
+  Braid: || r_21 || = 1.833260e-03, conv factor = 6.74e-01, wall time = 8.08e-01
+  Braid: || r_22 || = 1.250969e-03, conv factor = 6.82e-01, wall time = 8.46e-01
+  Braid: || r_23 || = 8.610779e-04, conv factor = 6.88e-01, wall time = 8.83e-01
+  Braid: || r_24 || = 5.961347e-04, conv factor = 6.92e-01, wall time = 9.21e-01
+  Braid: || r_25 || = 4.143631e-04, conv factor = 6.95e-01, wall time = 9.59e-01
+  Braid: || r_26 || = 2.889197e-04, conv factor = 6.97e-01, wall time = 9.97e-01
+  Braid: || r_27 || = 2.019826e-04, conv factor = 6.99e-01, wall time = 1.03e+00
+  Braid: || r_28 || = 1.415087e-04, conv factor = 7.01e-01, wall time = 1.07e+00
+  Braid: || r_29 || = 9.930283e-05, conv factor = 7.02e-01, wall time = 1.11e+00
+  Braid: || r_30 || = 6.976609e-05, conv factor = 7.03e-01, wall time = 1.15e+00
+  Braid: || r_31 || = 4.905412e-05, conv factor = 7.03e-01, wall time = 1.19e+00
+  Braid: || r_32 || = 3.451058e-05, conv factor = 7.04e-01, wall time = 1.22e+00
+  Braid: || r_33 || = 2.428921e-05, conv factor = 7.04e-01, wall time = 1.26e+00
+  Braid: || r_34 || = 1.710108e-05, conv factor = 7.04e-01, wall time = 1.30e+00
+  Braid: || r_35 || = 1.204377e-05, conv factor = 7.04e-01, wall time = 1.34e+00
+  Braid: || r_36 || = 8.484406e-06, conv factor = 7.04e-01, wall time = 1.37e+00
+  Braid: || r_37 || = 5.978618e-06, conv factor = 7.05e-01, wall time = 1.41e+00
+  Braid: || r_38 || = 4.214122e-06, conv factor = 7.05e-01, wall time = 1.45e+00
+  Braid: || r_39 || = 2.971329e-06, conv factor = 7.05e-01, wall time = 1.49e+00
+  Braid: || r_40 || = 2.095762e-06, conv factor = 7.05e-01, wall time = 1.53e+00
+  Braid: || r_41 || = 1.478727e-06, conv factor = 7.06e-01, wall time = 1.56e+00
+  Braid: || r_42 || = 1.043734e-06, conv factor = 7.06e-01, wall time = 1.60e+00
+  Braid: || r_43 || = 7.369543e-07, conv factor = 7.06e-01, wall time = 1.64e+00
+  Braid: || r_44 || = 5.205059e-07, conv factor = 7.06e-01, wall time = 1.68e+00
+  Braid: || r_45 || = 3.677248e-07, conv factor = 7.06e-01, wall time = 1.72e+00
+  Braid: || r_46 || = 2.598388e-07, conv factor = 7.07e-01, wall time = 1.75e+00
+  Braid: || r_47 || = 1.836271e-07, conv factor = 7.07e-01, wall time = 1.79e+00
+  Braid: || r_48 || = 1.297739e-07, conv factor = 7.07e-01, wall time = 1.83e+00
+  Braid: || r_49 || = 9.171157e-08, conv factor = 7.07e-01, wall time = 1.87e+00
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 512
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 1.022000e-08
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 50
+  residual norm         = 9.171157e-08
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 1
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 2
+  min coarse            = 2
+  number of levels      = 2
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0       512        1        1
+      1       512  
+
+  wall time = 2.018806
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   9.77e-03    9.77e-03    2.40e-01    2.46e+01
+  1   |   1.95e-02    9.77e-03    1.20e-01    6.14e+00
+
+ 
+ 
+Problem size:  -nx 1024 -nt 1024 
+  Braid: Begin simulation, 1024 time steps
+
+  Braid: || r_0 || not available, wall time = 5.50e-02
+  Braid: || r_1 || = 5.610932e+01, conv factor = 1.00e+00, wall time = 2.06e-01
+  Braid: || r_2 || = 3.755610e+01, conv factor = 6.69e-01, wall time = 3.57e-01
+  Braid: || r_3 || = 2.489074e+01, conv factor = 6.63e-01, wall time = 5.08e-01
+  Braid: || r_4 || = 1.495543e+01, conv factor = 6.01e-01, wall time = 6.59e-01
+  Braid: || r_5 || = 8.223287e+00, conv factor = 5.50e-01, wall time = 8.10e-01
+  Braid: || r_6 || = 4.311169e+00, conv factor = 5.24e-01, wall time = 9.61e-01
+  Braid: || r_7 || = 2.324946e+00, conv factor = 5.39e-01, wall time = 1.11e+00
+  Braid: || r_8 || = 1.377439e+00, conv factor = 5.92e-01, wall time = 1.26e+00
+  Braid: || r_9 || = 8.713419e-01, conv factor = 6.33e-01, wall time = 1.41e+00
+  Braid: || r_10 || = 5.490215e-01, conv factor = 6.30e-01, wall time = 1.57e+00
+  Braid: || r_11 || = 3.333137e-01, conv factor = 6.07e-01, wall time = 1.72e+00
+  Braid: || r_12 || = 1.955072e-01, conv factor = 5.87e-01, wall time = 1.87e+00
+  Braid: || r_13 || = 1.134768e-01, conv factor = 5.80e-01, wall time = 2.02e+00
+  Braid: || r_14 || = 6.722821e-02, conv factor = 5.92e-01, wall time = 2.17e+00
+  Braid: || r_15 || = 4.132164e-02, conv factor = 6.15e-01, wall time = 2.32e+00
+  Braid: || r_16 || = 2.611067e-02, conv factor = 6.32e-01, wall time = 2.47e+00
+  Braid: || r_17 || = 1.665306e-02, conv factor = 6.38e-01, wall time = 2.63e+00
+  Braid: || r_18 || = 1.062138e-02, conv factor = 6.38e-01, wall time = 2.78e+00
+  Braid: || r_19 || = 6.793117e-03, conv factor = 6.40e-01, wall time = 2.93e+00
+  Braid: || r_20 || = 4.393009e-03, conv factor = 6.47e-01, wall time = 3.08e+00
+  Braid: || r_21 || = 2.889867e-03, conv factor = 6.58e-01, wall time = 3.23e+00
+  Braid: || r_22 || = 1.933799e-03, conv factor = 6.69e-01, wall time = 3.38e+00
+  Braid: || r_23 || = 1.310915e-03, conv factor = 6.78e-01, wall time = 3.53e+00
+  Braid: || r_24 || = 8.964074e-04, conv factor = 6.84e-01, wall time = 3.68e+00
+  Braid: || r_25 || = 6.167758e-04, conv factor = 6.88e-01, wall time = 3.83e+00
+  Braid: || r_26 || = 4.265969e-04, conv factor = 6.92e-01, wall time = 3.99e+00
+  Braid: || r_27 || = 2.964536e-04, conv factor = 6.95e-01, wall time = 4.14e+00
+  Braid: || r_28 || = 2.068490e-04, conv factor = 6.98e-01, wall time = 4.29e+00
+  Braid: || r_29 || = 1.447857e-04, conv factor = 7.00e-01, wall time = 4.44e+00
+  Braid: || r_30 || = 1.015781e-04, conv factor = 7.02e-01, wall time = 4.59e+00
+  Braid: || r_31 || = 7.138206e-05, conv factor = 7.03e-01, wall time = 4.74e+00
+  Braid: || r_32 || = 5.022299e-05, conv factor = 7.04e-01, wall time = 4.89e+00
+  Braid: || r_33 || = 3.536887e-05, conv factor = 7.04e-01, wall time = 5.04e+00
+  Braid: || r_34 || = 2.492656e-05, conv factor = 7.05e-01, wall time = 5.19e+00
+  Braid: || r_35 || = 1.757766e-05, conv factor = 7.05e-01, wall time = 5.35e+00
+  Braid: || r_36 || = 1.240120e-05, conv factor = 7.06e-01, wall time = 5.50e+00
+  Braid: || r_37 || = 8.752390e-06, conv factor = 7.06e-01, wall time = 5.65e+00
+  Braid: || r_38 || = 6.178997e-06, conv factor = 7.06e-01, wall time = 5.80e+00
+  Braid: || r_39 || = 4.363295e-06, conv factor = 7.06e-01, wall time = 5.95e+00
+  Braid: || r_40 || = 3.081769e-06, conv factor = 7.06e-01, wall time = 6.10e+00
+  Braid: || r_41 || = 2.177020e-06, conv factor = 7.06e-01, wall time = 6.25e+00
+  Braid: || r_42 || = 1.538126e-06, conv factor = 7.07e-01, wall time = 6.41e+00
+  Braid: || r_43 || = 1.086878e-06, conv factor = 7.07e-01, wall time = 6.56e+00
+  Braid: || r_44 || = 7.681090e-07, conv factor = 7.07e-01, wall time = 6.71e+00
+  Braid: || r_45 || = 5.428915e-07, conv factor = 7.07e-01, wall time = 6.86e+00
+  Braid: || r_46 || = 3.837489e-07, conv factor = 7.07e-01, wall time = 7.01e+00
+  Braid: || r_47 || = 2.712825e-07, conv factor = 7.07e-01, wall time = 7.16e+00
+  Braid: || r_48 || = 1.917936e-07, conv factor = 7.07e-01, wall time = 7.31e+00
+  Braid: || r_49 || = 1.356068e-07, conv factor = 7.07e-01, wall time = 7.46e+00
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 1024
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 2.046000e-08
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 50
+  residual norm         = 1.356068e-07
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 1
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 2
+  min coarse            = 2
+  number of levels      = 2
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0      1024        1        1
+      1      1024  
+
+  wall time = 7.987366
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   4.88e-03    4.88e-03    2.40e-01    4.92e+01
+  1   |   9.77e-03    4.88e-03    1.20e-01    1.23e+01
+
+ 
+ 
+Problem size:  -nx 2048 -nt 2048 
+  Braid: Begin simulation, 2048 time steps
+
+  Braid: || r_0 || not available, wall time = 2.13e-01
+  Braid: || r_1 || = 1.148461e+02, conv factor = 1.00e+00, wall time = 8.16e-01
+  Braid: || r_2 || = 7.763976e+01, conv factor = 6.76e-01, wall time = 1.42e+00
+  Braid: || r_3 || = 5.198955e+01, conv factor = 6.70e-01, wall time = 2.02e+00
+  Braid: || r_4 || = 3.139611e+01, conv factor = 6.04e-01, wall time = 2.63e+00
+  Braid: || r_5 || = 1.728915e+01, conv factor = 5.51e-01, wall time = 3.23e+00
+  Braid: || r_6 || = 9.056171e+00, conv factor = 5.24e-01, wall time = 3.83e+00
+  Braid: || r_7 || = 4.873708e+00, conv factor = 5.38e-01, wall time = 4.43e+00
+  Braid: || r_8 || = 2.883495e+00, conv factor = 5.92e-01, wall time = 5.04e+00
+  Braid: || r_9 || = 1.823649e+00, conv factor = 6.32e-01, wall time = 5.64e+00
+  Braid: || r_10 || = 1.148647e+00, conv factor = 6.30e-01, wall time = 6.24e+00
+  Braid: || r_11 || = 6.961101e-01, conv factor = 6.06e-01, wall time = 6.84e+00
+  Braid: || r_12 || = 4.064766e-01, conv factor = 5.84e-01, wall time = 7.45e+00
+  Braid: || r_13 || = 2.339347e-01, conv factor = 5.76e-01, wall time = 8.05e+00
+  Braid: || r_14 || = 1.368785e-01, conv factor = 5.85e-01, wall time = 8.65e+00
+  Braid: || r_15 || = 8.292973e-02, conv factor = 6.06e-01, wall time = 9.26e+00
+  Braid: || r_16 || = 5.162254e-02, conv factor = 6.22e-01, wall time = 9.86e+00
+  Braid: || r_17 || = 3.237303e-02, conv factor = 6.27e-01, wall time = 1.05e+01
+  Braid: || r_18 || = 2.021723e-02, conv factor = 6.25e-01, wall time = 1.11e+01
+  Braid: || r_19 || = 1.259548e-02, conv factor = 6.23e-01, wall time = 1.17e+01
+  Braid: || r_20 || = 7.905908e-03, conv factor = 6.28e-01, wall time = 1.23e+01
+  Braid: || r_21 || = 5.047620e-03, conv factor = 6.38e-01, wall time = 1.29e+01
+  Braid: || r_22 || = 3.287888e-03, conv factor = 6.51e-01, wall time = 1.35e+01
+  Braid: || r_23 || = 2.177670e-03, conv factor = 6.62e-01, wall time = 1.41e+01
+  Braid: || r_24 || = 1.459383e-03, conv factor = 6.70e-01, wall time = 1.47e+01
+  Braid: || r_25 || = 9.865860e-04, conv factor = 6.76e-01, wall time = 1.53e+01
+  Braid: || r_26 || = 6.721835e-04, conv factor = 6.81e-01, wall time = 1.59e+01
+  Braid: || r_27 || = 4.614424e-04, conv factor = 6.86e-01, wall time = 1.65e+01
+  Braid: || r_28 || = 3.189494e-04, conv factor = 6.91e-01, wall time = 1.71e+01
+  Braid: || r_29 || = 2.216898e-04, conv factor = 6.95e-01, wall time = 1.77e+01
+  Braid: || r_30 || = 1.547276e-04, conv factor = 6.98e-01, wall time = 1.83e+01
+  Braid: || r_31 || = 1.083122e-04, conv factor = 7.00e-01, wall time = 1.89e+01
+  Braid: || r_32 || = 7.598470e-05, conv factor = 7.02e-01, wall time = 1.95e+01
+  Braid: || r_33 || = 5.339411e-05, conv factor = 7.03e-01, wall time = 2.01e+01
+  Braid: || r_34 || = 3.756873e-05, conv factor = 7.04e-01, wall time = 2.07e+01
+  Braid: || r_35 || = 2.646091e-05, conv factor = 7.04e-01, wall time = 2.13e+01
+  Braid: || r_36 || = 1.865205e-05, conv factor = 7.05e-01, wall time = 2.20e+01
+  Braid: || r_37 || = 1.315556e-05, conv factor = 7.05e-01, wall time = 2.26e+01
+  Braid: || r_38 || = 9.283053e-06, conv factor = 7.06e-01, wall time = 2.32e+01
+  Braid: || r_39 || = 6.552802e-06, conv factor = 7.06e-01, wall time = 2.38e+01
+  Braid: || r_40 || = 4.626866e-06, conv factor = 7.06e-01, wall time = 2.44e+01
+  Braid: || r_41 || = 3.267745e-06, conv factor = 7.06e-01, wall time = 2.50e+01
+  Braid: || r_42 || = 2.308308e-06, conv factor = 7.06e-01, wall time = 2.56e+01
+  Braid: || r_43 || = 1.630838e-06, conv factor = 7.07e-01, wall time = 2.62e+01
+  Braid: || r_44 || = 1.152363e-06, conv factor = 7.07e-01, wall time = 2.68e+01
+  Braid: || r_45 || = 8.143706e-07, conv factor = 7.07e-01, wall time = 2.74e+01
+  Braid: || r_46 || = 5.755771e-07, conv factor = 7.07e-01, wall time = 2.80e+01
+  Braid: || r_47 || = 4.068456e-07, conv factor = 7.07e-01, wall time = 2.86e+01
+  Braid: || r_48 || = 2.876057e-07, conv factor = 7.07e-01, wall time = 2.92e+01
+  Braid: || r_49 || = 2.033315e-07, conv factor = 7.07e-01, wall time = 2.98e+01
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 2048
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 4.094000e-08
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 50
+  residual norm         = 2.033315e-07
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 1
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 2
+  min coarse            = 2
+  number of levels      = 2
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0      2048        1        1
+      1      2048  
+
+  wall time = 31.765719
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   2.44e-03    2.44e-03    2.40e-01    9.83e+01
+  1   |   4.88e-03    2.44e-03    1.20e-01    2.46e+01
+
+ 
+ 
+Problem size:  -nx 4096 -nt 4096 
+  Braid: Begin simulation, 4096 time steps
+
+  Braid: || r_0 || not available, wall time = 8.43e-01
+  Braid: || r_1 || = 2.304553e+02, conv factor = 1.00e+00, wall time = 3.24e+00
+  Braid: || r_2 || = 1.572360e+02, conv factor = 6.82e-01, wall time = 5.63e+00
+  Braid: || r_3 || = 1.056713e+02, conv factor = 6.72e-01, wall time = 8.02e+00
+  Braid: || r_4 || = 6.380304e+01, conv factor = 6.04e-01, wall time = 1.04e+01
+  Braid: || r_5 || = 3.504470e+01, conv factor = 5.49e-01, wall time = 1.28e+01
+  Braid: || r_6 || = 1.829172e+01, conv factor = 5.22e-01, wall time = 1.52e+01
+  Braid: || r_7 || = 9.835580e+00, conv factor = 5.38e-01, wall time = 1.76e+01
+  Braid: || r_8 || = 5.840970e+00, conv factor = 5.94e-01, wall time = 2.00e+01
+  Braid: || r_9 || = 3.706672e+00, conv factor = 6.35e-01, wall time = 2.24e+01
+  Braid: || r_10 || = 2.334193e+00, conv factor = 6.30e-01, wall time = 2.48e+01
+  Braid: || r_11 || = 1.409831e+00, conv factor = 6.04e-01, wall time = 2.72e+01
+  Braid: || r_12 || = 8.188311e-01, conv factor = 5.81e-01, wall time = 2.96e+01
+  Braid: || r_13 || = 4.683544e-01, conv factor = 5.72e-01, wall time = 3.20e+01
+  Braid: || r_14 || = 2.724224e-01, conv factor = 5.82e-01, wall time = 3.44e+01
+  Braid: || r_15 || = 1.640776e-01, conv factor = 6.02e-01, wall time = 3.68e+01
+  Braid: || r_16 || = 1.013502e-01, conv factor = 6.18e-01, wall time = 3.92e+01
+  Braid: || r_17 || = 6.283582e-02, conv factor = 6.20e-01, wall time = 4.16e+01
+  Braid: || r_18 || = 3.861085e-02, conv factor = 6.14e-01, wall time = 4.40e+01
+  Braid: || r_19 || = 2.355099e-02, conv factor = 6.10e-01, wall time = 4.64e+01
+  Braid: || r_20 || = 1.441542e-02, conv factor = 6.12e-01, wall time = 4.88e+01
+  Braid: || r_21 || = 8.958270e-03, conv factor = 6.21e-01, wall time = 5.12e+01
+  Braid: || r_22 || = 5.679925e-03, conv factor = 6.34e-01, wall time = 5.35e+01
+  Braid: || r_23 || = 3.664605e-03, conv factor = 6.45e-01, wall time = 5.59e+01
+  Braid: || r_24 || = 2.393862e-03, conv factor = 6.53e-01, wall time = 5.83e+01
+  Braid: || r_25 || = 1.579001e-03, conv factor = 6.60e-01, wall time = 6.07e+01
+  Braid: || r_26 || = 1.051789e-03, conv factor = 6.66e-01, wall time = 6.31e+01
+  Braid: || r_27 || = 7.081573e-04, conv factor = 6.73e-01, wall time = 6.55e+01
+  Braid: || r_28 || = 4.818594e-04, conv factor = 6.80e-01, wall time = 6.79e+01
+  Braid: || r_29 || = 3.308578e-04, conv factor = 6.87e-01, wall time = 7.03e+01
+  Braid: || r_30 || = 2.287619e-04, conv factor = 6.91e-01, wall time = 7.27e+01
+  Braid: || r_31 || = 1.589814e-04, conv factor = 6.95e-01, wall time = 7.51e+01
+  Braid: || r_32 || = 1.109098e-04, conv factor = 6.98e-01, wall time = 7.75e+01
+  Braid: || r_33 || = 7.760479e-05, conv factor = 7.00e-01, wall time = 7.99e+01
+  Braid: || r_34 || = 5.443000e-05, conv factor = 7.01e-01, wall time = 8.23e+01
+  Braid: || r_35 || = 3.824710e-05, conv factor = 7.03e-01, wall time = 8.47e+01
+  Braid: || r_36 || = 2.691396e-05, conv factor = 7.04e-01, wall time = 8.71e+01
+  Braid: || r_37 || = 1.895918e-05, conv factor = 7.04e-01, wall time = 8.94e+01
+  Braid: || r_38 || = 1.336615e-05, conv factor = 7.05e-01, wall time = 9.18e+01
+  Braid: || r_39 || = 9.428760e-06, conv factor = 7.05e-01, wall time = 9.42e+01
+  Braid: || r_40 || = 6.654348e-06, conv factor = 7.06e-01, wall time = 9.66e+01
+  Braid: || r_41 || = 4.698036e-06, conv factor = 7.06e-01, wall time = 9.90e+01
+  Braid: || r_42 || = 3.317836e-06, conv factor = 7.06e-01, wall time = 1.01e+02
+  Braid: || r_43 || = 2.343667e-06, conv factor = 7.06e-01, wall time = 1.04e+02
+  Braid: || r_44 || = 1.655847e-06, conv factor = 7.07e-01, wall time = 1.06e+02
+  Braid: || r_45 || = 1.170074e-06, conv factor = 7.07e-01, wall time = 1.09e+02
+  Braid: || r_46 || = 8.269218e-07, conv factor = 7.07e-01, wall time = 1.11e+02
+  Braid: || r_47 || = 5.844744e-07, conv factor = 7.07e-01, wall time = 1.13e+02
+  Braid: || r_48 || = 4.131525e-07, conv factor = 7.07e-01, wall time = 1.16e+02
+  Braid: || r_49 || = 2.920751e-07, conv factor = 7.07e-01, wall time = 1.18e+02
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 4096
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 8.190000e-08
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 50
+  residual norm         = 2.920751e-07
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 1
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 2
+  min coarse            = 2
+  number of levels      = 2
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0      4096        1        1
+      1      4096  
+
+  wall time = 125.924523
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   1.22e-03    1.22e-03    2.40e-01    1.97e+02
+  1   |   2.44e-03    1.22e-03    1.20e-01    4.92e+01
+
+---------------------------------------------------------------------- 
+---------------------------------------------------------------------- 
+ 
+Setup:  Spatial coarsen every OTHER level, First in space and then time, append -sc 1, -asc 1
+ 
+ 
+Problem size:  -nx 128  -nt 128 
+  Braid: Begin simulation, 128 time steps
+
+  Braid: || r_0 || = 7.469592e+00, conv factor = 1.00e+00, wall time = 1.29e-02
+  Braid: || r_1 || = 3.334097e+00, conv factor = 4.46e-01, wall time = 2.90e-02
+  Braid: || r_2 || = 1.138214e+00, conv factor = 3.41e-01, wall time = 4.50e-02
+  Braid: || r_3 || = 3.498303e-01, conv factor = 3.07e-01, wall time = 6.11e-02
+  Braid: || r_4 || = 1.554890e-01, conv factor = 4.44e-01, wall time = 7.72e-02
+  Braid: || r_5 || = 6.353597e-02, conv factor = 4.09e-01, wall time = 9.33e-02
+  Braid: || r_6 || = 2.394772e-02, conv factor = 3.77e-01, wall time = 1.09e-01
+  Braid: || r_7 || = 1.041112e-02, conv factor = 4.35e-01, wall time = 1.25e-01
+  Braid: || r_8 || = 4.796941e-03, conv factor = 4.61e-01, wall time = 1.42e-01
+  Braid: || r_9 || = 2.206237e-03, conv factor = 4.60e-01, wall time = 1.58e-01
+  Braid: || r_10 || = 1.051539e-03, conv factor = 4.77e-01, wall time = 1.74e-01
+  Braid: || r_11 || = 5.180382e-04, conv factor = 4.93e-01, wall time = 1.90e-01
+  Braid: || r_12 || = 2.585851e-04, conv factor = 4.99e-01, wall time = 2.06e-01
+  Braid: || r_13 || = 1.299790e-04, conv factor = 5.03e-01, wall time = 2.22e-01
+  Braid: || r_14 || = 6.566584e-05, conv factor = 5.05e-01, wall time = 2.38e-01
+  Braid: || r_15 || = 3.327058e-05, conv factor = 5.07e-01, wall time = 2.54e-01
+  Braid: || r_16 || = 1.687768e-05, conv factor = 5.07e-01, wall time = 2.70e-01
+  Braid: || r_17 || = 8.566514e-06, conv factor = 5.08e-01, wall time = 2.86e-01
+  Braid: || r_18 || = 4.349895e-06, conv factor = 5.08e-01, wall time = 3.03e-01
+  Braid: || r_19 || = 2.209373e-06, conv factor = 5.08e-01, wall time = 3.19e-01
+  Braid: || r_20 || = 1.121933e-06, conv factor = 5.08e-01, wall time = 3.35e-01
+  Braid: || r_21 || = 5.693501e-07, conv factor = 5.07e-01, wall time = 3.51e-01
+  Braid: || r_22 || = 2.887310e-07, conv factor = 5.07e-01, wall time = 3.67e-01
+  Braid: || r_23 || = 1.463750e-07, conv factor = 5.07e-01, wall time = 3.83e-01
+  Braid: || r_24 || = 7.424032e-08, conv factor = 5.07e-01, wall time = 3.99e-01
+  Braid: || r_25 || = 3.770671e-08, conv factor = 5.08e-01, wall time = 4.15e-01
+  Braid: || r_26 || = 1.919740e-08, conv factor = 5.09e-01, wall time = 4.31e-01
+  Braid: || r_27 || = 9.804489e-09, conv factor = 5.11e-01, wall time = 4.47e-01
+  Braid: || r_28 || = 5.024726e-09, conv factor = 5.12e-01, wall time = 4.64e-01
+  Braid: || r_29 || = 2.583460e-09, conv factor = 5.14e-01, wall time = 4.80e-01
+  Braid: || r_30 || = 1.331674e-09, conv factor = 5.15e-01, wall time = 4.96e-01
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 128
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 2.540000e-09
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 31
+  residual norm         = 1.331674e-09
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 1
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 25
+  min coarse            = 2
+  number of levels      = 14
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0       128        1        1
+      1       128        2        1
+      2        64        1        1
+      3        64        2        1
+      4        32        1        1
+      5        32        2        1
+      6        16        1        1
+      7        16        2        1
+      8         8        1        1
+      9         8        2        1
+     10         4        1        1
+     11         4        2        1
+     12         2        1        1
+     13         2  
+
+  wall time = 0.513791
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   3.91e-02    3.91e-02    2.40e-01    6.14e+00
+  1   |   7.81e-02    3.91e-02    1.20e-01    1.54e+00
+  2   |   7.81e-02    7.81e-02    2.40e-01    3.07e+00
+  3   |   1.56e-01    7.81e-02    1.20e-01    7.68e-01
+  4   |   1.56e-01    1.56e-01    2.40e-01    1.54e+00
+  5   |   3.12e-01    1.56e-01    1.20e-01    3.84e-01
+  6   |   3.12e-01    3.12e-01    2.40e-01    7.68e-01
+  7   |   6.25e-01    3.12e-01    1.20e-01    1.92e-01
+  8   |   6.25e-01    6.25e-01    2.40e-01    3.84e-01
+  9   |   1.25e+00    6.25e-01    1.20e-01    9.60e-02
+ 10   |   1.25e+00    1.25e+00    2.40e-01    1.92e-01
+ 11   |   2.50e+00    1.25e+00    1.20e-01    4.80e-02
+ 12   |   2.50e+00    2.50e+00    2.40e-01    9.60e-02
+ 13   |   5.00e+00    2.50e+00    1.20e-01    2.40e-02
+
+ 
+ 
+Problem size:  -nx 256  -nt 256 
+  Braid: Begin simulation, 256 time steps
+
+  Braid: || r_0 || = 1.506530e+01, conv factor = 1.00e+00, wall time = 4.43e-02
+  Braid: || r_1 || = 6.310103e+00, conv factor = 4.19e-01, wall time = 1.02e-01
+  Braid: || r_2 || = 2.126451e+00, conv factor = 3.37e-01, wall time = 1.59e-01
+  Braid: || r_3 || = 6.441677e-01, conv factor = 3.03e-01, wall time = 2.17e-01
+  Braid: || r_4 || = 2.774094e-01, conv factor = 4.31e-01, wall time = 2.74e-01
+  Braid: || r_5 || = 1.118846e-01, conv factor = 4.03e-01, wall time = 3.32e-01
+  Braid: || r_6 || = 3.983100e-02, conv factor = 3.56e-01, wall time = 3.90e-01
+  Braid: || r_7 || = 1.645859e-02, conv factor = 4.13e-01, wall time = 4.48e-01
+  Braid: || r_8 || = 7.473075e-03, conv factor = 4.54e-01, wall time = 5.06e-01
+  Braid: || r_9 || = 3.308507e-03, conv factor = 4.43e-01, wall time = 5.65e-01
+  Braid: || r_10 || = 1.521758e-03, conv factor = 4.60e-01, wall time = 6.22e-01
+  Braid: || r_11 || = 7.415915e-04, conv factor = 4.87e-01, wall time = 6.80e-01
+  Braid: || r_12 || = 3.672523e-04, conv factor = 4.95e-01, wall time = 7.38e-01
+  Braid: || r_13 || = 1.828624e-04, conv factor = 4.98e-01, wall time = 7.96e-01
+  Braid: || r_14 || = 9.190472e-05, conv factor = 5.03e-01, wall time = 8.53e-01
+  Braid: || r_15 || = 4.641310e-05, conv factor = 5.05e-01, wall time = 9.11e-01
+  Braid: || r_16 || = 2.343858e-05, conv factor = 5.05e-01, wall time = 9.69e-01
+  Braid: || r_17 || = 1.183233e-05, conv factor = 5.05e-01, wall time = 1.03e+00
+  Braid: || r_18 || = 5.975880e-06, conv factor = 5.05e-01, wall time = 1.08e+00
+  Braid: || r_19 || = 3.021253e-06, conv factor = 5.06e-01, wall time = 1.14e+00
+  Braid: || r_20 || = 1.530160e-06, conv factor = 5.06e-01, wall time = 1.20e+00
+  Braid: || r_21 || = 7.767966e-07, conv factor = 5.08e-01, wall time = 1.26e+00
+  Braid: || r_22 || = 3.953973e-07, conv factor = 5.09e-01, wall time = 1.32e+00
+  Braid: || r_23 || = 2.018323e-07, conv factor = 5.10e-01, wall time = 1.37e+00
+  Braid: || r_24 || = 1.033228e-07, conv factor = 5.12e-01, wall time = 1.43e+00
+  Braid: || r_25 || = 5.303450e-08, conv factor = 5.13e-01, wall time = 1.49e+00
+  Braid: || r_26 || = 2.728483e-08, conv factor = 5.14e-01, wall time = 1.55e+00
+  Braid: || r_27 || = 1.406375e-08, conv factor = 5.15e-01, wall time = 1.60e+00
+  Braid: || r_28 || = 7.259712e-09, conv factor = 5.16e-01, wall time = 1.66e+00
+  Braid: || r_29 || = 3.751786e-09, conv factor = 5.17e-01, wall time = 1.72e+00
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 256
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 5.100000e-09
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 30
+  residual norm         = 3.751786e-09
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 1
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 25
+  min coarse            = 2
+  number of levels      = 16
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0       256        1        1
+      1       256        2        1
+      2       128        1        1
+      3       128        2        1
+      4        64        1        1
+      5        64        2        1
+      6        32        1        1
+      7        32        2        1
+      8        16        1        1
+      9        16        2        1
+     10         8        1        1
+     11         8        2        1
+     12         4        1        1
+     13         4        2        1
+     14         2        1        1
+     15         2  
+
+  wall time = 1.766201
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   1.95e-02    1.95e-02    2.40e-01    1.23e+01
+  1   |   3.91e-02    1.95e-02    1.20e-01    3.07e+00
+  2   |   3.91e-02    3.91e-02    2.40e-01    6.14e+00
+  3   |   7.81e-02    3.91e-02    1.20e-01    1.54e+00
+  4   |   7.81e-02    7.81e-02    2.40e-01    3.07e+00
+  5   |   1.56e-01    7.81e-02    1.20e-01    7.68e-01
+  6   |   1.56e-01    1.56e-01    2.40e-01    1.54e+00
+  7   |   3.12e-01    1.56e-01    1.20e-01    3.84e-01
+  8   |   3.12e-01    3.12e-01    2.40e-01    7.68e-01
+  9   |   6.25e-01    3.12e-01    1.20e-01    1.92e-01
+ 10   |   6.25e-01    6.25e-01    2.40e-01    3.84e-01
+ 11   |   1.25e+00    6.25e-01    1.20e-01    9.60e-02
+ 12   |   1.25e+00    1.25e+00    2.40e-01    1.92e-01
+ 13   |   2.50e+00    1.25e+00    1.20e-01    4.80e-02
+ 14   |   2.50e+00    2.50e+00    2.40e-01    9.60e-02
+ 15   |   5.00e+00    2.50e+00    1.20e-01    2.40e-02
+
+ 
+ 
+Problem size:  -nx 512  -nt 512 
+  Braid: Begin simulation, 512 time steps
+
+  Braid: || r_0 || = 2.877680e+01, conv factor = 1.00e+00, wall time = 1.63e-01
+  Braid: || r_1 || = 1.257775e+01, conv factor = 4.37e-01, wall time = 3.78e-01
+  Braid: || r_2 || = 4.453729e+00, conv factor = 3.54e-01, wall time = 5.93e-01
+  Braid: || r_3 || = 1.309788e+00, conv factor = 2.94e-01, wall time = 8.08e-01
+  Braid: || r_4 || = 5.516981e-01, conv factor = 4.21e-01, wall time = 1.02e+00
+  Braid: || r_5 || = 2.345594e-01, conv factor = 4.25e-01, wall time = 1.24e+00
+  Braid: || r_6 || = 8.190701e-02, conv factor = 3.49e-01, wall time = 1.45e+00
+  Braid: || r_7 || = 3.141317e-02, conv factor = 3.84e-01, wall time = 1.67e+00
+  Braid: || r_8 || = 1.427908e-02, conv factor = 4.55e-01, wall time = 1.88e+00
+  Braid: || r_9 || = 6.174328e-03, conv factor = 4.32e-01, wall time = 2.10e+00
+  Braid: || r_10 || = 2.679079e-03, conv factor = 4.34e-01, wall time = 2.31e+00
+  Braid: || r_11 || = 1.273216e-03, conv factor = 4.75e-01, wall time = 2.53e+00
+  Braid: || r_12 || = 6.248295e-04, conv factor = 4.91e-01, wall time = 2.74e+00
+  Braid: || r_13 || = 3.070847e-04, conv factor = 4.91e-01, wall time = 2.96e+00
+  Braid: || r_14 || = 1.534400e-04, conv factor = 5.00e-01, wall time = 3.17e+00
+  Braid: || r_15 || = 7.771252e-05, conv factor = 5.06e-01, wall time = 3.39e+00
+  Braid: || r_16 || = 3.946929e-05, conv factor = 5.08e-01, wall time = 3.60e+00
+  Braid: || r_17 || = 2.007298e-05, conv factor = 5.09e-01, wall time = 3.82e+00
+  Braid: || r_18 || = 1.023185e-05, conv factor = 5.10e-01, wall time = 4.03e+00
+  Braid: || r_19 || = 5.224378e-06, conv factor = 5.11e-01, wall time = 4.25e+00
+  Braid: || r_20 || = 2.671479e-06, conv factor = 5.11e-01, wall time = 4.47e+00
+  Braid: || r_21 || = 1.368534e-06, conv factor = 5.12e-01, wall time = 4.68e+00
+  Braid: || r_22 || = 7.024534e-07, conv factor = 5.13e-01, wall time = 4.90e+00
+  Braid: || r_23 || = 3.612647e-07, conv factor = 5.14e-01, wall time = 5.11e+00
+  Braid: || r_24 || = 1.861399e-07, conv factor = 5.15e-01, wall time = 5.33e+00
+  Braid: || r_25 || = 9.608774e-08, conv factor = 5.16e-01, wall time = 5.54e+00
+  Braid: || r_26 || = 4.970697e-08, conv factor = 5.17e-01, wall time = 5.76e+00
+  Braid: || r_27 || = 2.577597e-08, conv factor = 5.19e-01, wall time = 5.97e+00
+  Braid: || r_28 || = 1.339791e-08, conv factor = 5.20e-01, wall time = 6.19e+00
+  Braid: || r_29 || = 6.976220e-09, conv factor = 5.21e-01, wall time = 6.40e+00
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 512
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 1.022000e-08
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 30
+  residual norm         = 6.976220e-09
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 1
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 25
+  min coarse            = 2
+  number of levels      = 18
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0       512        1        1
+      1       512        2        1
+      2       256        1        1
+      3       256        2        1
+      4       128        1        1
+      5       128        2        1
+      6        64        1        1
+      7        64        2        1
+      8        32        1        1
+      9        32        2        1
+     10        16        1        1
+     11        16        2        1
+     12         8        1        1
+     13         8        2        1
+     14         4        1        1
+     15         4        2        1
+     16         2        1        1
+     17         2  
+
+  wall time = 6.553930
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   9.77e-03    9.77e-03    2.40e-01    2.46e+01
+  1   |   1.95e-02    9.77e-03    1.20e-01    6.14e+00
+  2   |   1.95e-02    1.95e-02    2.40e-01    1.23e+01
+  3   |   3.91e-02    1.95e-02    1.20e-01    3.07e+00
+  4   |   3.91e-02    3.91e-02    2.40e-01    6.14e+00
+  5   |   7.81e-02    3.91e-02    1.20e-01    1.54e+00
+  6   |   7.81e-02    7.81e-02    2.40e-01    3.07e+00
+  7   |   1.56e-01    7.81e-02    1.20e-01    7.68e-01
+  8   |   1.56e-01    1.56e-01    2.40e-01    1.54e+00
+  9   |   3.12e-01    1.56e-01    1.20e-01    3.84e-01
+ 10   |   3.12e-01    3.12e-01    2.40e-01    7.68e-01
+ 11   |   6.25e-01    3.12e-01    1.20e-01    1.92e-01
+ 12   |   6.25e-01    6.25e-01    2.40e-01    3.84e-01
+ 13   |   1.25e+00    6.25e-01    1.20e-01    9.60e-02
+ 14   |   1.25e+00    1.25e+00    2.40e-01    1.92e-01
+ 15   |   2.50e+00    1.25e+00    1.20e-01    4.80e-02
+ 16   |   2.50e+00    2.50e+00    2.40e-01    9.60e-02
+ 17   |   5.00e+00    2.50e+00    1.20e-01    2.40e-02
+
+ 
+ 
+Problem size:  -nx 1024 -nt 1024 
+  Braid: Begin simulation, 1024 time steps
+
+  Braid: || r_0 || = 5.753629e+01, conv factor = 1.00e+00, wall time = 6.32e-01
+  Braid: || r_1 || = 2.549822e+01, conv factor = 4.43e-01, wall time = 1.47e+00
+  Braid: || r_2 || = 9.091884e+00, conv factor = 3.57e-01, wall time = 2.31e+00
+  Braid: || r_3 || = 2.619382e+00, conv factor = 2.88e-01, wall time = 3.15e+00
+  Braid: || r_4 || = 1.139329e+00, conv factor = 4.35e-01, wall time = 3.99e+00
+  Braid: || r_5 || = 5.193490e-01, conv factor = 4.56e-01, wall time = 4.83e+00
+  Braid: || r_6 || = 2.156629e-01, conv factor = 4.15e-01, wall time = 5.67e+00
+  Braid: || r_7 || = 1.071679e-01, conv factor = 4.97e-01, wall time = 6.51e+00
+  Braid: || r_8 || = 5.653868e-02, conv factor = 5.28e-01, wall time = 7.35e+00
+  Braid: || r_9 || = 2.785880e-02, conv factor = 4.93e-01, wall time = 8.19e+00
+  Braid: || r_10 || = 1.331395e-02, conv factor = 4.78e-01, wall time = 9.03e+00
+  Braid: || r_11 || = 6.412569e-03, conv factor = 4.82e-01, wall time = 9.86e+00
+  Braid: || r_12 || = 3.114296e-03, conv factor = 4.86e-01, wall time = 1.07e+01
+  Braid: || r_13 || = 1.516972e-03, conv factor = 4.87e-01, wall time = 1.15e+01
+  Braid: || r_14 || = 7.408259e-04, conv factor = 4.88e-01, wall time = 1.24e+01
+  Braid: || r_15 || = 3.623969e-04, conv factor = 4.89e-01, wall time = 1.32e+01
+  Braid: || r_16 || = 1.774074e-04, conv factor = 4.90e-01, wall time = 1.41e+01
+  Braid: || r_17 || = 8.694518e-05, conv factor = 4.90e-01, wall time = 1.49e+01
+  Braid: || r_18 || = 4.268377e-05, conv factor = 4.91e-01, wall time = 1.57e+01
+  Braid: || r_19 || = 2.099952e-05, conv factor = 4.92e-01, wall time = 1.66e+01
+  Braid: || r_20 || = 1.036175e-05, conv factor = 4.93e-01, wall time = 1.74e+01
+  Braid: || r_21 || = 5.134101e-06, conv factor = 4.95e-01, wall time = 1.83e+01
+  Braid: || r_22 || = 2.558345e-06, conv factor = 4.98e-01, wall time = 1.91e+01
+  Braid: || r_23 || = 1.284705e-06, conv factor = 5.02e-01, wall time = 1.99e+01
+  Braid: || r_24 || = 6.516882e-07, conv factor = 5.07e-01, wall time = 2.08e+01
+  Braid: || r_25 || = 3.345697e-07, conv factor = 5.13e-01, wall time = 2.16e+01
+  Braid: || r_26 || = 1.739301e-07, conv factor = 5.20e-01, wall time = 2.24e+01
+  Braid: || r_27 || = 9.149039e-08, conv factor = 5.26e-01, wall time = 2.33e+01
+  Braid: || r_28 || = 4.862107e-08, conv factor = 5.31e-01, wall time = 2.41e+01
+  Braid: || r_29 || = 2.605299e-08, conv factor = 5.36e-01, wall time = 2.50e+01
+  Braid: || r_30 || = 1.404091e-08, conv factor = 5.39e-01, wall time = 2.58e+01
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 1024
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 2.046000e-08
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 31
+  residual norm         = 1.404091e-08
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 1
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 25
+  min coarse            = 2
+  number of levels      = 20
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0      1024        1        1
+      1      1024        2        1
+      2       512        1        1
+      3       512        2        1
+      4       256        1        1
+      5       256        2        1
+      6       128        1        1
+      7       128        2        1
+      8        64        1        1
+      9        64        2        1
+     10        32        1        1
+     11        32        2        1
+     12        16        1        1
+     13        16        2        1
+     14         8        1        1
+     15         8        2        1
+     16         4        1        1
+     17         4        2        1
+     18         2        1        1
+     19         2  
+
+  wall time = 26.357857
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   4.88e-03    4.88e-03    2.40e-01    4.92e+01
+  1   |   9.77e-03    4.88e-03    1.20e-01    1.23e+01
+  2   |   9.77e-03    9.77e-03    2.40e-01    2.46e+01
+  3   |   1.95e-02    9.77e-03    1.20e-01    6.14e+00
+  4   |   1.95e-02    1.95e-02    2.40e-01    1.23e+01
+  5   |   3.91e-02    1.95e-02    1.20e-01    3.07e+00
+  6   |   3.91e-02    3.91e-02    2.40e-01    6.14e+00
+  7   |   7.81e-02    3.91e-02    1.20e-01    1.54e+00
+  8   |   7.81e-02    7.81e-02    2.40e-01    3.07e+00
+  9   |   1.56e-01    7.81e-02    1.20e-01    7.68e-01
+ 10   |   1.56e-01    1.56e-01    2.40e-01    1.54e+00
+ 11   |   3.12e-01    1.56e-01    1.20e-01    3.84e-01
+ 12   |   3.12e-01    3.12e-01    2.40e-01    7.68e-01
+ 13   |   6.25e-01    3.12e-01    1.20e-01    1.92e-01
+ 14   |   6.25e-01    6.25e-01    2.40e-01    3.84e-01
+ 15   |   1.25e+00    6.25e-01    1.20e-01    9.60e-02
+ 16   |   1.25e+00    1.25e+00    2.40e-01    1.92e-01
+ 17   |   2.50e+00    1.25e+00    1.20e-01    4.80e-02
+ 18   |   2.50e+00    2.50e+00    2.40e-01    9.60e-02
+ 19   |   5.00e+00    2.50e+00    1.20e-01    2.40e-02
+
+ 
+ 
+Problem size:  -nx 2048 -nt 2048 
+  Braid: Begin simulation, 2048 time steps
+
+  Braid: || r_0 || = 1.177262e+02, conv factor = 1.00e+00, wall time = 2.48e+00
+  Braid: || r_1 || = 5.371312e+01, conv factor = 4.56e-01, wall time = 5.81e+00
+  Braid: || r_2 || = 2.034237e+01, conv factor = 3.79e-01, wall time = 9.14e+00
+  Braid: || r_3 || = 6.589182e+00, conv factor = 3.24e-01, wall time = 1.25e+01
+  Braid: || r_4 || = 8.969936e+00, conv factor = 1.36e+00, wall time = 1.58e+01
+  Braid: || r_5 || = 1.762921e+01, conv factor = 1.97e+00, wall time = 1.91e+01
+  Braid: || r_6 || = 2.341016e+01, conv factor = 1.33e+00, wall time = 2.24e+01
+  Braid: || r_7 || = 2.461298e+01, conv factor = 1.05e+00, wall time = 2.58e+01
+  Braid: || r_8 || = 2.204442e+01, conv factor = 8.96e-01, wall time = 2.91e+01
+  Braid: || r_9 || = 1.745468e+01, conv factor = 7.92e-01, wall time = 3.24e+01
+  Braid: || r_10 || = 1.248355e+01, conv factor = 7.15e-01, wall time = 3.58e+01
+  Braid: || r_11 || = 8.180511e+00, conv factor = 6.55e-01, wall time = 3.91e+01
+  Braid: || r_12 || = 4.967598e+00, conv factor = 6.07e-01, wall time = 4.24e+01
+  Braid: || r_13 || = 2.825693e+00, conv factor = 5.69e-01, wall time = 4.57e+01
+  Braid: || r_14 || = 1.523395e+00, conv factor = 5.39e-01, wall time = 4.91e+01
+  Braid: || r_15 || = 7.886538e-01, conv factor = 5.18e-01, wall time = 5.24e+01
+  Braid: || r_16 || = 3.973627e-01, conv factor = 5.04e-01, wall time = 5.57e+01
+  Braid: || r_17 || = 1.971411e-01, conv factor = 4.96e-01, wall time = 5.91e+01
+  Braid: || r_18 || = 9.706549e-02, conv factor = 4.92e-01, wall time = 6.24e+01
+  Braid: || r_19 || = 4.761117e-02, conv factor = 4.91e-01, wall time = 6.57e+01
+  Braid: || r_20 || = 2.329670e-02, conv factor = 4.89e-01, wall time = 6.90e+01
+  Braid: || r_21 || = 1.137823e-02, conv factor = 4.88e-01, wall time = 7.24e+01
+  Braid: || r_22 || = 5.550090e-03, conv factor = 4.88e-01, wall time = 7.57e+01
+  Braid: || r_23 || = 2.705325e-03, conv factor = 4.87e-01, wall time = 7.90e+01
+  Braid: || r_24 || = 1.318305e-03, conv factor = 4.87e-01, wall time = 8.23e+01
+  Braid: || r_25 || = 6.423794e-04, conv factor = 4.87e-01, wall time = 8.57e+01
+  Braid: || r_26 || = 3.130352e-04, conv factor = 4.87e-01, wall time = 8.90e+01
+  Braid: || r_27 || = 1.525597e-04, conv factor = 4.87e-01, wall time = 9.23e+01
+  Braid: || r_28 || = 7.436055e-05, conv factor = 4.87e-01, wall time = 9.57e+01
+  Braid: || r_29 || = 3.625021e-05, conv factor = 4.87e-01, wall time = 9.90e+01
+  Braid: || r_30 || = 1.767447e-05, conv factor = 4.88e-01, wall time = 1.02e+02
+  Braid: || r_31 || = 8.618694e-06, conv factor = 4.88e-01, wall time = 1.06e+02
+  Braid: || r_32 || = 4.203162e-06, conv factor = 4.88e-01, wall time = 1.09e+02
+  Braid: || r_33 || = 2.049881e-06, conv factor = 4.88e-01, wall time = 1.12e+02
+  Braid: || r_34 || = 9.997356e-07, conv factor = 4.88e-01, wall time = 1.16e+02
+  Braid: || r_35 || = 4.875793e-07, conv factor = 4.88e-01, wall time = 1.19e+02
+  Braid: || r_36 || = 2.378047e-07, conv factor = 4.88e-01, wall time = 1.22e+02
+  Braid: || r_37 || = 1.159914e-07, conv factor = 4.88e-01, wall time = 1.26e+02
+  Braid: || r_38 || = 5.658077e-08, conv factor = 4.88e-01, wall time = 1.29e+02
+  Braid: || r_39 || = 2.760243e-08, conv factor = 4.88e-01, wall time = 1.32e+02
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 2048
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 4.094000e-08
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 40
+  residual norm         = 2.760243e-08
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 1
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 25
+  min coarse            = 2
+  number of levels      = 22
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0      2048        1        1
+      1      2048        2        1
+      2      1024        1        1
+      3      1024        2        1
+      4       512        1        1
+      5       512        2        1
+      6       256        1        1
+      7       256        2        1
+      8       128        1        1
+      9       128        2        1
+     10        64        1        1
+     11        64        2        1
+     12        32        1        1
+     13        32        2        1
+     14        16        1        1
+     15        16        2        1
+     16         8        1        1
+     17         8        2        1
+     18         4        1        1
+     19         4        2        1
+     20         2        1        1
+     21         2  
+
+  wall time = 134.618363
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   2.44e-03    2.44e-03    2.40e-01    9.83e+01
+  1   |   4.88e-03    2.44e-03    1.20e-01    2.46e+01
+  2   |   4.88e-03    4.88e-03    2.40e-01    4.92e+01
+  3   |   9.77e-03    4.88e-03    1.20e-01    1.23e+01
+  4   |   9.77e-03    9.77e-03    2.40e-01    2.46e+01
+  5   |   1.95e-02    9.77e-03    1.20e-01    6.14e+00
+  6   |   1.95e-02    1.95e-02    2.40e-01    1.23e+01
+  7   |   3.91e-02    1.95e-02    1.20e-01    3.07e+00
+  8   |   3.91e-02    3.91e-02    2.40e-01    6.14e+00
+  9   |   7.81e-02    3.91e-02    1.20e-01    1.54e+00
+ 10   |   7.81e-02    7.81e-02    2.40e-01    3.07e+00
+ 11   |   1.56e-01    7.81e-02    1.20e-01    7.68e-01
+ 12   |   1.56e-01    1.56e-01    2.40e-01    1.54e+00
+ 13   |   3.12e-01    1.56e-01    1.20e-01    3.84e-01
+ 14   |   3.12e-01    3.12e-01    2.40e-01    7.68e-01
+ 15   |   6.25e-01    3.12e-01    1.20e-01    1.92e-01
+ 16   |   6.25e-01    6.25e-01    2.40e-01    3.84e-01
+ 17   |   1.25e+00    6.25e-01    1.20e-01    9.60e-02
+ 18   |   1.25e+00    1.25e+00    2.40e-01    1.92e-01
+ 19   |   2.50e+00    1.25e+00    1.20e-01    4.80e-02
+ 20   |   2.50e+00    2.50e+00    2.40e-01    9.60e-02
+ 21   |   5.00e+00    2.50e+00    1.20e-01    2.40e-02
+
+ 
+ 
+Problem size:  -nx 4096 -nt 4096 
+  Braid: Begin simulation, 4096 time steps
+
+  Braid: || r_0 || = 2.361590e+02, conv factor = 1.00e+00, wall time = 9.75e+00
+  Braid: || r_1 || = 2.294747e+02, conv factor = 9.72e-01, wall time = 2.29e+01
+  Braid: || r_2 || = 1.439698e+03, conv factor = 6.27e+00, wall time = 3.61e+01
+  Braid: || r_3 || = 5.397834e+03, conv factor = 3.75e+00, wall time = 4.93e+01
+  Braid: || r_4 || = 1.307465e+04, conv factor = 2.42e+00, wall time = 6.24e+01
+  Braid: || r_5 || = 2.206054e+04, conv factor = 1.69e+00, wall time = 7.56e+01
+  Braid: || r_6 || = 2.543828e+04, conv factor = 1.15e+00, wall time = 8.88e+01
+  Braid: || r_7 || = 1.621877e+04, conv factor = 6.38e-01, wall time = 1.02e+02
+  Braid: || r_8 || = 2.756560e+04, conv factor = 1.70e+00, wall time = 1.15e+02
+  Braid: || r_9 || = 7.940958e+04, conv factor = 2.88e+00, wall time = 1.28e+02
+  Braid: || r_10 || = 1.429923e+05, conv factor = 1.80e+00, wall time = 1.41e+02
+  Braid: || r_11 || = 2.025435e+05, conv factor = 1.42e+00, wall time = 1.55e+02
+  Braid: || r_12 || = 2.447763e+05, conv factor = 1.21e+00, wall time = 1.68e+02
+  Braid: || r_13 || = 2.622439e+05, conv factor = 1.07e+00, wall time = 1.81e+02
+  Braid: || r_14 || = 2.546421e+05, conv factor = 9.71e-01, wall time = 1.94e+02
+  Braid: || r_15 || = 2.273649e+05, conv factor = 8.93e-01, wall time = 2.07e+02
+  Braid: || r_16 || = 1.886017e+05, conv factor = 8.30e-01, wall time = 2.20e+02
+  Braid: || r_17 || = 1.464748e+05, conv factor = 7.77e-01, wall time = 2.34e+02
+  Braid: || r_18 || = 1.071631e+05, conv factor = 7.32e-01, wall time = 2.47e+02
+  Braid: || r_19 || = 7.423506e+04, conv factor = 6.93e-01, wall time = 2.60e+02
+  Braid: || r_20 || = 4.890824e+04, conv factor = 6.59e-01, wall time = 2.73e+02
+  Braid: || r_21 || = 3.076942e+04, conv factor = 6.29e-01, wall time = 2.86e+02
+  Braid: || r_22 || = 1.855647e+04, conv factor = 6.03e-01, wall time = 3.00e+02
+  Braid: || r_23 || = 1.076893e+04, conv factor = 5.80e-01, wall time = 3.13e+02
+  Braid: || r_24 || = 6.037440e+03, conv factor = 5.61e-01, wall time = 3.26e+02
+  Braid: || r_25 || = 3.283254e+03, conv factor = 5.44e-01, wall time = 3.39e+02
+  Braid: || r_26 || = 1.739251e+03, conv factor = 5.30e-01, wall time = 3.52e+02
+  Braid: || r_27 || = 9.013459e+02, conv factor = 5.18e-01, wall time = 3.65e+02
+  Braid: || r_28 || = 4.589047e+02, conv factor = 5.09e-01, wall time = 3.79e+02
+  Braid: || r_29 || = 2.304433e+02, conv factor = 5.02e-01, wall time = 3.92e+02
+  Braid: || r_30 || = 1.145311e+02, conv factor = 4.97e-01, wall time = 4.05e+02
+  Braid: || r_31 || = 5.650083e+01, conv factor = 4.93e-01, wall time = 4.18e+02
+  Braid: || r_32 || = 2.772988e+01, conv factor = 4.91e-01, wall time = 4.31e+02
+  Braid: || r_33 || = 1.356291e+01, conv factor = 4.89e-01, wall time = 4.45e+02
+  Braid: || r_34 || = 6.619398e+00, conv factor = 4.88e-01, wall time = 4.58e+02
+  Braid: || r_35 || = 3.226526e+00, conv factor = 4.87e-01, wall time = 4.71e+02
+  Braid: || r_36 || = 1.571691e+00, conv factor = 4.87e-01, wall time = 4.84e+02
+  Braid: || r_37 || = 7.653880e-01, conv factor = 4.87e-01, wall time = 4.97e+02
+  Braid: || r_38 || = 3.727136e-01, conv factor = 4.87e-01, wall time = 5.11e+02
+  Braid: || r_39 || = 1.815080e-01, conv factor = 4.87e-01, wall time = 5.24e+02
+  Braid: || r_40 || = 8.840210e-02, conv factor = 4.87e-01, wall time = 5.37e+02
+  Braid: || r_41 || = 4.306045e-02, conv factor = 4.87e-01, wall time = 5.50e+02
+  Braid: || r_42 || = 2.097679e-02, conv factor = 4.87e-01, wall time = 5.63e+02
+  Braid: || r_43 || = 1.021965e-02, conv factor = 4.87e-01, wall time = 5.76e+02
+  Braid: || r_44 || = 4.979201e-03, conv factor = 4.87e-01, wall time = 5.90e+02
+  Braid: || r_45 || = 2.426064e-03, conv factor = 4.87e-01, wall time = 6.03e+02
+  Braid: || r_46 || = 1.182109e-03, conv factor = 4.87e-01, wall time = 6.16e+02
+  Braid: || r_47 || = 5.759999e-04, conv factor = 4.87e-01, wall time = 6.29e+02
+  Braid: || r_48 || = 2.806700e-04, conv factor = 4.87e-01, wall time = 6.43e+02
+  Braid: || r_49 || = 1.367660e-04, conv factor = 4.87e-01, wall time = 6.56e+02
+
+  start time = 0.000000e+00
+  stop time  = 5.000000e+00
+  time steps = 4096
+
+  use seq soln?         = 0
+  storage               = -1
+
+  stopping tolerance    = 8.190000e-08
+  use relative tol?     = 0
+  max iterations        = 50
+  iterations            = 50
+  residual norm         = 1.367660e-04
+                         --> 2-norm TemporalNorm 
+
+  use fmg?              = 1
+  V-cycles / FMG level  = 1
+  fmg-cycles for all iteratons
+  access_level          = 1
+  print_level           = 1
+
+  max number of levels  = 25
+  min coarse            = 2
+  number of levels      = 24
+  skip down cycle       = 1
+  number of refinements = 0
+
+  level   time-pts   cfactor   nrelax
+      0      4096        1        1
+      1      4096        2        1
+      2      2048        1        1
+      3      2048        2        1
+      4      1024        1        1
+      5      1024        2        1
+      6       512        1        1
+      7       512        2        1
+      8       256        1        1
+      9       256        2        1
+     10       128        1        1
+     11       128        2        1
+     12        64        1        1
+     13        64        2        1
+     14        32        1        1
+     15        32        2        1
+     16        16        1        1
+     17        16        2        1
+     18         8        1        1
+     19         8        2        1
+     20         4        1        1
+     21         4        2        1
+     22         2        1        1
+     23         2  
+
+  wall time = 663.374853
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+ Per level diagnostic information 
+
+level     dx         dt       a*dt/dx       a*dt/dx^2
+-----------------------------------------------------------------
+  0   |   1.22e-03    1.22e-03    2.40e-01    1.97e+02
+  1   |   2.44e-03    1.22e-03    1.20e-01    4.92e+01
+  2   |   2.44e-03    2.44e-03    2.40e-01    9.83e+01
+  3   |   4.88e-03    2.44e-03    1.20e-01    2.46e+01
+  4   |   4.88e-03    4.88e-03    2.40e-01    4.92e+01
+  5   |   9.77e-03    4.88e-03    1.20e-01    1.23e+01
+  6   |   9.77e-03    9.77e-03    2.40e-01    2.46e+01
+  7   |   1.95e-02    9.77e-03    1.20e-01    6.14e+00
+  8   |   1.95e-02    1.95e-02    2.40e-01    1.23e+01
+  9   |   3.91e-02    1.95e-02    1.20e-01    3.07e+00
+ 10   |   3.91e-02    3.91e-02    2.40e-01    6.14e+00
+ 11   |   7.81e-02    3.91e-02    1.20e-01    1.54e+00
+ 12   |   7.81e-02    7.81e-02    2.40e-01    3.07e+00
+ 13   |   1.56e-01    7.81e-02    1.20e-01    7.68e-01
+ 14   |   1.56e-01    1.56e-01    2.40e-01    1.54e+00
+ 15   |   3.12e-01    1.56e-01    1.20e-01    3.84e-01
+ 16   |   3.12e-01    3.12e-01    2.40e-01    7.68e-01
+ 17   |   6.25e-01    3.12e-01    1.20e-01    1.92e-01
+ 18   |   6.25e-01    6.25e-01    2.40e-01    3.84e-01
+ 19   |   1.25e+00    6.25e-01    1.20e-01    9.60e-02
+ 20   |   1.25e+00    1.25e+00    2.40e-01    1.92e-01
+ 21   |   2.50e+00    1.25e+00    1.20e-01    4.80e-02
+ 22   |   2.50e+00    2.50e+00    2.40e-01    9.60e-02
+ 23   |   5.00e+00    2.50e+00    1.20e-01    2.40e-02
+
