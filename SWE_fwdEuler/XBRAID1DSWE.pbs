@@ -1,0 +1,28 @@
+#!/bin/bash                                                                                                                                                                                                                                                                    
+# set the number of nodes and processes per node                                                                                                                                                                                                                               
+#PBS -l nodes=1:ppn=8                                                                                                                                                                                                                                                        
+# set max wallclock time                                                                                                                                                                                                                                                       
+#PBS -l walltime=30:00                                                                                                                                                                                                                                                       
+# set name of job                                                                                                                                                                                                                                                              
+#PBS -N xbraid_swe_1d
+
+# mail alert at (b)eginning, (e)nd and (a)bortion of execution                                                                                                                                                                                                                 
+
+#PBS -m bea                                                                                                                                                                                                                                                                    
+
+# send mail to the following address                                                                                                                                                                                                                                           
+
+#PBS -M applenick@unm.edu                                                                                                                                                                                                                                                         
+
+# start job from the directory it was submitted                                                                                                                                                                                                                                
+
+# define MPI host details                                                                                                                                                                                                                                                      
+
+#. enable_hal_mpi.sh                                                                                                                                                                                                                                                           
+module load gnu7/7.3.0
+
+module load mpich/3.2.1
+
+#Intel Thread Advisor                                                                                                                                                                                                                                                          
+cd $PBS_O_WORKDIR
+mpirun -np 8 -machinefile $PBS_NODEFILE ./xbraid-SWE
