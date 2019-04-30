@@ -75,9 +75,9 @@ my_Step(braid_App        app,
 					g*(prev->h)[i+1]*(prev->h)[i+1]*0.5) - 
 				(((prev->uh)[i-1]*(prev->uh)[i-1])/(prev->h)[i-1] +
 				 g*(prev->h)[i-1]*(prev->h)[i-1]* 0.5))/(2.0*dx);
-	//	if ((abs(u->uh[i]/u->h[i]) + sqrt(g*u->h[i]))*dt/dx >= 1.) printf("Courant number large %d : %f\n",i,(abs(u->uh[i]/u->h[i]) + sqrt(g*u->h[i]))*dt/dx);
-	//	else if ((abs(u->uh[i]/u->h[i]) + sqrt(g*u->h[i]))*dt/dx <= 0.1) printf("Courant number small %d : %f\n",i,(abs(u->uh[i]/u->h[i]) + sqrt(g*u->h[i]))*dt/dx);
-	//	else printf("OK\n");
+		//	if ((abs(u->uh[i]/u->h[i]) + sqrt(g*u->h[i]))*dt/dx >= 1.) printf("Courant number large %d : %f\n",i,(abs(u->uh[i]/u->h[i]) + sqrt(g*u->h[i]))*dt/dx);
+		//	else if ((abs(u->uh[i]/u->h[i]) + sqrt(g*u->h[i]))*dt/dx <= 0.1) printf("Courant number small %d : %f\n",i,(abs(u->uh[i]/u->h[i]) + sqrt(g*u->h[i]))*dt/dx);
+		//	else printf("OK\n");
 	}
 
 	/*
@@ -141,6 +141,12 @@ my_Init(braid_App     app,
 		(u->uh)[0] = (u->uh)[1];
 		(u->uh)[nspace-1] = (u->uh)[nspace-2];
 	}
+	else {
+		for (int i = 0; i < nspace; i++) {
+                        (u->h)[i] = 1. + ((double)braid_Rand())/braid_RAND_MAX;
+                        (u->uh)[i] = 1. + ((double)braid_Rand())/braid_RAND_MAX;
+                }
+	}
 	*u_ptr = u;
 
 	return 0;
@@ -196,10 +202,11 @@ my_SpatialNorm(braid_App     app,
 		braid_Vector  u,
 		double       *norm_ptr)
 {
+	int i;
 	int size = (u->size);
-	double dot = 0.;
-	for (int i = 0; i < size; i++) {
-		dot = dot + (u->h)[i]*(u->h)[i]; //+ (u->uh)[i]*(u->uh)[i]; 
+	double dot = 0.0;
+	for (i = 0; i < size; i++) {
+		dot += (u->h)[i]*(u->h)[i]; //+ (u->uh)[i]*(u->uh)[i]; 
 	}
 	*norm_ptr = sqrt(dot);
 	return 0;
@@ -220,7 +227,7 @@ my_Access(braid_App          app,
 
 	int size = (u->size);
 	for (int i = 0; i < size; i++) {
-	    fprintf(file, "%.16e \n", u->h[i]);
+		fprintf(file, "%.16e \n", u->h[i]);
 	}
 	fflush(file);
 	fclose(file);
@@ -402,8 +409,8 @@ int main (int argc, char *argv[])
 	tstart = 0.0;
 	tstop  = 1.0;
 	double    xstart        =  0.0;
-	double    xstop         =  75.0;
-	int      nspace        = 257;
+	double    xstop         =  300.0;
+	int      nspace        = 1025;
 	int print_level = 2;
 	int max_levels = 2;
 
@@ -439,10 +446,10 @@ int main (int argc, char *argv[])
 	/* Create spatial communicator for wrapper-tests */
 	braid_SplitCommworld(&comm, 1, &comm_x, &comm_t);
 
-	braid_TestAll(app, comm_x, stdout, 0.0, (tstop-tstart)/ntime,
-			2*(tstop-tstart)/ntime, my_Init, my_Free, my_Clone,
-			my_Sum, my_SpatialNorm, my_BufSize, my_BufPack,
-			my_BufUnpack, my_Coarsen, my_Interp, my_Residual, my_Step);
+//	braid_TestAll(app, comm_x, stdout, 0.0, (tstop-tstart)/ntime,
+//			2*(tstop-tstart)/ntime, my_Init, my_Free, my_Clone,
+//			my_Sum, my_SpatialNorm, my_BufSize, my_BufPack,
+//			my_BufUnpack, my_Coarsen, my_Interp, my_Residual, my_Step);
 
 
 
@@ -457,7 +464,7 @@ int main (int argc, char *argv[])
 	//   braid_SetSeqSoln(core, 1);
 	braid_SetCFactor(core, -1, 2);
 	braid_SetNRelax(core, -1, 1);
-	braid_SetMaxIter(core, 300);
+	braid_SetMaxIter(core, ntime/4 + 1);
 	braid_SetMinCoarse(core,3);
 
 	/* Spatial Coarsening */
