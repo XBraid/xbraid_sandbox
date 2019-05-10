@@ -201,6 +201,136 @@ my_BufUnpack(braid_App          app,
    return 0;
 }
 
+int
+my_ObjectiveT(braid_App app,
+              braid_Vector u,
+              braid_ObjectiveStatus ostatus,
+              double *objectiveT_ptr)
+{
+   double objT;
+
+   objT  = ( u->value - 2.0 ) * ( u->value - 2.0 );
+   objT += ( 1.0 - u->value ) * ( 1.0 - u->value );
+   objT = 0.5 * objT / app->ntime;
+
+   *objectiveT_ptr = objT;
+
+   return 0;
+}
+
+/* Transposed partial derivatives of objectiveT times F_bar */
+int
+my_ObjectiveT_diff(braid_App            app,
+                  braid_Vector          u,
+                  braid_Vector          u_bar,
+                  braid_Real            F_bar,
+                  braid_ObjectiveStatus ostatus)
+{
+
+   /* Partial wrt u times F_bar */
+   u_bar->value = ( 2.0 * u->value - 3 ) * F_bar;
+
+   /* Partial wrt design times F_bar is zero. Nothing to do. */
+
+   return 0;
+}
+
+int
+my_Step_diff(braid_App           app,
+             braid_Vector        ustop,
+             braid_Vector        u,
+             braid_Vector        ustop_bar,
+             braid_Vector        u_bar,
+             braid_StepStatus    status)
+{
+   double ddu;      /* Derivative wrt u */
+   double ddesign;  /* Derivative wrt design */
+   double tstart;             /* current time */
+   double tstop;              /* evolve to this time*/
+   int istart;
+
+   braid_StepStatusGetTstartTstop(status, &tstart, &tstop);
+   braid_StepStatusGetTIndex(status, &istart);
+   double deltat = tstop - tstart;
+
+   /* Get the design from the app */
+   double design = app->design[istart];
+
+   /* Transposed derivative of step wrt u times u_bar */
+   ddu = 1./(1. + (-design)*deltat)*(u_bar->value);
+
+   /* Transposed derivative of step wrt design times u_bar */
+   ddesign = (deltat * (u->value)) / pow(1. - deltat*design,2) * (u_bar->value);
+
+   /* Update u_bar and add to gradient */
+   u_bar->value        = ddu;              
+   app->gradient[istart] += ddesign;
+
+
+   return 0;
+}
+
+
+/* Set the gradient to zero */
+int 
+my_ResetGradient(braid_App app)
+{
+   for (int i = 0; i < app->ntime; i++)
+   {
+      app->gradient[i] = 0.0;
+   }
+
+   return 0;
+}
+
+// * Function to allow for the computation of the gradient */
+// int
+// gradient_allreduce(braid_App app)
+// {
+//    double mygradient = app->gradient;
+//    double gradient; 
+
+//    /* Collect sensitivities from all processors and broadcast it */
+//    MPI_Allreduce(&mygradient, &gradient, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+//    app->gradient = gradient;
+
+//    return 0;
+// }
+
+
+int print_gradient(braid_App app)
+{
+   char       filename[255];
+   FILE      *file;
+   sprintf(filename, "%s.%03d", "gradient.out", app->rank);
+   file = fopen(filename, "w");
+   for (int i = 0; i < app->ntime; i++)
+   {
+      fprintf(file, "%03d  %1.14e\n", i, app->gradient[i]);
+   }
+   fclose(file);
+
+   printf("Writing %s\n", filename);
+
+   return 0;
+}
+
+int print_design(braid_App app)
+{
+   char       filename[255];
+   FILE      *file;
+   sprintf(filename, "%s.%03d", "design.out", app->rank);
+   file = fopen(filename, "w");
+   for (int i = 0; i < app->ntime; i++)
+   {
+      fprintf(file, "%03d  %1.14e\n", i, app->design[i]);
+   }
+   fclose(file);
+
+   printf("Writing %s\n", filename);
+
+   return 0;
+}
 /*--------------------------------------------------------------------------
  * Main driver
  *--------------------------------------------------------------------------*/
@@ -212,6 +342,7 @@ int main (int argc, char *argv[])
    my_App       *app;
    double        tstart, tstop;
    int           ntime;
+   double        objective;
 
    int           max_levels = 2;
    int           nrelax     = 1;
@@ -335,10 +466,16 @@ int main (int argc, char *argv[])
    (app->gradient) = gradient;
 
 
-   /* initialize XBraid and set options */
+   /* initialize XBraid */
    braid_Init(comm, comm, tstart, tstop, ntime, app,
             my_Step, my_Init, my_Clone, my_Free, my_Sum, my_SpatialNorm, 
             my_Access, my_BufSize, my_BufPack, my_BufUnpack, &core);
+
+  /* Initialize adjoint-based gradient computation */
+   braid_InitAdjoint( my_ObjectiveT, my_ObjectiveT_diff, my_Step_diff, my_ResetGradient, &core);
+
+
+   /* Set options */
    braid_SetPrintLevel( core, 1);
    braid_SetMaxLevels(core, max_levels);
    braid_SetNRelax(core, -1, nrelax);
@@ -362,6 +499,12 @@ int main (int argc, char *argv[])
    /* Run simulation */
    braid_Drive(core);
 
+   /* Get the objective function value */
+   braid_GetObjective(core, &objective);
+   printf("Objective: %1.14e\n", objective);
+
+   print_gradient(app);
+   print_design(app);
 
    /* Clean up */
    braid_Destroy(core);
