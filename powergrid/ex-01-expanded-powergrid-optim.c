@@ -18,6 +18,8 @@ typedef struct _braid_App_struct
    double    tstop;
    int       ntime;     /* Number of uniform time points */
    int       rank;
+   double*   design;    /* Stores a(t) forall t */
+   double*   gradient;  /* dJ/dDesign */
 
 } my_App;
 
@@ -25,7 +27,6 @@ typedef struct _braid_App_struct
 typedef struct _braid_Vector_struct
 {
    double value;  // PDE solution value
-   double coeff;  // PDE coefficient
 } my_Vector;
 
 
@@ -46,21 +47,12 @@ my_Step(braid_App        app,
    braid_StepStatusGetIter(status, &iter);
    braid_StepStatusGetTstartTstop(status, &tstart, &tstop);
    braid_StepStatusGetTIndex(status, &istart);
+
+   /* Get the design variable from the app */
+   double design = app->design[istart];
    
-   /* Use backward Euler and current coeff to propagate solution forward */
-   (u->value) = 1./(1. + (-u->coeff)*(tstop-tstart))*(u->value);
-
-   /* Compute new nonlinear PDE coefficient (based on ustop, or u?) */
-   if (u->value >= 2.0) 
-   {
-      u->coeff = -1.0;
-   }
-   else if (u->value <= 1.0)
-   {
-      u->coeff = 1.0;
-   }
-   /* else do nothing, keep existing value of u->coeff */
-
+   /* Use backward Euler and current design to propagate solution forward */
+   (u->value) = 1./(1. + (-design)*(tstop-tstart))*(u->value);
 
    /* no refinement */
    braid_StepStatusSetRFactor(status, 1);
@@ -77,7 +69,6 @@ my_Init(braid_App     app,
    my_Vector *u;
 
    u = (my_Vector *) malloc(sizeof(my_Vector));
-   (u->coeff) = 1.0;
    
    if (t == 0.0) /* Initial condition */
    {
@@ -101,7 +92,6 @@ my_Clone(braid_App     app,
 
    v = (my_Vector *) malloc(sizeof(my_Vector));
    (v->value) = (u->value);
-   (v->coeff) = (u->coeff);
    *v_ptr = v;
 
    return 0;
@@ -125,11 +115,6 @@ my_Sum(braid_App     app,
 {
    (y->value) = alpha*(x->value) + beta*(y->value);
    
-   /* if(x->level < y->level)
-   {
-      y->coeff = x->coeff;
-   } */
-  
    return 0;
 }
 
@@ -182,7 +167,7 @@ my_BufSize(braid_App          app,
            int                *size_ptr,
            braid_BufferStatus bstatus)
 {
-   *size_ptr = 2*sizeof(double);
+   *size_ptr = sizeof(double);
    return 0;
 }
 
@@ -195,8 +180,7 @@ my_BufPack(braid_App          app,
    double *dbuffer = buffer;
 
    dbuffer[0] = (u->value);
-   dbuffer[1] = (u->coeff);
-   braid_BufferStatusSetSize( bstatus, 2*sizeof(double) );
+   braid_BufferStatusSetSize( bstatus, sizeof(double) );
 
    return 0;
 }
@@ -212,7 +196,6 @@ my_BufUnpack(braid_App          app,
 
    u = (my_Vector *) malloc(sizeof(my_Vector));
    (u->value) = dbuffer[0];
-   (u->coeff) = dbuffer[1];
    *u_ptr = u;
 
    return 0;
@@ -330,6 +313,17 @@ int main (int argc, char *argv[])
    file = fopen(filename, "w");
    fclose(file);
 
+   /* initialize design and gradient */
+   double* design;
+   double* gradient;
+   design   = (double*) malloc(ntime * sizeof(double));
+   gradient = (double*) malloc(ntime * sizeof(double));
+   for (int i = 0; i < ntime; i++)
+   {
+      design[i]   = 1.0;  // Initial guess
+      gradient[i] = 0.0;
+   }
+
    /* set up app structure */
    app = (my_App *) malloc(sizeof(my_App));
    (app->comm)   = comm;
@@ -337,6 +331,8 @@ int main (int argc, char *argv[])
    (app->tstop)  = tstop;
    (app->ntime)  = ntime;
    (app->rank)   = rank;
+   (app->design) = design;
+   (app->gradient) = gradient;
 
 
    /* initialize XBraid and set options */
@@ -364,13 +360,14 @@ int main (int argc, char *argv[])
 
 
    /* Run simulation */
-   braid_SetMaxLevels(core, 1); //serial timestepping only. 
    braid_Drive(core);
 
 
    /* Clean up */
    braid_Destroy(core);
    free(app);
+   free(design);
+   free(gradient);
    MPI_Finalize();
 
    return (0);
