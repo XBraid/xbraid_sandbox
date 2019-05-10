@@ -506,6 +506,17 @@ int main (int argc, char *argv[])
    print_gradient(app);
    print_design(app);
 
+
+   /* --- Finite differences test --- */
+   double EPS = 1e-6;
+
+   /* perturb design */
+   int idx = 1;
+   double design0 = app->design[idx];  // store original design 
+   app->design[idx] += EPS;            // perturb design
+
+   double perturb = 0.0;
+
    /* Clean up */
    braid_Destroy(core);
    free(app);
