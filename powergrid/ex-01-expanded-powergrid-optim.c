@@ -228,7 +228,8 @@ my_ObjectiveT_diff(braid_App            app,
 {
 
    /* Partial wrt u times F_bar */
-   u_bar->value = ( 2.0 * u->value - 3 ) * F_bar;
+   u_bar->value = ( 2.0 * u->value - 3 ) / app->ntime;
+   u_bar->value = u_bar->value * F_bar;
 
    /* Partial wrt design times F_bar is zero. Nothing to do. */
 
@@ -507,18 +508,118 @@ int main (int argc, char *argv[])
    print_design(app);
 
 
+   /* Finish braid */
+   braid_Destroy(core);
+
+
    /* --- Finite differences test --- */
-   double EPS = 1e-6;
+   double objective_orig, objective_perturb;
+   double findiff, relerror;
+   double errornorm = 0.0;
 
-   /* perturb design */
-   int idx = 1;
-   double design0 = app->design[idx];  // store original design 
-   app->design[idx] += EPS;            // perturb design
+   double EPS = 1e-6;   // FD step size
 
-   double perturb = 0.0;
+   /* Store original design and gradient */
+   double* design0   = (double*) malloc(app->ntime * sizeof(double));
+   double* gradient0 = (double*) malloc(app->ntime * sizeof(double));
+   for (int idx = 0; idx < app->ntime; idx++)
+   {
+      design0[idx]   = app->design[idx];  
+      gradient0[idx] = app->gradient[idx];
+   }
+
+   /* Iterate over all design elements */
+   // int idx = 96;         // design element id
+   for (int idx = 0; idx < app->ntime; idx ++)
+   {
+      /* Reset the design */
+      app->design[idx] = design0[idx];
+
+      /* Run first braid instance */ 
+      braid_Init(comm, comm, tstart, tstop, ntime, app,
+               my_Step, my_Init, my_Clone, my_Free, my_Sum, my_SpatialNorm, 
+               my_Access, my_BufSize, my_BufPack, my_BufUnpack, &core);
+      braid_InitAdjoint( my_ObjectiveT, my_ObjectiveT_diff, my_Step_diff, my_ResetGradient, &core);
+      braid_SetPrintLevel( core, 1);
+      braid_SetMaxLevels(core, max_levels);
+      braid_SetNRelax(core, -1, nrelax);
+      if (nrelax0 > -1)
+      {
+         braid_SetNRelax(core,  0, nrelax0);
+      }
+      braid_SetAbsTol(core, tol);
+      braid_SetCFactor(core, -1, cfactor);
+      braid_SetMaxIter(core, max_iter);
+      if (fmg)
+      {
+         braid_SetFMG(core);
+      }
+      if (storage >= -2)
+      {
+         braid_SetStorage(core, storage);
+      }
+      
+      /* Run simulation */
+      braid_Drive(core);
+
+      /* Get the perturbed objective function value */
+      braid_GetObjective(core, &objective_orig);
+
+      /* Destroy new braid instance */
+      braid_Destroy(core);
+
+      
+      /* perturb design */
+      app->design[idx] += EPS;
+
+      /* Create and run another braid instance */ 
+      braid_Init(comm, comm, tstart, tstop, ntime, app,
+               my_Step, my_Init, my_Clone, my_Free, my_Sum, my_SpatialNorm, 
+               my_Access, my_BufSize, my_BufPack, my_BufUnpack, &core);
+      braid_InitAdjoint( my_ObjectiveT, my_ObjectiveT_diff, my_Step_diff, my_ResetGradient, &core);
+      braid_SetPrintLevel( core, 1);
+      braid_SetMaxLevels(core, max_levels);
+      braid_SetNRelax(core, -1, nrelax);
+      if (nrelax0 > -1)
+      {
+         braid_SetNRelax(core,  0, nrelax0);
+      }
+      braid_SetAbsTol(core, tol);
+      braid_SetCFactor(core, -1, cfactor);
+      braid_SetMaxIter(core, max_iter);
+      if (fmg)
+      {
+         braid_SetFMG(core);
+      }
+      if (storage >= -2)
+      {
+         braid_SetStorage(core, storage);
+      }
+      /* Run simulation */
+      braid_Drive(core);
+      /* Get the perturbed objective function value */
+      braid_GetObjective(core, &objective_perturb);
+      printf("perturbed Objective: %1.14e\n", objective_perturb);
+
+      /* Destroy new braid instance */
+      braid_Destroy(core);
+
+      /* FD */
+      findiff = (objective_perturb - objective_orig) / EPS;
+      relerror = (gradient0[idx] - findiff) / findiff;
+      printf("Finite Difference Test: \n");
+      printf("%03d: gradient %1.14e findiff %1.14e \n", idx, gradient0[idx], findiff);
+      printf("%03d: rel. error %1.14e\n", idx, relerror);
+      errornorm += pow(relerror, 2);
+   }
+
+   errornorm = sqrt(errornorm);
+   printf("\n Global errornorm %1.14e\n", errornorm);
+
+   free(design0);
+   free(gradient0);
 
    /* Clean up */
-   braid_Destroy(core);
    free(app);
    free(design);
    free(gradient);
