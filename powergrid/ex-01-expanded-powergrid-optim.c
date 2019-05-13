@@ -344,18 +344,26 @@ int main (int argc, char *argv[])
    double        tstart, tstop;
    int           ntime;
    double        objective;
-
-   int           max_levels = 2;
-   int           nrelax     = 1;
-   int           nrelax0    = -1;
-   double        tol        = 1.0e-06;
-   int           cfactor    = 2;
-   int           max_iter   = 100;
-   int           fmg        = 0;
-   int           storage    = -1;
-
+   double        gnorm;
+   int           optimiter;
    int           arg_index;
    int           rank;
+   double        mygradnorm;
+
+   /* Setting defaults */
+   int         max_levels = 2;
+   int         nrelax     = 1;
+   int         nrelax0    = -1;
+   double      tol        = 1.0e-06;
+   int         cfactor    = 2;
+   int         max_iter   = 100;
+   int         fmg        = 0;
+   int         storage    = -1;
+
+   int         maxoptimiter = 100;    /* Maximum number of optimization iterations */
+   double      stepsize     = 1.0;    /* Step size for design updates */
+   double      gtol         = 1e-6;   /* Stopping criterion on the gradient norm */
+
 
    /* Initialize MPI */
    comm   = MPI_COMM_WORLD;
@@ -376,14 +384,18 @@ int main (int argc, char *argv[])
          if ( rank == 0 )
          {
             printf("\nExample 1: Solve a scalar ODE \n\n");
-            printf("  -ntime <ntime>    : set num time points\n");
-            printf("  -ml  <max_levels> : set max levels\n");
-            printf("  -nu  <nrelax>     : set num F-C relaxations\n");
-            printf("  -nu0 <nrelax>     : set num F-C relaxations on level 0\n");
-            printf("  -tol <tol>        : set stopping tolerance\n");
-            printf("  -cf  <cfactor>    : set coarsening factor\n");
-            printf("  -mi  <max_iter>   : set max iterations\n");
-            printf("  -fmg              : use FMG cycling\n");
+            printf("  -ntime <ntime>         : set num time points\n");
+            printf("  -ml  <max_levels>      : set max levels\n");
+            printf("  -nu  <nrelax>          : set num F-C relaxations\n");
+            printf("  -nu0 <nrelax>          : set num F-C relaxations on level 0\n");
+            printf("  -tol <tol>             : set stopping tolerance\n");
+            printf("  -cf  <cfactor>         : set coarsening factor\n");
+            printf("  -fmg                   : use FMG cycling\n");
+            printf("  -mi  <max_iter>        : set max braid iterations\n");
+            printf("  -moi <max_optim_iter>  : set max optimization iter\n");
+            printf("  -dstep <stepsize>      : set step size for design updates\n");
+            printf("  -gtol <gtol>           : set optimization stopping tolerance\n");
+
             printf("  -storage <level>  : full storage on levels >= level\n");
          }
          exit(1);
@@ -413,6 +425,16 @@ int main (int argc, char *argv[])
          arg_index++;
          tol = atof(argv[arg_index++]);
       }
+      else if ( strcmp(argv[arg_index], "-gtol") == 0 ) 
+      {
+         arg_index++;
+         gtol = atof(argv[arg_index++]);
+      }
+      else if ( strcmp(argv[arg_index], "-dstep") == 0 ) 
+      {
+         arg_index++;
+         stepsize = atof(argv[arg_index++]);
+      }
       else if ( strcmp(argv[arg_index], "-cf") == 0 )
       {
          arg_index++;
@@ -422,6 +444,11 @@ int main (int argc, char *argv[])
       {
          arg_index++;
          max_iter = atoi(argv[arg_index++]);
+      }
+      else if ( strcmp(argv[arg_index], "-moi") == 0 )
+      {
+         arg_index++;
+         maxoptimiter = atoi(argv[arg_index++]);
       }
       else if ( strcmp(argv[arg_index], "-fmg") == 0 )
       {
@@ -477,7 +504,7 @@ int main (int argc, char *argv[])
 
 
    /* Set options */
-   braid_SetPrintLevel( core, 1);
+   braid_SetPrintLevel( core, 0);
    braid_SetMaxLevels(core, max_levels);
    braid_SetNRelax(core, -1, nrelax);
    if (nrelax0 > -1)
@@ -496,128 +523,183 @@ int main (int argc, char *argv[])
       braid_SetStorage(core, storage);
    }
 
+   /* Optimization iteration */
+   for (optimiter = 0; optimiter < maxoptimiter; optimiter++)
+   {
+      /* Run adjoint XBraid to compute objective function and gradient */
+      braid_Drive(core);
 
-   /* Run simulation */
-   braid_Drive(core);
+      /* Get the objective function value */
+      braid_GetObjective(core, &objective);
 
-   /* Get the objective function value */
-   braid_GetObjective(core, &objective);
-   printf("Objective: %1.14e\n", objective);
+      /* Compute gradient norm */
+      mygradnorm = 0.0;
+      for (int id = 0; id < app->ntime; id++)
+      {
+         mygradnorm += pow(app->gradient[id], 2);
+      }
+      MPI_Allreduce(&mygradnorm, &gnorm, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+      gnorm = sqrt(gnorm);
 
-   print_gradient(app);
-   print_design(app);
+      /* Output */
+      if (rank == 0) 
+      {
+         printf("\n %3d: Objective = %1.8e,  || Gradient || = %1.8e\n", optimiter, objective, gnorm);
+      }
+
+      /* Check optimization convergence */
+      if (gnorm < gtol)
+      {
+         break;
+      }
+
+      /* Design update using simple steepest descent method with fixed stepsize */
+      for (int idx = 0; idx < app->ntime; idx++)
+      {
+         app->design[idx] -= stepsize * app->gradient[idx];
+      }
+   }
+
+
+   /* Print some statistics about the optimization run */
+   if (rank == 0)
+   {
+      if (optimiter == maxoptimiter)
+      {
+         printf("\n Max. number of iterations reached! \n\n"); 
+      }
+      else
+      {
+         printf("\n");
+         printf("  Optimization has converged.\n");
+         printf("\n"); 
+         printf("  Objective function value = %1.8e\n", objective);
+         printf("  Gradient norm            = %1.8e\n", gnorm);
+         printf("\n");
+         printf("  optimization iterations  = %d\n", optimiter);
+         printf("  max optim iterations     = %d\n", maxoptimiter);
+         printf("  gradient norm tolerance  = %1.1e", gtol);
+         printf("\n");
+      }
+   }
+
+   /* Print XBraid statistics */
+   braid_PrintStats(core);
 
 
    /* Finish braid */
    braid_Destroy(core);
 
 
-   /* --- Finite differences test --- */
-   double objective_orig, objective_perturb;
-   double findiff, relerror;
-   double errornorm = 0.0;
 
-   double EPS = 1e-6;   // FD step size
 
-   /* Store original design and gradient */
-   double* design0   = (double*) malloc(app->ntime * sizeof(double));
-   double* gradient0 = (double*) malloc(app->ntime * sizeof(double));
-   for (int idx = 0; idx < app->ntime; idx++)
-   {
-      design0[idx]   = app->design[idx];  
-      gradient0[idx] = app->gradient[idx];
-   }
+   // /* --- Finite differences test --- */
+   // double objective_orig, objective_perturb;
+   // double findiff, relerror;
+   // double errornorm = 0.0;
 
-   /* Iterate over all design elements */
-   // int idx = 96;         // design element id
-   for (int idx = 0; idx < app->ntime; idx ++)
-   {
-      /* Reset the design */
-      app->design[idx] = design0[idx];
+   // double EPS = 1e-6;   // FD step size
 
-      /* Run first braid instance */ 
-      braid_Init(comm, comm, tstart, tstop, ntime, app,
-               my_Step, my_Init, my_Clone, my_Free, my_Sum, my_SpatialNorm, 
-               my_Access, my_BufSize, my_BufPack, my_BufUnpack, &core);
-      braid_InitAdjoint( my_ObjectiveT, my_ObjectiveT_diff, my_Step_diff, my_ResetGradient, &core);
-      braid_SetPrintLevel( core, 1);
-      braid_SetMaxLevels(core, max_levels);
-      braid_SetNRelax(core, -1, nrelax);
-      if (nrelax0 > -1)
-      {
-         braid_SetNRelax(core,  0, nrelax0);
-      }
-      braid_SetAbsTol(core, tol);
-      braid_SetCFactor(core, -1, cfactor);
-      braid_SetMaxIter(core, max_iter);
-      if (fmg)
-      {
-         braid_SetFMG(core);
-      }
-      if (storage >= -2)
-      {
-         braid_SetStorage(core, storage);
-      }
+   // /* Store original design and gradient */
+   // double* design0   = (double*) malloc(app->ntime * sizeof(double));
+   // double* gradient0 = (double*) malloc(app->ntime * sizeof(double));
+   // for (int idx = 0; idx < app->ntime; idx++)
+   // {
+   //    design0[idx]   = app->design[idx];  
+   //    gradient0[idx] = app->gradient[idx];
+   // }
+
+   // /* Iterate over all design elements */
+   // // int idx = 96;         // design element id
+   // for (int idx = 0; idx < app->ntime; idx ++)
+   // {
+   //    /* Reset the design */
+   //    app->design[idx] = design0[idx];
+
+   //    /* Run first braid instance */ 
+   //    braid_Init(comm, comm, tstart, tstop, ntime, app,
+   //             my_Step, my_Init, my_Clone, my_Free, my_Sum, my_SpatialNorm, 
+   //             my_Access, my_BufSize, my_BufPack, my_BufUnpack, &core);
+   //    braid_InitAdjoint( my_ObjectiveT, my_ObjectiveT_diff, my_Step_diff, my_ResetGradient, &core);
+   //    braid_SetPrintLevel( core, 1);
+   //    braid_SetMaxLevels(core, max_levels);
+   //    braid_SetNRelax(core, -1, nrelax);
+   //    if (nrelax0 > -1)
+   //    {
+   //       braid_SetNRelax(core,  0, nrelax0);
+   //    }
+   //    braid_SetAbsTol(core, tol);
+   //    braid_SetCFactor(core, -1, cfactor);
+   //    braid_SetMaxIter(core, max_iter);
+   //    if (fmg)
+   //    {
+   //       braid_SetFMG(core);
+   //    }
+   //    if (storage >= -2)
+   //    {
+   //       braid_SetStorage(core, storage);
+   //    }
       
-      /* Run simulation */
-      braid_Drive(core);
+   //    /* Run simulation */
+   //    braid_Drive(core);
 
-      /* Get the perturbed objective function value */
-      braid_GetObjective(core, &objective_orig);
+   //    /* Get the perturbed objective function value */
+   //    braid_GetObjective(core, &objective_orig);
 
-      /* Destroy new braid instance */
-      braid_Destroy(core);
+   //    /* Destroy new braid instance */
+   //    braid_Destroy(core);
 
       
-      /* perturb design */
-      app->design[idx] += EPS;
+   //    /* perturb design */
+   //    app->design[idx] += EPS;
 
-      /* Create and run another braid instance */ 
-      braid_Init(comm, comm, tstart, tstop, ntime, app,
-               my_Step, my_Init, my_Clone, my_Free, my_Sum, my_SpatialNorm, 
-               my_Access, my_BufSize, my_BufPack, my_BufUnpack, &core);
-      braid_InitAdjoint( my_ObjectiveT, my_ObjectiveT_diff, my_Step_diff, my_ResetGradient, &core);
-      braid_SetPrintLevel( core, 1);
-      braid_SetMaxLevels(core, max_levels);
-      braid_SetNRelax(core, -1, nrelax);
-      if (nrelax0 > -1)
-      {
-         braid_SetNRelax(core,  0, nrelax0);
-      }
-      braid_SetAbsTol(core, tol);
-      braid_SetCFactor(core, -1, cfactor);
-      braid_SetMaxIter(core, max_iter);
-      if (fmg)
-      {
-         braid_SetFMG(core);
-      }
-      if (storage >= -2)
-      {
-         braid_SetStorage(core, storage);
-      }
-      /* Run simulation */
-      braid_Drive(core);
-      /* Get the perturbed objective function value */
-      braid_GetObjective(core, &objective_perturb);
-      printf("perturbed Objective: %1.14e\n", objective_perturb);
+   //    /* Create and run another braid instance */ 
+   //    braid_Init(comm, comm, tstart, tstop, ntime, app,
+   //             my_Step, my_Init, my_Clone, my_Free, my_Sum, my_SpatialNorm, 
+   //             my_Access, my_BufSize, my_BufPack, my_BufUnpack, &core);
+   //    braid_InitAdjoint( my_ObjectiveT, my_ObjectiveT_diff, my_Step_diff, my_ResetGradient, &core);
+   //    braid_SetPrintLevel( core, 1);
+   //    braid_SetMaxLevels(core, max_levels);
+   //    braid_SetNRelax(core, -1, nrelax);
+   //    if (nrelax0 > -1)
+   //    {
+   //       braid_SetNRelax(core,  0, nrelax0);
+   //    }
+   //    braid_SetAbsTol(core, tol);
+   //    braid_SetCFactor(core, -1, cfactor);
+   //    braid_SetMaxIter(core, max_iter);
+   //    if (fmg)
+   //    {
+   //       braid_SetFMG(core);
+   //    }
+   //    if (storage >= -2)
+   //    {
+   //       braid_SetStorage(core, storage);
+   //    }
+   //    /* Run simulation */
+   //    braid_Drive(core);
+   //    /* Get the perturbed objective function value */
+   //    braid_GetObjective(core, &objective_perturb);
+   //    printf("perturbed Objective: %1.14e\n", objective_perturb);
 
-      /* Destroy new braid instance */
-      braid_Destroy(core);
+   //    /* Destroy new braid instance */
+   //    braid_Destroy(core);
 
-      /* FD */
-      findiff = (objective_perturb - objective_orig) / EPS;
-      relerror = (gradient0[idx] - findiff) / findiff;
-      printf("Finite Difference Test: \n");
-      printf("%03d: gradient %1.14e findiff %1.14e \n", idx, gradient0[idx], findiff);
-      printf("%03d: rel. error %1.14e\n", idx, relerror);
-      errornorm += pow(relerror, 2);
-   }
+   //    /* FD */
+   //    findiff = (objective_perturb - objective_orig) / EPS;
+   //    relerror = (gradient0[idx] - findiff) / findiff;
+   //    printf("Finite Difference Test: \n");
+   //    printf("%03d: gradient %1.14e findiff %1.14e \n", idx, gradient0[idx], findiff);
+   //    printf("%03d: rel. error %1.14e\n", idx, relerror);
+   //    errornorm += pow(relerror, 2);
+   // }
 
-   errornorm = sqrt(errornorm);
-   printf("\n Global errornorm %1.14e\n", errornorm);
+   // errornorm = sqrt(errornorm);
+   // printf("\n Global errornorm %1.14e\n", errornorm);
 
-   free(design0);
-   free(gradient0);
+   // /* Clean up Finite Differences */
+   // free(design0);
+   // free(gradient0);
 
    /* Clean up */
    free(app);
