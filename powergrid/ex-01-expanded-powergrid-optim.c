@@ -21,6 +21,8 @@ typedef struct _braid_App_struct
    double*   design;    /* Stores a(t) forall t */
    double*   gradient;  /* dJ/dDesign */
 
+   double    sigmoid_p; /* parameter of the s-shaped penalty curve */ 
+
 } my_App;
 
 /* Vector structure can contain anything, and be name anything as well */
@@ -30,6 +32,16 @@ typedef struct _braid_Vector_struct
 } my_Vector;
 
 
+/* This drives a(t) towards -1 or 1, param defines steepness */
+double sigmoid(int param, double a)
+{
+   return tanh(param * a);
+}
+
+double sigmoid_diff(int param, double a)
+{
+   return param / pow(cosh(param * a), 2);
+}
 
 int
 my_Step(braid_App        app,
@@ -50,6 +62,9 @@ my_Step(braid_App        app,
 
    /* Get the design variable from the app */
    double design = app->design[istart];
+   
+   /* Push towards -1 or 1 */
+   design = sigmoid(app->sigmoid_p, design); 
    
    /* Use backward Euler and current design to propagate solution forward */
    (u->value) = 1./(1. + (-design)*(tstop-tstart))*(u->value);
@@ -248,6 +263,7 @@ my_Step_diff(braid_App           app,
    double ddesign;  /* Derivative wrt design */
    double tstart;             /* current time */
    double tstop;              /* evolve to this time*/
+   double dsigm;
    int istart;
 
    braid_StepStatusGetTstartTstop(status, &tstart, &tstop);
@@ -257,11 +273,17 @@ my_Step_diff(braid_App           app,
    /* Get the design from the app */
    double design = app->design[istart];
 
+   /* Push towards -1 or 1 */
+   design = sigmoid(app->sigmoid_p, design); 
+
+   /* Get gradient of sigmoid */
+   dsigm  = sigmoid_diff(app->sigmoid_p, app->design[istart]);
+
    /* Transposed derivative of step wrt u times u_bar */
    ddu = 1./(1. + (-design)*deltat)*(u_bar->value);
 
    /* Transposed derivative of step wrt design times u_bar */
-   ddesign = (deltat * (u->value)) / pow(1. - deltat*design,2) * (u_bar->value);
+   ddesign = dsigm * (deltat * (u->value)) / pow(1. - deltat*design,2) * (u_bar->value);
 
    /* Update u_bar and add to gradient */
    u_bar->value        = ddu;              
@@ -344,6 +366,7 @@ int main (int argc, char *argv[])
    double        tstart, tstop;
    int           ntime;
    double        objective;
+
    double        gnorm;
    int           optimiter;
    int           arg_index;
@@ -360,6 +383,7 @@ int main (int argc, char *argv[])
    int         fmg        = 0;
    int         storage    = -1;
 
+   double      sigmoid_p    = 10;     /* Parameter for sigmoid function */
    int         maxoptimiter = 100;    /* Maximum number of optimization iterations */
    double      stepsize     = 1.0;    /* Step size for design updates */
    double      gtol         = 1e-6;   /* Stopping criterion on the gradient norm */
@@ -391,12 +415,12 @@ int main (int argc, char *argv[])
             printf("  -tol <tol>             : set stopping tolerance\n");
             printf("  -cf  <cfactor>         : set coarsening factor\n");
             printf("  -fmg                   : use FMG cycling\n");
+            printf("  -storage <level>       : full storage on levels >= level\n");
             printf("  -mi  <max_iter>        : set max braid iterations\n");
             printf("  -moi <max_optim_iter>  : set max optimization iter\n");
             printf("  -dstep <stepsize>      : set step size for design updates\n");
             printf("  -gtol <gtol>           : set optimization stopping tolerance\n");
-
-            printf("  -storage <level>  : full storage on levels >= level\n");
+            printf("  -sp <sigmoid_param> : set parameter for sigmoid function \n");
          }
          exit(1);
       } 
@@ -459,6 +483,11 @@ int main (int argc, char *argv[])
          arg_index++;
          storage = atoi(argv[arg_index++]);
       }
+      else if ( strcmp(argv[arg_index], "-sp") == 0 ) 
+      {
+         arg_index++;
+         sigmoid_p = atof(argv[arg_index++]);
+      }
       else
       {
          arg_index++;
@@ -492,6 +521,7 @@ int main (int argc, char *argv[])
    (app->rank)   = rank;
    (app->design) = design;
    (app->gradient) = gradient;
+   (app->sigmoid_p) = sigmoid_p;
 
 
    /* initialize XBraid */
