@@ -235,9 +235,13 @@ my_ObjectiveT(braid_App app,
 {
    double objT;
 
-   objT  = ( u->value - 2.0 ) * ( u->value - 2.0 );
-   objT += ( 1.0 - u->value ) * ( 1.0 - u->value );
-   objT = 0.5 * objT;
+   /* one norm */
+   objT = fabs(u->value - 2) + fabs(u->value - 1);
+
+   /* two norm */
+   // objT  = ( u->value - 2.0 ) * ( u->value - 2.0 );
+   // objT += ( 1.0 - u->value ) * ( 1.0 - u->value );
+   // objT = 0.5 * objT;
 
    *objectiveT_ptr = objT;
 
@@ -254,8 +258,13 @@ my_ObjectiveT_diff(braid_App            app,
 {
 
    /* Partial wrt u times F_bar */
-   u_bar->value = 2.0 * u->value - 3;
-   u_bar->value = u_bar->value * F_bar;
+   /* one norm */
+   if      (u->value < 1) u_bar->value = -1.0 * F_bar;
+   else if (u->value > 2) u_bar->value =  2.0 * F_bar;
+   else                   u_bar->value =  0.0;
+
+   /* two norm */
+   // u_bar->value = ( 2.0 * u->value - 3.0 ) * F_bar;
 
    /* Partial wrt design times F_bar is zero. Nothing to do. */
 
