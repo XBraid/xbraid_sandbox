@@ -21,7 +21,7 @@ typedef struct _braid_App_struct
    double*   design;    /* Stores a(t) forall t */
    double*   gradient;  /* dJ/dDesign */
 
-   double    sigmoid_p; /* parameter of the s-shaped penalty curve */ 
+   double    penalty_p; /* parameter of the penalty curve */ 
 
 } my_App;
 
@@ -33,12 +33,12 @@ typedef struct _braid_Vector_struct
 
 
 /* This drives a(t) towards -1 or 1, param defines steepness */
-double sigmoid(int param, double a)
+double penalty(int param, double a)
 {
    return tanh(param * a);
 }
 
-double sigmoid_diff(int param, double a)
+double penalty_diff(int param, double a)
 {
    return param / pow(cosh(param * a), 2);
 }
@@ -64,7 +64,7 @@ my_Step(braid_App        app,
    double design = app->design[istart];
    
    /* Push towards -1 or 1 */
-   design = sigmoid(app->sigmoid_p, design); 
+   design = penalty(app->penalty_p, design); 
    
    /* Use backward Euler and current design to propagate solution forward */
    (u->value) = 1./(1. + (-design)*(tstop-tstart))*(u->value);
@@ -226,7 +226,7 @@ my_ObjectiveT(braid_App app,
 
    objT  = ( u->value - 2.0 ) * ( u->value - 2.0 );
    objT += ( 1.0 - u->value ) * ( 1.0 - u->value );
-   objT = 0.5 * objT / app->ntime;
+   objT = 0.5 * objT;
 
    *objectiveT_ptr = objT;
 
@@ -243,7 +243,7 @@ my_ObjectiveT_diff(braid_App            app,
 {
 
    /* Partial wrt u times F_bar */
-   u_bar->value = ( 2.0 * u->value - 3 ) / app->ntime;
+   u_bar->value = 2.0 * u->value - 3;
    u_bar->value = u_bar->value * F_bar;
 
    /* Partial wrt design times F_bar is zero. Nothing to do. */
@@ -274,10 +274,10 @@ my_Step_diff(braid_App           app,
    double design = app->design[istart];
 
    /* Push towards -1 or 1 */
-   design = sigmoid(app->sigmoid_p, design); 
+   design = penalty(app->penalty_p, design); 
 
-   /* Get gradient of sigmoid */
-   dsigm  = sigmoid_diff(app->sigmoid_p, app->design[istart]);
+   /* Get gradient of penalty */
+   dsigm  = penalty_diff(app->penalty_p, app->design[istart]);
 
    /* Transposed derivative of step wrt u times u_bar */
    ddu = 1./(1. + (-design)*deltat)*(u_bar->value);
@@ -383,7 +383,7 @@ int main (int argc, char *argv[])
    int         fmg        = 0;
    int         storage    = -1;
 
-   double      sigmoid_p    = 10;     /* Parameter for sigmoid function */
+   double      penalty_p    = 10;     /* Parameter for penalty function */
    int         maxoptimiter = 100;    /* Maximum number of optimization iterations */
    double      stepsize     = 1.0;    /* Step size for design updates */
    double      gtol         = 1e-6;   /* Stopping criterion on the gradient norm */
@@ -420,7 +420,7 @@ int main (int argc, char *argv[])
             printf("  -moi <max_optim_iter>  : set max optimization iter\n");
             printf("  -dstep <stepsize>      : set step size for design updates\n");
             printf("  -gtol <gtol>           : set optimization stopping tolerance\n");
-            printf("  -sp <sigmoid_param> : set parameter for sigmoid function \n");
+            printf("  -pp <penalty_param>    : set parameter for penalty function \n");
          }
          exit(1);
       } 
@@ -483,10 +483,10 @@ int main (int argc, char *argv[])
          arg_index++;
          storage = atoi(argv[arg_index++]);
       }
-      else if ( strcmp(argv[arg_index], "-sp") == 0 ) 
+      else if ( strcmp(argv[arg_index], "-pp") == 0 ) 
       {
          arg_index++;
-         sigmoid_p = atof(argv[arg_index++]);
+         penalty_p = atof(argv[arg_index++]);
       }
       else
       {
@@ -521,7 +521,7 @@ int main (int argc, char *argv[])
    (app->rank)   = rank;
    (app->design) = design;
    (app->gradient) = gradient;
-   (app->sigmoid_p) = sigmoid_p;
+   (app->penalty_p) = penalty_p;
 
 
    /* initialize XBraid */
@@ -557,6 +557,7 @@ int main (int argc, char *argv[])
    for (optimiter = 0; optimiter < maxoptimiter; optimiter++)
    {
       /* Run adjoint XBraid to compute objective function and gradient */
+      braid_SetAccessLevel(core, 0);
       braid_Drive(core);
 
       /* Get the objective function value */
@@ -616,11 +617,15 @@ int main (int argc, char *argv[])
    /* Print XBraid statistics */
    braid_PrintStats(core);
 
+   /* Get final access */
+   braid_SetAccessLevel(core, 1);
+   braid_Drive(core);
 
    /* Finish braid */
    braid_Destroy(core);
 
-
+   /* print design */
+   print_design(app);
 
 
    // /* --- Finite differences test --- */
