@@ -321,39 +321,32 @@ my_ResetGradient(braid_App app)
 // }
 
 
-int print_gradient(braid_App app)
+void write_vector(char   *filename,
+                  double * var, 
+                  int      dimN)
 {
-   char       filename[255];
-   FILE      *file;
-   sprintf(filename, "%s.%03d", "gradient.out", app->rank);
+   FILE *file;
+   int i;
+
+   /* open file */
    file = fopen(filename, "w");
-   for (int i = 0; i < app->ntime; i++)
+   if (file == NULL)
    {
-      fprintf(file, "%03d  %1.14e\n", i, app->gradient[i]);
+      printf("Can't open %s \n", filename);
+      exit(1);
    }
-   fclose(file);
-
-   printf("Writing %s\n", filename);
-
-   return 0;
-}
-
-int print_design(braid_App app)
-{
-   char       filename[255];
-   FILE      *file;
-   sprintf(filename, "%s.%03d", "design.out", app->rank);
-   file = fopen(filename, "w");
-   for (int i = 0; i < app->ntime; i++)
+   /* Write data */
+   printf("Writing file %s\n", filename);
+   for ( i = 0; i < dimN; i++)
    {
-      fprintf(file, "%03d  %1.14e\n", i, app->design[i]);
+      fprintf(file, "%04d  %1.14e\n", i, var[i]);
    }
+
+   /* close file */
    fclose(file);
+}            
 
-   printf("Writing %s\n", filename);
 
-   return 0;
-}
 /*--------------------------------------------------------------------------
  * Main driver
  *--------------------------------------------------------------------------*/
@@ -525,6 +518,7 @@ int main (int argc, char *argv[])
 
 
    /* initialize XBraid */
+   
    braid_Init(comm, comm, tstart, tstop, ntime, app,
             my_Step, my_Init, my_Clone, my_Free, my_Sum, my_SpatialNorm, 
             my_Access, my_BufSize, my_BufPack, my_BufUnpack, &core);
@@ -624,8 +618,11 @@ int main (int argc, char *argv[])
    /* Finish braid */
    braid_Destroy(core);
 
-   /* print design */
-   print_design(app);
+   /* print */
+   sprintf(filename, "%s.%03d", "design.out", rank);
+   write_vector(filename, app->design, app->ntime);
+   sprintf(filename, "%s.%03d", "gradient.out", rank);
+   write_vector(filename, app->gradient, app->ntime);
 
 
    // /* --- Finite differences test --- */
