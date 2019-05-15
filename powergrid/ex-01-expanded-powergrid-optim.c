@@ -109,7 +109,7 @@ my_Init(braid_App     app,
    }
    else /* All other time points set to arbitrary value */
    {
-      (u->value) = 0.0;
+      (u->value) = 1.5;
    }
    *u_ptr = u;
 
@@ -667,6 +667,16 @@ int main (int argc, char *argv[])
    write_vector(filename, app->design, app->ntime);
    sprintf(filename, "%s.%03d", "gradient.out", rank);
    write_vector(filename, app->gradient, app->ntime);
+
+   /* Print Penalty(design) */
+   double* Sa = (double*) malloc(app->ntime * sizeof(double));
+   for (int i=0; i<app->ntime; i++)
+   {
+      Sa[i] = penalty(app->penalty_p, app->design[i]);
+   }
+   sprintf(filename, "%s.%03d", "Sa.out", rank);
+   write_vector(filename, Sa, app->ntime);
+
 
 
 #if FINDEF
