@@ -24,6 +24,7 @@ typedef struct _braid_App_struct
    double*   design;    /* Stores a(t) forall t */
    double*   gradient;  /* dJ/dDesign */
 
+   double    gamma;     /* Regularization parameter */
    double    penalty_p; /* parameter of the penalty curve */ 
 
 } my_App;
@@ -242,7 +243,12 @@ my_ObjectiveT(braid_App app,
    double objT;
 
    /* one norm */
-   objT = fabs(u->value - 2) + fabs(u->value - 1);
+   objT = fabs(u->value - 2) + fabs(u->value - 1) - 1.0;
+
+   /* Regularization */
+   int    idx;
+   braid_ObjectiveStatusGetTIndex(ostatus, &idx);
+   objT += app->gamma * fabs(app->design[idx] - 1.0);
 
    /* two norm */
    // objT  = ( u->value - 2.0 ) * ( u->value - 2.0 );
@@ -266,13 +272,18 @@ my_ObjectiveT_diff(braid_App            app,
    /* Partial wrt u times F_bar */
    /* one norm */
    if      (u->value < 1) u_bar->value = -1.0 * F_bar;
-   else if (u->value > 2) u_bar->value =  2.0 * F_bar;
+   else if (u->value > 2) u_bar->value =  1.0 * F_bar;
    else                   u_bar->value =  0.0;
+
 
    /* two norm */
    // u_bar->value = ( 2.0 * u->value - 3.0 ) * F_bar;
 
-   /* Partial wrt design times F_bar is zero. Nothing to do. */
+   /* Partial wrt design times F_bar -> Regularization . */
+   int    idx;
+   braid_ObjectiveStatusGetTIndex(ostatus, &idx);
+   if (app->design[idx] < 1) app->gradient[idx] += -1.0 * app->gamma * F_bar;
+   if (app->design[idx] > 1) app->gradient[idx] +=  1.0 * app->gamma * F_bar;
 
    return 0;
 }
@@ -406,18 +417,18 @@ int main (int argc, char *argv[])
    int         maxoptimiter = 100;    /* Maximum number of optimization iterations */
    double      stepsize     = 1.0;    /* Step size for design updates */
    double      gtol         = 1e-6;   /* Stopping criterion on the gradient norm */
+   double      gamma        = 1e-4;   /* Regularization parameter */
 
+   /* Define time domain: ntime intervals */
+   ntime  = 100;
+   tstart = 0.0;
+   tstop  = 2.0; 
 
    /* Initialize MPI */
    comm   = MPI_COMM_WORLD;
    MPI_Init(&argc, &argv);
    MPI_Comm_rank(comm, &rank);
 
-   /* Define time domain: ntime intervals */
-   ntime  = 100;
-   tstart = 0.0;
-   tstop  = 2.0; 
-   
    /* Parse command line */
    arg_index = 1;
    while (arg_index < argc)
@@ -440,6 +451,7 @@ int main (int argc, char *argv[])
             printf("  -dstep <stepsize>      : set step size for design updates\n");
             printf("  -gtol <gtol>           : set optimization stopping tolerance\n");
             printf("  -pp <penalty_param>    : set parameter for penalty function \n");
+            printf("  -regul <regularization param> : set the regularization parameter \n");
          }
          exit(1);
       } 
@@ -507,6 +519,11 @@ int main (int argc, char *argv[])
          arg_index++;
          penalty_p = atof(argv[arg_index++]);
       }
+      else if ( strcmp(argv[arg_index], "-regul") == 0 ) 
+      {
+         arg_index++;
+         gamma = atof(argv[arg_index++]);
+      }
       else
       {
          arg_index++;
@@ -541,6 +558,7 @@ int main (int argc, char *argv[])
    (app->design) = design;
    (app->gradient) = gradient;
    (app->penalty_p) = penalty_p;
+   (app->gamma)     = gamma;
 
 
    /* initialize XBraid */
