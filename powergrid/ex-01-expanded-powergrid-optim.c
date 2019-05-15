@@ -38,20 +38,26 @@ typedef struct _braid_Vector_struct
 /* This drives a(t) towards -1 or 1, param defines steepness */
 double penalty(int param, double a)
 {
+   /* Identity */
+   // return a;
+
    /* a\in[0,1], exponential, then linear transform */
-   return 2 * pow(a, param) - 1;
+   // return 2 * pow(a, param) - 1;
 
    /* Sigmoid */
-   // return tanh(param * a);
+   return tanh(param * a);
 }
 
 double penalty_diff(int param, double a)
 {
+   /* Identity */
+   // return 1.0;
+
    /* a\in[0,1], exponential, then linear transform */
-   return 2 * param * pow(a, param-1);
+   // return 2 * param * pow(a, param-1);
 
    /* Sigmoid */
-   // return param / pow(cosh(param * a), 2);
+   return param / pow(cosh(param * a), 2);
 }
 
 int
