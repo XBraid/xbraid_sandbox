@@ -254,6 +254,7 @@ my_ObjectiveT(braid_App app,
    double design_penalty = 0.0;
    double regularization = 0.0;
    double fd = 0.0;
+   double objT = 0.0;
 
    /* Get design */
    int    idx;
@@ -266,13 +267,14 @@ my_ObjectiveT(braid_App app,
    /* Barrier for state 1 <= y(t) <= 2, 2-norm */
    if      (u->value < 1.0) state_penalty = 0.5 * pow(1.0 - u->value, 2);
    else if (u->value > 2.0) state_penalty = 0.5 * pow(u->value - 2.0, 2);
-   else                   state_penalty = 0.0;
+   else                     state_penalty = 0.0;
+   objT += app->state_penalty_p * state_penalty;
 
    /* Barrier for design -1 <= a(t) <= 1, 2-norm */
    if      (design < -1.0) design_penalty = 0.5 * pow(-1.0 - design, 2);
    else if (design > 1.0)  design_penalty = 0.5 * pow(design - 1.0, 2);
-   else                  design_penalty = 0.0;
-
+   else                    design_penalty = 0.0;
+   objT += app->design_penalty_p * design_penalty;
 
    /* Regularization: 0.5 * | dS/da |^2  */
    // regularization = 0.5 * pow(sigmoid_diff(app->sigmoid_p, design), 2);
@@ -283,13 +285,12 @@ my_ObjectiveT(braid_App app,
       /* Central finite differences */
       double dt = app->tstop / app->ntime;
       fd = (app->design[idx + 1] - app->design[idx - 1]) / (2.0 * dt);
+      regularization = 0.5 * pow(fd, 2);
    }
-   regularization = 0.5 * pow(fd, 2);
+   objT += app->gamma * regularization;
 
-   /* Compute objective */
-   *objectiveT_ptr =   app->state_penalty_p  * state_penalty \
-                     + app->design_penalty_p * design_penalty \
-                     + app->gamma            * regularization;
+   /* set return value */
+   *objectiveT_ptr =  objT;
 
    return 0;
 }
@@ -760,11 +761,49 @@ int main (int argc, char *argv[])
 
 #if FINDEF
    /* --- Finite differences test --- */
+   printf("\n\n --- FINITE DIFFERENCE TESTING ---\n\n");
+
    double objective_orig, objective_perturb;
    double findiff, relerror;
    double errornorm = 0.0;
 
    double EPS = 1e-6;   // FD step size
+
+   /* Compute original objective and gradient */ 
+   braid_Init(comm, comm, tstart, tstop, ntime, app,
+            my_Step, my_Init, my_Clone, my_Free, my_Sum, my_SpatialNorm, 
+            my_Access, my_BufSize, my_BufPack, my_BufUnpack, &core);
+   braid_InitAdjoint( my_ObjectiveT, my_ObjectiveT_diff, my_Step_diff, my_ResetGradient, &core);
+   braid_SetPrintLevel( core, 1);
+   braid_SetMaxLevels(core, max_levels);
+   braid_SetNRelax(core, -1, nrelax);
+   if (nrelax0 > -1)
+   {
+      braid_SetNRelax(core,  0, nrelax0);
+   }
+   braid_SetAbsTol(core, tol);
+   braid_SetCFactor(core, -1, cfactor);
+   braid_SetMaxIter(core, max_iter);
+   if (fmg)
+   {
+      braid_SetFMG(core);
+   }
+   if (storage >= -2)
+   {
+      braid_SetStorage(core, storage);
+   }
+      
+   /* Run simulation */
+   my_ResetGradient(app);
+   braid_Drive(core);
+
+   /* Get the perturbed objective function value */
+   braid_GetObjective(core, &objective_orig);
+   printf("original Objective: %1.14e\n", objective_orig);
+
+   /* Destroy new braid instance */
+   braid_Destroy(core);
+
 
    /* Store original design and gradient */
    double* design0   = (double*) malloc(app->ntime * sizeof(double));
@@ -776,45 +815,9 @@ int main (int argc, char *argv[])
    }
 
    /* Iterate over all design elements */
-   // int idx = 6;         // design element id
+   // int idx = 96;         // design element id
    for (int idx = 0; idx < app->ntime; idx ++)
    {
-      /* Reset the design */
-      app->design[idx] = design0[idx];
-
-      /* Run first braid instance */ 
-      braid_Init(comm, comm, tstart, tstop, ntime, app,
-               my_Step, my_Init, my_Clone, my_Free, my_Sum, my_SpatialNorm, 
-               my_Access, my_BufSize, my_BufPack, my_BufUnpack, &core);
-      braid_InitAdjoint( my_ObjectiveT, my_ObjectiveT_diff, my_Step_diff, my_ResetGradient, &core);
-      braid_SetPrintLevel( core, 1);
-      braid_SetMaxLevels(core, max_levels);
-      braid_SetNRelax(core, -1, nrelax);
-      if (nrelax0 > -1)
-      {
-         braid_SetNRelax(core,  0, nrelax0);
-      }
-      braid_SetAbsTol(core, tol);
-      braid_SetCFactor(core, -1, cfactor);
-      braid_SetMaxIter(core, max_iter);
-      if (fmg)
-      {
-         braid_SetFMG(core);
-      }
-      if (storage >= -2)
-      {
-         braid_SetStorage(core, storage);
-      }
-      
-      /* Run simulation */
-      braid_Drive(core);
-
-      /* Get the perturbed objective function value */
-      braid_GetObjective(core, &objective_orig);
-
-      /* Destroy new braid instance */
-      braid_Destroy(core);
-
       
       /* perturb design */
       app->design[idx] += EPS;
@@ -843,6 +846,7 @@ int main (int argc, char *argv[])
          braid_SetStorage(core, storage);
       }
       /* Run simulation */
+      my_ResetGradient(app);
       braid_Drive(core);
       /* Get the perturbed objective function value */
       braid_GetObjective(core, &objective_perturb);
@@ -858,6 +862,9 @@ int main (int argc, char *argv[])
       printf("%03d: gradient %1.14e findiff %1.14e \n", idx, gradient0[idx], findiff);
       printf("%03d: rel. error %1.14e\n", idx, relerror);
       errornorm += pow(relerror, 2);
+
+      /* Reset the design */
+      app->design[idx] = design0[idx];
    }
 
    errornorm = sqrt(errornorm);
