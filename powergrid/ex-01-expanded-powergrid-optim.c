@@ -27,6 +27,7 @@ typedef struct _braid_App_struct
    double    gamma;     /* Regularization parameter */
    double    sigmoid_p; /* parameter for steepnes of the sigmoid curve */ 
    double    state_barrier_p; /* parameter of the barrier objective */ 
+   double    design_barrier_p; /* parameter of the design barrier objective */ 
 
 } my_App;
 
@@ -249,30 +250,36 @@ my_ObjectiveT(braid_App app,
               braid_ObjectiveStatus ostatus,
               double *objectiveT_ptr)
 {
-   double objT;
-   double regul = 0.0;
+   double state_barrier  = 0.0;
+   double design_barrier = 0.0;
+   double regularization = 0.0;
+
+   /* Get design */
+   int    idx;
+   braid_ObjectiveStatusGetTIndex(ostatus, &idx);
+   double design = app->design[idx];
 
    /* one norm */
    // objT = fabs(u->value - 2) + fabs(u->value - 1) - 1.0;
 
-   /* Barrier for state 1<= y <= 2, 2-norm */
-   if      (u->value < 1) objT = 0.5 * app->state_barrier_p * pow(u->value - 1, 2);
-   else if (u->value > 2) objT = 0.5 * app->state_barrier_p * pow(u->value - 2, 2);
-   else                   objT = 0.0;
+   /* Barrier for state 1 <= y(t) <= 2, 2-norm */
+   if      (u->value < 1.0) state_barrier = 0.5 * pow(1.0 - u->value, 2);
+   else if (u->value > 2.0) state_barrier = 0.5 * pow(u->value - 2.0, 2);
+   else                   state_barrier = 0.0;
 
-   /* Regularization */
-   int    idx;
-   braid_ObjectiveStatusGetTIndex(ostatus, &idx);
-   /* |a-1| */
-   // objT += app->gamma * fabs(app->design[idx] - 1.0);   
-   /* |S(a)-1| */
-   // objT += app->gamma * fabs(sigmoid(app->sigmoid_p, app->design[idx]) - 1.0);
+   /* Barrier for design -1 <= a(t) <= 1, 2-norm */
+   if      (design < -1.0) design_barrier = 0.5 * pow(-1.0 - design, 2);
+   else if (design > 1.0)  design_barrier = 0.5 * pow(design - 1.0, 2);
+   else                  design_barrier = 0.0;
 
-   /* 0.5 * | dS/da |^2 -> min. switches */
-   regul = 0.5 * pow(sigmoid_diff(app->sigmoid_p, app->design[idx]), 2);
 
-   /* Set the pointer */
-   *objectiveT_ptr = objT + app->gamma * regul;
+   /* Regularization:  0.5 * | dS/da |^2  */
+   regularization = 0.5 * pow(sigmoid_diff(app->sigmoid_p, design), 2);
+
+   /* Compute objective */
+   *objectiveT_ptr =   app->state_barrier_p  * state_barrier \
+                     + app->design_barrier_p * design_barrier \
+                     + app->gamma            * regularization;
 
    return 0;
 }
@@ -285,26 +292,35 @@ my_ObjectiveT_diff(braid_App            app,
                   braid_Real            F_bar,
                   braid_ObjectiveStatus ostatus)
 {
+   double state_barrier_diff;
+   double design_barrier_diff;
+   double regularization_diff;
 
-   /* Partial wrt u times F_bar */
+   /* Get design */
+   int    idx;
+   braid_ObjectiveStatusGetTIndex(ostatus, &idx);
+   double design = app->design[idx];
+
    /* one norm */
    // if      (u->value < 1) u_bar->value = -1.0 * F_bar;
    // else if (u->value > 2) u_bar->value =  1.0 * F_bar;
    // else                   u_bar->value =  0.0;
 
-   /* two norm */
-   // u_bar->value = ( 2.0 * u->value - 3.0 ) * F_bar;
-
    /* Barrier for state 1 <= y <= 2, 2-norm */
-   if      (u->value < 1) u_bar->value = app->state_barrier_p * (u->value-1) * F_bar;
-   else if (u->value > 2) u_bar->value = app->state_barrier_p * (u->value-2) * F_bar;
-   else                   u_bar->value = 0.0;
+   if      (u->value < 1.0) state_barrier_diff = - (1.0 - u->value);
+   else if (u->value > 2.0) state_barrier_diff =   (u->value - 2.0);
+   else                   state_barrier_diff = 0.0;
+   u_bar->value = app->state_barrier_p * state_barrier_diff * F_bar;
 
-   /* Regularization */
-   int    idx;
-   braid_ObjectiveStatusGetTIndex(ostatus, &idx);
-   /* from | dS/da |^2 -> min. switches */
-   app->gradient[idx] += app->gamma * sigmoid_diff(app->sigmoid_p, app->design[idx]) * sigmoid_diff_diff(app->sigmoid_p, app->design[idx]) * F_bar;
+   /* Barrier for design -1 <= a(t) <= 1, 2-norm */ 
+   if      (design < -1.0) design_barrier_diff = - (-1.0 - design);
+   else if (design >  1.0) design_barrier_diff =   (design - 1.0);
+   else                    design_barrier_diff = 0.0;
+   app->gradient[idx] += app->design_barrier_p * design_barrier_diff * F_bar;
+
+   /* Regularization: 0.5 * | dS/da |^2 */
+   regularization_diff = sigmoid_diff(app->sigmoid_p, design) * sigmoid_diff_diff(app->sigmoid_p, design);
+   app->gradient[idx] += app->gamma * regularization_diff * F_bar;
 
    return 0;
 }
@@ -434,12 +450,13 @@ int main (int argc, char *argv[])
    int         fmg        = 0;
    int         storage    = -1;
 
-   double      sigmoid_p       = 3;      /* Parameter for sigmoid function */
-   double      state_barrier_p = 10;     /* Parameter for state barrier in objective */
-   int         maxoptimiter    = 100;    /* Maximum optimization iterations */
-   double      stepsize        = 1.0;    /* Step size for design updates */
-   double      gtol            = 1e-6;   /* Stopping criterion on the gradient norm */
-   double      gamma           = 1e-4;   /* Regularization parameter */
+   double      sigmoid_p        = 3;      /* Parameter for sigmoid function */
+   double      state_barrier_p  = 10;     /* Param for state barrier in objective */
+   double      design_barrier_p = 10;     /* Param for design barrier in objective */
+   double      gamma            = 1e-4;   /* Regularization parameter */
+   int         maxoptimiter     = 100;    /* Maximum optimization iterations */
+   double      stepsize         = 1.0;    /* Step size for design updates */
+   double      gtol             = 1e-6;   /* Stopping criterion on the gradient norm */
 
    /* Define time domain: ntime intervals */
    ntime  = 100;
@@ -474,6 +491,7 @@ int main (int argc, char *argv[])
             printf("  -gtol <gtol>           : set optimization stopping tolerance\n");
             printf("  -sp <sigmoid_param>    : set parameter for sigmoid function \n");
             printf("  -sbp <parameter>       : set parameter for state barrier in objective \n");
+            printf("  -dbp <sigmoid_param>   : set parameter for design barrier in objective \n");
             printf("  -regul <regularization param> : set the regularization parameter \n");
          }
          exit(1);
@@ -547,6 +565,11 @@ int main (int argc, char *argv[])
          arg_index++;
          state_barrier_p = atof(argv[arg_index++]);
       }
+      else if ( strcmp(argv[arg_index], "-dbp") == 0 ) 
+      {
+         arg_index++;
+         design_barrier_p = atof(argv[arg_index++]);
+      }
       else if ( strcmp(argv[arg_index], "-regul") == 0 ) 
       {
          arg_index++;
@@ -587,6 +610,7 @@ int main (int argc, char *argv[])
    (app->gradient) = gradient;
    (app->sigmoid_p) = sigmoid_p;
    (app->state_barrier_p) = state_barrier_p;
+   (app->design_barrier_p) = design_barrier_p;
    (app->gamma)     = gamma;
 
 
