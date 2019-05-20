@@ -253,6 +253,7 @@ my_ObjectiveT(braid_App app,
    double state_penalty  = 0.0;
    double design_penalty = 0.0;
    double regularization = 0.0;
+   double fd = 0.0;
 
    /* Get design */
    int    idx;
@@ -273,8 +274,17 @@ my_ObjectiveT(braid_App app,
    else                  design_penalty = 0.0;
 
 
-   /* Regularization:  0.5 * | dS/da |^2  */
-   regularization = 0.5 * pow(sigmoid_diff(app->sigmoid_p, design), 2);
+   /* Regularization: 0.5 * | dS/da |^2  */
+   // regularization = 0.5 * pow(sigmoid_diff(app->sigmoid_p, design), 2);
+
+   /* Regularization: 0.5 * | da/dt |^2  */
+   if (idx > 0 && idx < app->ntime-1)
+   {
+      /* Central finite differences */
+      double dt = app->tstop / app->ntime;
+      fd = (app->design[idx + 1] - app->design[idx - 1]) / (2.0 * dt);
+   }
+   regularization = 0.5 * pow(fd, 2);
 
    /* Compute objective */
    *objectiveT_ptr =   app->state_penalty_p  * state_penalty \
@@ -292,9 +302,11 @@ my_ObjectiveT_diff(braid_App            app,
                   braid_Real            F_bar,
                   braid_ObjectiveStatus ostatus)
 {
-   double state_penalty_diff;
-   double design_penalty_diff;
-   double regularization_diff;
+   double state_penalty_diff  = 0.0;
+   double design_penalty_diff = 0.0;
+   double regularization_diff = 0.0;
+   double fd      = 0.0;
+   double fd_diff = 0.0;
 
    /* Get design */
    int    idx;
@@ -318,10 +330,22 @@ my_ObjectiveT_diff(braid_App            app,
    else                    design_penalty_diff = 0.0;
    app->gradient[idx] += app->design_penalty_p * design_penalty_diff * F_bar;
 
-   /* Regularization: 0.5 * | dS/da |^2 */
-   regularization_diff = sigmoid_diff(app->sigmoid_p, design) * sigmoid_diff_diff(app->sigmoid_p, design);
-   app->gradient[idx] += app->gamma * regularization_diff * F_bar;
+   /* Regularization:  0.5 * | dS/da |^2 */
+   // regularization_diff = sigmoid_diff(app->sigmoid_p, design) * sigmoid_diff_diff(app->sigmoid_p, design);
+   // app->gradient[idx] += app->gamma * regularization_diff * F_bar;
 
+   /* Regularization: 0.5 * | da/dt |^2  */
+   if (idx > 0 && idx < app->ntime-1)
+   {
+      /* First order central finite differences */
+      double dt = app->tstop / app->ntime;
+      fd      = (app->design[idx + 1] - app->design[idx - 1]) / (2.0 * dt);
+      fd_diff = (app->design[idx+1] - 2.0 * app->design[idx] + app->design[idx-1]) / pow(dt,2);
+   }
+   regularization_diff = fd * fd_diff;
+   app->gradient[idx] += app->gamma * regularization_diff * F_bar; 
+
+ 
    return 0;
 }
 
@@ -752,8 +776,8 @@ int main (int argc, char *argv[])
    }
 
    /* Iterate over all design elements */
-   int idx = 6;         // design element id
-   // for (int idx = 0; idx < app->ntime; idx ++)
+   // int idx = 6;         // design element id
+   for (int idx = 0; idx < app->ntime; idx ++)
    {
       /* Reset the design */
       app->design[idx] = design0[idx];
