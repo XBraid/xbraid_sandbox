@@ -279,13 +279,13 @@ my_ObjectiveT(braid_App app,
    /* Regularization: 0.5 * | dS/da |^2  */
    // regularization = 0.5 * pow(sigmoid_diff(app->sigmoid_p, design), 2);
 
-   /* Regularization: 0.5 * | da/dt |^2  */
-   if (idx > 0 && idx < app->ntime-1)
+   /* Regularization: | da/dt |_1  */
+   if (idx > 0 && idx < app->ntime)
    {
-      /* Central finite differences */
-      double dt = app->tstop / app->ntime;
-      fd = (app->design[idx + 1] - app->design[idx - 1]) / (2.0 * dt);
-      regularization = 0.5 * pow(fd, 2);
+      /* Backward finite differences */
+      double oneoverdt = app->ntime / app->tstop ;
+      fd = (app->design[idx] - app->design[idx - 1]) * oneoverdt;
+      regularization = fabs(fd);
    }
    objT += app->gamma * regularization;
 
@@ -305,9 +305,7 @@ my_ObjectiveT_diff(braid_App            app,
 {
    double state_penalty_diff  = 0.0;
    double design_penalty_diff = 0.0;
-   double regularization_diff = 0.0;
-   double fd      = 0.0;
-   double fd_diff = 0.0;
+   double fd_diff             = 0.0;
 
    /* Get design */
    int    idx;
@@ -335,17 +333,17 @@ my_ObjectiveT_diff(braid_App            app,
    // regularization_diff = sigmoid_diff(app->sigmoid_p, design) * sigmoid_diff_diff(app->sigmoid_p, design);
    // app->gradient[idx] += app->gamma * regularization_diff * F_bar;
 
-   /* Regularization: 0.5 * | da/dt |^2  */
-   if (idx > 0 && idx < app->ntime-1)
+   /* Regularization: | da/dt |_1 */
+   if (idx > 0 && idx < app->ntime)
    {
-      /* First order central finite differences */
-      double dt = app->tstop / app->ntime;
-      fd      = (app->design[idx + 1] - app->design[idx - 1]) / (2.0 * dt);
-      fd_diff = (app->design[idx+1] - 2.0 * app->design[idx] + app->design[idx-1]) / pow(dt,2);
+      /* Backwards finite differences */
+      double oneoverdt = app->ntime / app->tstop ;
+      if      ( app->design[idx] > app->design[idx - 1] ) fd_diff = oneoverdt;
+      else if ( app->design[idx] < app->design[idx - 1] ) fd_diff = oneoverdt * (-1.0);
+      else fd_diff = 0.0;
+      app->gradient[idx]   += app->gamma * fd_diff  * F_bar;
+      app->gradient[idx-1] += app->gamma * (-1.0) * fd_diff * F_bar;
    }
-   regularization_diff = fd * fd_diff;
-   app->gradient[idx] += app->gamma * regularization_diff * F_bar; 
-
  
    return 0;
 }
