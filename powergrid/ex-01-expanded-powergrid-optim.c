@@ -289,6 +289,9 @@ my_ObjectiveT(braid_App app,
    }
    objT += app->gamma * regularization;
 
+   /* Divide by number of time-steps */
+   objT = objT / (double) app->ntime;
+
    /* set return value */
    *objectiveT_ptr =  objT;
 
@@ -311,6 +314,9 @@ my_ObjectiveT_diff(braid_App            app,
    int    idx;
    braid_ObjectiveStatusGetTIndex(ostatus, &idx);
    double design = app->design[idx];
+
+   /* Divide by number of time steps */
+   F_bar = 1.0 / (double) app->ntime;
 
    /* one norm */
    // if      (u->value < 1) u_bar->value = -1.0 * F_bar;
