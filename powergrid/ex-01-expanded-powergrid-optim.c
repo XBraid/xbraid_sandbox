@@ -7,7 +7,7 @@
 #include "braid.h"
 
 /* On/Off switch for finite difference testing */
-#define FINDEF 1
+#define FINDEF 0
 
 /*--------------------------------------------------------------------------
  * User-defined routines and structures
@@ -620,8 +620,12 @@ int main (int argc, char *argv[])
    /* initialize design and gradient */
    double* design;
    double* gradient;
+   double* design0;
+   double* gradient0;
    design   = (double*) malloc(ntime * sizeof(double));
    gradient = (double*) malloc(ntime * sizeof(double));
+   design0   = (double*) malloc(ntime * sizeof(double));
+   gradient0 = (double*) malloc(ntime * sizeof(double));
    for (int i = 0; i < ntime; i++)
    {
       design[i]   = 1.0;  // Initial guess
@@ -679,6 +683,7 @@ int main (int argc, char *argv[])
    {
       /* Run adjoint XBraid to compute objective function and gradient */
       braid_SetAccessLevel(core, 0);
+      braid_SetObjectiveOnly(core, 0);
       braid_Drive(core);
 
       /* Get the objective function value */
@@ -706,11 +711,65 @@ int main (int argc, char *argv[])
          break;
       }
 
+      /* Store design and gradient */
+      for (int idx = 0; idx < app->ntime; idx++)
+      {
+         gradient0[idx] = app->gradient[idx];
+         design0[idx]   = app->design[idx];
+      }
+
       /* Design update using simple steepest descent method with fixed stepsize */
       for (int idx = 0; idx < app->ntime; idx++)
       {
-         app->design[idx] -= stepsize * app->gradient[idx];
+         app->design[idx] = design0[idx] - stepsize * gradient0[idx];
       }
+
+      /* --- Backtracking linesearch -- */
+
+      /* Compute wolfe condition */
+      double wolfe = 0.0;
+      for (int idx = 0; idx < app->ntime; idx++)
+      {
+         wolfe += pow(app->gradient[idx], 2);
+      } 
+      
+      
+
+      double ls_stepsize = stepsize;
+      double ls_objective;
+      double ls_param = 1e-4;
+      int    ls_maxiter = 40;
+      for (int ls_iter = 0; ls_iter < ls_maxiter; ls_iter++)
+      {
+         /* Get objective */
+         braid_SetObjectiveOnly(core, 1);
+         braid_Drive(core);
+         braid_GetObjective(core, &ls_objective);
+
+         double test_obj = objective - ls_param * ls_stepsize * wolfe;
+         // printf("ls %d: new step %1.14e < %1.14e ?\n", ls_iter, ls_objective, test_obj);
+         if (ls_objective <= test_obj)
+         {
+            break; // line search success, use this design 
+         }
+         else
+         {
+            /* Test for line-search failure */
+            if (ls_iter == ls_maxiter - 1)
+            {
+               printf("\n WARNING: LINESEARCH FAILED! \n");
+            }
+
+            /* Go back half of the step */
+            for (int idx = 0; idx < app->ntime; idx++)
+            {
+               ls_stepsize = 0.5 * ls_stepsize;
+               app->design[idx] = design0[idx] - ls_stepsize * gradient0[idx];
+            }
+         }
+         
+      }
+
    }
 
 
@@ -810,8 +869,6 @@ int main (int argc, char *argv[])
 
 
    /* Store original design and gradient */
-   double* design0   = (double*) malloc(app->ntime * sizeof(double));
-   double* gradient0 = (double*) malloc(app->ntime * sizeof(double));
    for (int idx = 0; idx < app->ntime; idx++)
    {
       design0[idx]   = app->design[idx];  
@@ -874,16 +931,14 @@ int main (int argc, char *argv[])
    errornorm = sqrt(errornorm);
    printf("\n Global errornorm %1.14e\n", errornorm);
 
-   /* Clean up Finite Differences */
-   free(design0);
-   free(gradient0);
-
 #endif
 
    /* Clean up */
    free(app);
    free(design);
    free(gradient);
+   free(design0);
+   free(gradient0);
    MPI_Finalize();
 
    return (0);
