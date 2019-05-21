@@ -7,7 +7,6 @@
 #include "braid.h"
 
 /* On/Off switch for finite difference testing */
-#define FINDEF 0
 
 /*--------------------------------------------------------------------------
  * User-defined routines and structures
@@ -262,13 +261,19 @@ my_ObjectiveT(braid_App app,
    double design = app->design[idx];
 
    /* one norm */
-   // objT = fabs(u->value - 2) + fabs(u->value - 1) - 1.0;
+   // objT = fabs(u->value - 2) + fabs(1.0 - u->value) - 1.0;
 
-   /* Barrier for state 1 <= y(t) <= 2, 2-norm */
-   if      (u->value < 1.0) state_penalty = 0.5 * pow(1.0 - u->value, 2);
-   else if (u->value > 2.0) state_penalty = 0.5 * pow(u->value - 2.0, 2);
+   /* Max violation */
+   if      (u->value < 1.0) state_penalty = 1.0 - u->value;
+   else if (u->value > 2.0) state_penalty = u->value - 2.0;
    else                     state_penalty = 0.0;
    objT += app->state_penalty_p * state_penalty;
+
+   /* Barrier for state 1 <= y(t) <= 2, 2-norm */
+   // if      (u->value < 1.0) state_penalty = 0.5 * pow(1.0 - u->value, 2);
+   // else if (u->value > 2.0) state_penalty = 0.5 * pow(u->value - 2.0, 2);
+   // else                     state_penalty = 0.0;
+   // objT += app->state_penalty_p * state_penalty;
 
    /* Barrier for design -1 <= a(t) <= 1, 2-norm */
    if      (design < -1.0) design_penalty = 0.5 * pow(-1.0 - design, 2);
@@ -323,11 +328,17 @@ my_ObjectiveT_diff(braid_App            app,
    // else if (u->value > 2) u_bar->value =  1.0 * F_bar;
    // else                   u_bar->value =  0.0;
 
-   /* Barrier for state 1 <= y <= 2, 2-norm */
-   if      (u->value < 1.0) state_penalty_diff = - (1.0 - u->value);
-   else if (u->value > 2.0) state_penalty_diff =   (u->value - 2.0);
-   else                   state_penalty_diff = 0.0;
+   /* Max viaolation */
+   if      (u->value < 1.0) state_penalty_diff = - 1.0;
+   else if (u->value > 2.0) state_penalty_diff =   1.0;
+   else                     state_penalty_diff = 0.0;
    u_bar->value = app->state_penalty_p * state_penalty_diff * F_bar;
+
+   /* Barrier for state 1 <= y <= 2, 2-norm */
+   // if      (u->value < 1.0) state_penalty_diff = - (1.0 - u->value);
+   // else if (u->value > 2.0) state_penalty_diff =   (u->value - 2.0);
+   // else                   state_penalty_diff = 0.0;
+   // u_bar->value = app->state_penalty_p * state_penalty_diff * F_bar;
 
    /* Barrier for design -1 <= a(t) <= 1, 2-norm */ 
    if      (design < -1.0) design_penalty_diff = - (-1.0 - design);
@@ -349,6 +360,7 @@ my_ObjectiveT_diff(braid_App            app,
       else fd_diff = 0.0;
       app->gradient[idx]   += app->gamma * fd_diff  * F_bar;
       app->gradient[idx-1] += app->gamma * (-1.0) * fd_diff * F_bar;
+      // printf("%d %1.14e \n", idx, app->gradient[idx]);
    }
  
    return 0;
@@ -822,7 +834,7 @@ int main (int argc, char *argv[])
 
 
 
-#if FINDEF
+#if 1
    /* --- Finite differences test --- */
    printf("\n\n --- FINITE DIFFERENCE TESTING ---\n\n");
 
@@ -876,8 +888,8 @@ int main (int argc, char *argv[])
    }
 
    /* Iterate over all design elements */
-   // int idx = 96;         // design element id
-   for (int idx = 0; idx < app->ntime; idx ++)
+   int idx = 96;         // design element id
+   // for (int idx = 0; idx < app->ntime; idx ++)
    {
       
       /* perturb design */
