@@ -481,6 +481,10 @@ int main (int argc, char *argv[])
    int           rank;
    double        mygradnorm;
 
+   double ls_objective;
+   double ls_param    = 1e-4;
+   double ls_maxiter  = 40;
+
    /* Setting defaults */
    int         max_levels = 2;
    int         nrelax     = 1;
@@ -690,7 +694,8 @@ int main (int argc, char *argv[])
    }
 
    /* Optimization iteration */
-   double obj_init = 1.0;
+   double obj_init    = 1.0;
+   double ls_stepsize = -1.0;
    for (optimiter = 0; optimiter < maxoptimiter; optimiter++)
    {
       /* Run adjoint XBraid to compute objective function and gradient */
@@ -714,7 +719,7 @@ int main (int argc, char *argv[])
       /* Output */
       if (rank == 0) 
       {
-         printf("%3d: obj = %1.8e, rel drop %1.4e  || grad || = %1.8e\n", optimiter, objective, objective/obj_init, gnorm);
+         printf("%3d: %1.14e  %1.2e  %1.14e  %.14f\n", optimiter, objective, objective/obj_init, gnorm, ls_stepsize);
       }
 
       /* Check optimization convergence */
@@ -747,10 +752,7 @@ int main (int argc, char *argv[])
       
       
 
-      double ls_stepsize = stepsize;
-      double ls_objective;
-      double ls_param = 1e-4;
-      int    ls_maxiter = 40;
+      ls_stepsize = stepsize;
       for (int ls_iter = 0; ls_iter < ls_maxiter; ls_iter++)
       {
          /* Get objective */
@@ -773,9 +775,9 @@ int main (int argc, char *argv[])
             }
 
             /* Go back half of the step */
+            ls_stepsize = 0.5 * ls_stepsize;
             for (int idx = 0; idx < app->ntime; idx++)
             {
-               ls_stepsize = 0.5 * ls_stepsize;
                app->design[idx] = design0[idx] - ls_stepsize * gradient0[idx];
             }
          }
