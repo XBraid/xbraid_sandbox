@@ -527,7 +527,8 @@ my_ObjectiveT_diff(braid_App            app,
          else if ( app->design[idx]*fd < 0 ) fd_diff = oneoverdt * (-1.0);
          else fd_diff = 0.0;
          
-         app->gradient[idx-1] += app->push_penalty_param * app->design[idx] * fd_diff * F_bar;
+         app->gradient[idx-1] += app->push_penalty_param * (-1.0) * app->design[idx] * fd_diff * F_bar;
+         if (idx == 1) printf("%d %1.14e\n", idx, app->gradient[idx-1]);
          app->gradient[idx]   += app->push_penalty_param * (2.0 * app->design[idx] - app->design[idx-1]) * fd_diff * F_bar;
       }
    }
