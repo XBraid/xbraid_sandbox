@@ -6,7 +6,6 @@
 
 #include "braid.h"
 
-/* On/Off switch for finite difference testing */
 
 /*--------------------------------------------------------------------------
  * User-defined routines and structures
@@ -23,10 +22,11 @@ typedef struct _braid_App_struct
    double*   design;    /* Stores a(t) forall t */
    double*   gradient;  /* dJ/dDesign */
 
-   double    gamma;     /* Regularization parameter */
-   double    sigmoid_p; /* parameter for steepnes of the sigmoid curve */ 
-   double    state_penalty_p; /* parameter of the penalty objective */ 
-   double    design_penalty_p; /* parameter of the design penalty objective */ 
+   double    regul_param;                /* Regularization parameter */
+   double    sigmoid_coeff;        /* parameter for steepnes of the sigmoid curve */ 
+   double    state_penalty_param;  /* parameter of the penalty objective */ 
+   double    design_penalty_param; /* parameter of the design penalty objective */ 
+   double    push_penalty_p;       /* parameter of the push penalty in objective */ 
 
 } my_App;
 
@@ -40,34 +40,41 @@ typedef struct _braid_Vector_struct
 /* This drives a towards -1 or 1, param defines steepness */
 double sigmoid(double param, double a)
 {
-   /* Identity */
-   // return a;
 
-   /* a\in[0,1], exponential, then linear transform */
-   // return 2 * pow(a, param) - 1;
+   if (param == 0)
+   {  /* Identity */
+      return a;
+   } 
+   else 
+   {  /* Sigmoid */
+      return tanh(param * a);
+   }
 
-   /* Sigmoid */
-   return tanh(param * a);
 }
 
 /* First derivative of the sigmoidterm */
 double sigmoid_diff(double param, double a)
 {
    /* Identity */
-   // return 1.0;
-
-   /* a\in[0,1], exponential, then linear transform */
-   // return 2 * param * pow(a, param-1);
-
-   /* Sigmoid */
-   return param / pow(cosh(param * a), 2);
+   if (param == 0)
+   {  /* Identity */
+      return 1.0;
+   }
+   else
+   {
+      /* Sigmoid */
+      return param / pow(cosh(param * a), 2);
+   }
 }
 
 /* Second derivative of the sigmoid term */
 double sigmoid_diff_diff(double param, double a)
 {
+   /* Identity */
+   return 0.0;
+
    /* Sigmoid */
-   return - 2.0 * param * sigmoid(param, a) * sigmoid_diff(param, a);
+   // return - 2.0 * param * sigmoid(param, a) * sigmoid_diff(param, a);
 }
 
 int
@@ -91,7 +98,7 @@ my_Step(braid_App        app,
    double design = app->design[istart];
    
    /* Push towards -1 or 1 */
-   design = sigmoid(app->sigmoid_p, design); 
+   design = sigmoid(app->sigmoid_coeff, design); 
    
    /* Use backward Euler and current design to propagate solution forward */
    (u->value) = 1./(1. + (-design)*(tstop-tstart))*(u->value);
@@ -253,6 +260,8 @@ my_ObjectiveT(braid_App app,
    double design_penalty = 0.0;
    double regularization = 0.0;
    double fd = 0.0;
+   double push = 0.0;
+   double oneoverdt = 0.0;
    double objT = 0.0;
 
    /* Get design */
@@ -260,39 +269,84 @@ my_ObjectiveT(braid_App app,
    braid_ObjectiveStatusGetTIndex(ostatus, &idx);
    double design = app->design[idx];
 
-   /* one norm */
-   // objT = fabs(u->value - 2) + fabs(1.0 - u->value) - 1.0;
+   /* --- State Penalty 1 <= y <= 2 ---*/
 
-   /* Max violation */
-   if      (u->value < 1.0) state_penalty = 1.0 - u->value;
-   else if (u->value > 2.0) state_penalty = u->value - 2.0;
-   else                     state_penalty = 0.0;
-   objT += app->state_penalty_p * state_penalty;
-
-   /* Barrier for state 1 <= y(t) <= 2, 2-norm */
-   // if      (u->value < 1.0) state_penalty = 0.5 * pow(1.0 - u->value, 2);
-   // else if (u->value > 2.0) state_penalty = 0.5 * pow(u->value - 2.0, 2);
+   /* 1-norm  */
+   // if      (u->value < 1.0) state_penalty = 1.0 - u->value;
+   // else if (u->value > 2.0) state_penalty = u->value - 2.0;
    // else                     state_penalty = 0.0;
-   // objT += app->state_penalty_p * state_penalty;
+   // objT += app->state_penalty_param * state_penalty;
 
-   /* Barrier for design -1 <= a(t) <= 1, 2-norm */
+   /* 2-norm */
+   if      (u->value < 1.0) state_penalty = 0.5 * pow(1.0 - u->value, 2);
+   else if (u->value > 2.0) state_penalty = 0.5 * pow(u->value - 2.0, 2);
+   else                     state_penalty = 0.0;
+   objT += app->state_penalty_param * state_penalty;
+
+
+   /* --- Design Penalty -1 <= a(t) <= 1 --- */
+   
+   /* 1-norm */
+   // if      (design < -1.0) design_penalty = -1.0 - design;
+   // else if (design > 1.0)  design_penalty = design - 1.0;
+   // else                    design_penalty = 0.0;
+   // objT += app->design_penalty_param * design_penalty;
+
+   /* 2-norm */
    if      (design < -1.0) design_penalty = 0.5 * pow(-1.0 - design, 2);
    else if (design > 1.0)  design_penalty = 0.5 * pow(design - 1.0, 2);
    else                    design_penalty = 0.0;
-   objT += app->design_penalty_p * design_penalty;
+   objT += app->design_penalty_param * design_penalty;
 
-   /* Regularization: 0.5 * | dS/da |^2  */
-   // regularization = 0.5 * pow(sigmoid_diff(app->sigmoid_p, design), 2);
 
-   /* Regularization: | da/dt |_1  */
+   /* --- Regularization on da/dt --- */
+
+   /* 1-norm */
+   // oneoverdt = app->ntime / app->tstop ;
+   // if (idx > 0 && idx < app->ntime)
+   // {
+   //    /* Backward finite differences */
+   //    fd = (app->design[idx] - app->design[idx - 1]) * oneoverdt;
+   //    regularization = fabs(fd);
+   // }
+   // objT += app->regul_param * regularization;
+
+   /* 2-norm */
+   oneoverdt = app->ntime / app->tstop ;
    if (idx > 0 && idx < app->ntime)
    {
       /* Backward finite differences */
-      double oneoverdt = app->ntime / app->tstop ;
       fd = (app->design[idx] - app->design[idx - 1]) * oneoverdt;
-      regularization = fabs(fd);
+      regularization = 0.5*pow(fd,2);
    }
-   objT += app->gamma * regularization;
+   objT += app->regul_param * regularization;
+
+
+   /* --- Push towards -1,1 ---- */ 
+   
+   /* Non-convex quadratic (1-a(t))*(1+a(t)) = -a^2+1 */
+   // objT += app->push_penalty_p * 0.5 * ( -1.0 * pow(design, 2) + 1.0);
+   
+   /* || a(t)*a'(t) || 1-norm */
+   // oneoverdt = app->ntime / app->tstop ;
+   // if (idx > 0 && idx < app->ntime)
+   // {
+   //    fd = (app->design[idx] - app->design[idx - 1]) * oneoverdt;
+   //    push = fabs(app->design[idx] * fd);
+   // }
+   // objT += app->push_penalty_p * push;
+
+   /* || a(t)*a'(t) || 2-norm */
+   oneoverdt = app->ntime / app->tstop ;
+   if (idx > 0 && idx < app->ntime)
+   {
+      fd = (app->design[idx] - app->design[idx - 1]) * oneoverdt;
+      push = 0.5 * pow(app->design[idx] * fd,2);
+   }
+   objT += app->push_penalty_p * push;
+
+
+
 
    /* Divide by number of time-steps */
    objT = objT / (double) app->ntime;
@@ -314,6 +368,8 @@ my_ObjectiveT_diff(braid_App            app,
    double state_penalty_diff  = 0.0;
    double design_penalty_diff = 0.0;
    double fd_diff             = 0.0;
+   double oneoverdt           = 0.0;
+   double diff, fd;
 
    /* Get design */
    int    idx;
@@ -323,46 +379,100 @@ my_ObjectiveT_diff(braid_App            app,
    /* Divide by number of time steps */
    F_bar = 1.0 / (double) app->ntime;
 
-   /* one norm */
-   // if      (u->value < 1) u_bar->value = -1.0 * F_bar;
-   // else if (u->value > 2) u_bar->value =  1.0 * F_bar;
-   // else                   u_bar->value =  0.0;
+   /* --- State Penalty 1 <= y <= 2 ---*/
 
-   /* Max viaolation */
-   if      (u->value < 1.0) state_penalty_diff = - 1.0;
-   else if (u->value > 2.0) state_penalty_diff =   1.0;
-   else                     state_penalty_diff = 0.0;
-   u_bar->value = app->state_penalty_p * state_penalty_diff * F_bar;
+   /* 1-norm */
+   // if      (u->value < 1.0) state_penalty_diff = - 1.0;
+   // else if (u->value > 2.0) state_penalty_diff =   1.0;
+   // else                     state_penalty_diff = 0.0;
+   // u_bar->value = app->state_penalty_param * state_penalty_diff * F_bar;
 
-   /* Barrier for state 1 <= y <= 2, 2-norm */
-   // if      (u->value < 1.0) state_penalty_diff = - (1.0 - u->value);
-   // else if (u->value > 2.0) state_penalty_diff =   (u->value - 2.0);
-   // else                   state_penalty_diff = 0.0;
-   // u_bar->value = app->state_penalty_p * state_penalty_diff * F_bar;
+   /*  2-norm */
+   if      (u->value < 1.0) state_penalty_diff = - (1.0 - u->value);
+   else if (u->value > 2.0) state_penalty_diff =   (u->value - 2.0);
+   else                   state_penalty_diff = 0.0;
+   u_bar->value = app->state_penalty_param * state_penalty_diff * F_bar;
 
-   /* Barrier for design -1 <= a(t) <= 1, 2-norm */ 
+
+
+   /* --- Design Penalty -1 <= a(t) <= 1 --- */
+
+   /* 1-norm */ 
+   // if      (design < -1.0) design_penalty_diff = -1.0;
+   // else if (design >  1.0) design_penalty_diff =  1.0;
+   // else                    design_penalty_diff =  0.0;
+   // app->gradient[idx] += app->design_penalty_param * design_penalty_diff * F_bar;
+
+   /* 2-norm */ 
    if      (design < -1.0) design_penalty_diff = - (-1.0 - design);
    else if (design >  1.0) design_penalty_diff =   (design - 1.0);
    else                    design_penalty_diff = 0.0;
-   app->gradient[idx] += app->design_penalty_p * design_penalty_diff * F_bar;
+   app->gradient[idx] += app->design_penalty_param * design_penalty_diff * F_bar;
 
-   /* Regularization:  0.5 * | dS/da |^2 */
-   // regularization_diff = sigmoid_diff(app->sigmoid_p, design) * sigmoid_diff_diff(app->sigmoid_p, design);
-   // app->gradient[idx] += app->gamma * regularization_diff * F_bar;
 
-   /* Regularization: | da/dt |_1 */
+
+   /* --- Regularization on da/dt  --- */
+   /* 1-norm */
+   // oneoverdt = app->ntime / app->tstop ;
+   // if (idx > 0 && idx < app->ntime)
+   // {
+   //    /* Backwards finite differences */
+   //    if      ( app->design[idx] > app->design[idx - 1] ) fd_diff = oneoverdt;
+   //    else if ( app->design[idx] < app->design[idx - 1] ) fd_diff = oneoverdt * (-1.0);
+   //    else fd_diff = 0.0;
+   //    app->gradient[idx]   += app->regul_param * fd_diff  * F_bar;
+   //    app->gradient[idx-1] += app->regul_param * (-1.0) * fd_diff * F_bar;
+   //    // printf("%d %1.14e \n", idx, app->gradient[idx]);
+   // }
+
+   /* 2-norm */
+   oneoverdt = app->ntime / app->tstop ;
    if (idx > 0 && idx < app->ntime)
    {
       /* Backwards finite differences */
-      double oneoverdt = app->ntime / app->tstop ;
       if      ( app->design[idx] > app->design[idx - 1] ) fd_diff = oneoverdt;
       else if ( app->design[idx] < app->design[idx - 1] ) fd_diff = oneoverdt * (-1.0);
       else fd_diff = 0.0;
-      app->gradient[idx]   += app->gamma * fd_diff  * F_bar;
-      app->gradient[idx-1] += app->gamma * (-1.0) * fd_diff * F_bar;
+      fd = (app->design[idx] - app->design[idx - 1]) * oneoverdt;
+      app->gradient[idx]   += app->regul_param * fd * fd_diff * F_bar;
+      app->gradient[idx-1] += app->regul_param * fd * (-1.0) * fd_diff * F_bar;
       // printf("%d %1.14e \n", idx, app->gradient[idx]);
    }
+
+
+   /* --- Push towards -1,1 ---- */ 
+   
+   /* Non-convex quadratic (1-a(t))*(1+a(t)) = -a^2+1 */
+   // app->gradient[idx] += app->push_penalty_p * (-1.0) * design * F_bar;
+
+   /* || a(t)*a'(t) ||, 1-norm */
+   // oneoverdt = app->ntime / app->tstop ;
+   // if (idx > 0 && idx < app->ntime)
+   // {
+   //    double fd = (app->design[idx] - app->design[idx - 1]) * oneoverdt;
+   //    if      ( app->design[idx]*fd > 0 ) fd_diff = oneoverdt;
+   //    else if ( app->design[idx]*fd < 0 ) fd_diff = oneoverdt * (-1.0);
+   //    else fd_diff = 0.0;
+      
+   //    app->gradient[idx-1] += app->push_penalty_p * app->design[idx] * fd_diff * F_bar;
+   //    app->gradient[idx]   += app->push_penalty_p * (2.0 * app->design[idx] - app->design[idx-1]) * fd_diff * F_bar;
+   // }
  
+   /* || a(t)*a'(t) ||, 2-norm */
+   oneoverdt = app->ntime / app->tstop ;
+   if (idx > 0 && idx < app->ntime)
+   {
+      fd = (app->design[idx] - app->design[idx - 1]) * oneoverdt;
+
+      diff = app->design[idx] * fd * (2.0 * app->design[idx] - app->design[idx-1]) * oneoverdt;
+      app->gradient[idx]   += app->push_penalty_p * diff * F_bar;
+
+      diff = app->design[idx] * fd * (app->design[idx] * (-1.0)) * oneoverdt ;
+      app->gradient[idx-1] += app->push_penalty_p * diff * F_bar;
+   }
+ 
+
+
    return 0;
 }
 
@@ -389,10 +499,10 @@ my_Step_diff(braid_App           app,
    double design = app->design[istart];
 
    /* Push towards -1 or 1 */
-   design = sigmoid(app->sigmoid_p, design); 
+   design = sigmoid(app->sigmoid_coeff, design); 
 
    /* Get gradient of sigmoid */
-   dsigm  = sigmoid_diff(app->sigmoid_p, app->design[istart]);
+   dsigm  = sigmoid_diff(app->sigmoid_coeff, app->design[istart]);
 
    /* Transposed derivative of step wrt u times u_bar */
    ddu = 1./(1. + (-design)*deltat)*(u_bar->value);
@@ -486,7 +596,7 @@ int main (int argc, char *argv[])
    double ls_maxiter  = 40;
 
    /* Setting defaults */
-   int         max_levels = 2;
+   int         max_levels = 1;
    int         nrelax     = 1;
    int         nrelax0    = -1;
    double      tol        = 1.0e-06;
@@ -495,10 +605,11 @@ int main (int argc, char *argv[])
    int         fmg        = 0;
    int         storage    = -1;
 
-   double      sigmoid_p        = 3;      /* Parameter for sigmoid function */
-   double      state_penalty_p  = 10;     /* Param for state penalty in objective */
-   double      design_penalty_p = 10;     /* Param for design penalty in objective */
-   double      gamma            = 1e-4;   /* Regularization parameter */
+   double      sigmoid_coeff        = 3;      /* Parameter for sigmoid function */
+   double      state_penalty_param  = 10;     /* Param for state  penalty in objective */
+   double      design_penalty_param = 10;     /* Param for design penalty in objective */
+   double      push_penalty_p   = 10;     /* Param for push   penalty in objective */
+   double      regul_param      = 1e-4;   /* Regularization parameter */
    int         maxoptimiter     = 100;    /* Maximum optimization iterations */
    double      stepsize         = 1.0;    /* Step size for design updates */
    double      gtol             = 1e-6;   /* Stopping criterion on the gradient norm */
@@ -534,10 +645,11 @@ int main (int argc, char *argv[])
             printf("  -moi <max_optim_iter>  : set max optimization iter\n");
             printf("  -dstep <stepsize>      : set step size for design updates\n");
             printf("  -gtol <gtol>           : set optimization stopping tolerance\n");
-            printf("  -sigmoid <sigmoid_param>    : set parameter for sigmoid function \n");
-            printf("  -spp <parameter>       : set parameter for state penalty in objective \n");
-            printf("  -dpp <sigmoid_param>   : set parameter for design penalty in objective \n");
-            printf("  -regul <regularization param> : set the regularization parameter \n");
+            printf("  -sigmoid <parameter>   : set parameter for sigmoid function \n");
+            printf("  -spp <parameter>       : set parameter for state  penalty in objective \n");
+            printf("  -dpp <parameter>       : set parameter for design penalty in objective \n");
+            printf("  -ppp <parameter>       : set parameter for push   penalty in objective \n");
+            printf("  -regul <parameter>     : set the design regularization parameter \n");
          }
          exit(1);
       } 
@@ -603,22 +715,27 @@ int main (int argc, char *argv[])
       else if ( strcmp(argv[arg_index], "-sigmoid") == 0 ) 
       {
          arg_index++;
-         sigmoid_p = atof(argv[arg_index++]);
+         sigmoid_coeff = atof(argv[arg_index++]);
       }
       else if ( strcmp(argv[arg_index], "-spp") == 0 ) 
       {
          arg_index++;
-         state_penalty_p = atof(argv[arg_index++]);
+         state_penalty_param = atof(argv[arg_index++]);
       }
       else if ( strcmp(argv[arg_index], "-dpp") == 0 ) 
       {
          arg_index++;
-         design_penalty_p = atof(argv[arg_index++]);
+         design_penalty_param = atof(argv[arg_index++]);
+      }
+      else if ( strcmp(argv[arg_index], "-ppp") == 0 ) 
+      {
+         arg_index++;
+         push_penalty_p = atof(argv[arg_index++]);
       }
       else if ( strcmp(argv[arg_index], "-regul") == 0 ) 
       {
          arg_index++;
-         gamma = atof(argv[arg_index++]);
+         regul_param = atof(argv[arg_index++]);
       }
       else
       {
@@ -657,10 +774,11 @@ int main (int argc, char *argv[])
    (app->rank)   = rank;
    (app->design) = design;
    (app->gradient) = gradient;
-   (app->sigmoid_p) = sigmoid_p;
-   (app->state_penalty_p) = state_penalty_p;
-   (app->design_penalty_p) = design_penalty_p;
-   (app->gamma)     = gamma;
+   (app->sigmoid_coeff) = sigmoid_coeff;
+   (app->state_penalty_param) = state_penalty_param;
+   (app->design_penalty_param) = design_penalty_param;
+   (app->push_penalty_p) = push_penalty_p;
+   (app->regul_param)     = regul_param;
 
 
    /* initialize XBraid */
@@ -694,6 +812,7 @@ int main (int argc, char *argv[])
    }
 
    /* Optimization iteration */
+   printf("Iter   Objective     rel. obj      ||grad||    stepsize\n"); 
    double obj_init    = 1.0;
    double ls_stepsize = -1.0;
    for (optimiter = 0; optimiter < maxoptimiter; optimiter++)
@@ -829,7 +948,7 @@ int main (int argc, char *argv[])
    double* Sa = (double*) malloc(app->ntime * sizeof(double));
    for (int i=0; i<app->ntime; i++)
    {
-      Sa[i] = sigmoid(app->sigmoid_p, app->design[i]);
+      Sa[i] = sigmoid(app->sigmoid_coeff, app->design[i]);
    }
    sprintf(filename, "%s.%03d", "Sa.out", rank);
    write_vector(filename, Sa, app->ntime);
