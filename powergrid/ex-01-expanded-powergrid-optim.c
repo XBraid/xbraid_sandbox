@@ -686,6 +686,7 @@ int main (int argc, char *argv[])
    int         nrelax0    = -1;
    double      tol        = 1.0e-06;
    int         cfactor    = 2;
+   int         print_level= 0;
    int         max_iter   = 100;
    int         fmg        = 0;
    int         storage    = -1;
@@ -728,6 +729,7 @@ int main (int argc, char *argv[])
             printf("  -nu0 <nrelax>          : set num F-C relaxations on level 0\n");
             printf("  -tol <tol>             : set stopping tolerance\n");
             printf("  -cf  <cfactor>         : set coarsening factor\n");
+            printf("  -pl  <printlevel>      : set print level\n");
             printf("  -fmg                   : use FMG cycling\n");
             printf("  -storage <level>       : full storage on levels >= level\n");
             printf("  -mi  <max_iter>        : max braid iterations\n");
@@ -785,6 +787,11 @@ int main (int argc, char *argv[])
       {
          arg_index++;
          cfactor = atoi(argv[arg_index++]);
+      }
+      else if ( strcmp(argv[arg_index], "-pl") == 0 )
+      {
+         arg_index++;
+         print_level = atoi(argv[arg_index++]);
       }
       else if ( strcmp(argv[arg_index], "-mi") == 0 )
       {
@@ -910,7 +917,7 @@ int main (int argc, char *argv[])
 
 
    /* Set options */
-   braid_SetPrintLevel( core, 0);
+   braid_SetPrintLevel( core, print_level);
    braid_SetMaxLevels(core, max_levels);
    braid_SetNRelax(core, -1, nrelax);
    if (nrelax0 > -1)
