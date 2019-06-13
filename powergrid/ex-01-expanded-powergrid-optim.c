@@ -18,17 +18,13 @@ typedef struct _braid_App_struct
    double    tstart;
    double    tstop;
    int       ntime;     /* Number of uniform time points */
+   int       ndisc;     /* Number of switching events */
    int       rank;
-   double*   design;    /* Stores a(t) forall t */
+   double*   design;    /* Stores the switching times */
    double*   gradient;  /* dJ/dDesign */
 
-   double      sigmoid_param;        /* Parameter for sigmoid function */
    double      state_penalty_param;  /* Param for state  penalty */
    int         state_penalty_norm;   /* p-Norm for state  penalty */
-   double      design_penalty_param; /* Param for design penalty */
-   int         design_penalty_norm;  /* p-Norm for design penalty */
-   double      push_penalty_param;   /* Param for push penalty term */
-   int         push_penalty_norm;    /* p-Norm for push penalty term */
    double      regul_param;          /* Regularization parameter */
    int         regul_norm;           /* Regularization parameter */
 
@@ -41,44 +37,24 @@ typedef struct _braid_Vector_struct
 } my_Vector;
 
 
-/* This drives a towards -1 or 1, param defines steepness */
-double sigmoid(double param, double a)
+/* Return the mode of the ODE (-1 or 1, depending on switching times in design) */
+int getMode(double* design,
+            int     ndisc,
+            double  t)
 {
+   int mode = 1; // Default mode: rising branch
 
-   if (param == 0)
-   {  /* Identity */
-      return a;
-   } 
-   else 
-   {  /* Sigmoid */
-      return tanh(param * a);
-   }
-
-}
-
-/* First derivative of the sigmoidterm */
-double sigmoid_diff(double param, double a)
-{
-   /* Identity */
-   if (param == 0)
-   {  /* Identity */
-      return 1.0;
-   }
-   else
+   /* Switch mode when a switching time has passed */
+   for (int i=0; i < ndisc; i++)
    {
-      /* Sigmoid */
-      return param / pow(cosh(param * a), 2);
+      if (t > design[i])
+      {
+         /* Switch mode */
+         mode = -1 * mode;
+      }
    }
-}
 
-/* Second derivative of the sigmoid term */
-double sigmoid_diff_diff(double param, double a)
-{
-   /* Identity */
-   return 0.0;
-
-   /* Sigmoid */
-   // return - 2.0 * param * sigmoid(param, a) * sigmoid_diff(param, a);
+   return mode;
 }
 
 int
@@ -98,14 +74,11 @@ my_Step(braid_App        app,
    braid_StepStatusGetTstartTstop(status, &tstart, &tstop);
    braid_StepStatusGetTIndex(status, &istart);
 
-   /* Get the design variable from the app */
-   double design = app->design[istart];
-   
-   /* Push towards -1 or 1 */
-   design = sigmoid(app->sigmoid_param, design); 
+   /* Get the ODE mode */
+   int mode = getMode(app->design, app->ndisc, tstart);
    
    /* Use backward Euler and current design to propagate solution forward */
-   (u->value) = 1./(1. + (-design)*(tstop-tstart))*(u->value);
+   (u->value) = 1./(1. + (-mode)*(tstop-tstart))*(u->value);
 
    /* no refinement */
    braid_StepStatusSetRFactor(status, 1);
@@ -298,99 +271,39 @@ my_ObjectiveT(braid_App app,
    }
    
 
-   /* --- Design Penalty -1 <= a(t) <= 1 --- */
-   
-   if (app->design_penalty_norm == 1)
-   {
-      /* 1-norm */
-      if      (design < -1.0) design_penalty = -1.0 - design;
-      else if (design > 1.0)  design_penalty = design - 1.0;
-      else                    design_penalty = 0.0;
-      objT += app->design_penalty_param * design_penalty;
-   }
-   else if (app->design_penalty_norm == 2)
-   {
-      /* 2-norm */
-      if      (design < -1.0) design_penalty = 0.5 * pow(-1.0 - design, 2);
-      else if (design > 1.0)  design_penalty = 0.5 * pow(design - 1.0, 2);
-      else                    design_penalty = 0.0;
-      objT += app->design_penalty_param * design_penalty;
-   }
-   else
-   {
-      printf("Error:  %i-norm for design penalty not implemented.\n", app->design_penalty_norm);
-      exit(1);
-   }
+   // /* --- Regularization on da/dt --- */
 
-
-   /* --- Regularization on da/dt --- */
-
-   if (app->regul_norm == 1)
-   {
-      /* 1-norm */
-      oneoverdt = app->ntime / app->tstop ;
-      if (idx > 0 && idx < app->ntime)
-      {
-         /* Backward finite differences */
-         fd = (app->design[idx] - app->design[idx - 1]) * oneoverdt;
-         regularization = fabs(fd);
-         objT += app->regul_param * regularization;
-      }
-   }
-   else if (app->regul_norm == 2)
-   {
-      /* 2-norm */
-      oneoverdt = app->ntime / app->tstop ;
-      if (idx > 0 && idx < app->ntime)
-      {
-         /* Backward finite differences */
-         fd = (app->design[idx] - app->design[idx - 1]) * oneoverdt;
-         regularization = 0.5*pow(fd,2);
-         objT += app->regul_param * regularization;
-      }
-   }
-   else
-   {
-      printf("Error:  %i-norm for regularization not implemented.\n", app->regul_norm);
-      exit(1);
-   }
+   // if (app->regul_norm == 1)
+   // {
+   //    /* 1-norm */
+   //    oneoverdt = app->ntime / app->tstop ;
+   //    if (idx > 0 && idx < app->ntime)
+   //    {
+   //       /* Backward finite differences */
+   //       fd = (app->design[idx] - app->design[idx - 1]) * oneoverdt;
+   //       regularization = fabs(fd);
+   //       objT += app->regul_param * regularization;
+   //    }
+   // }
+   // else if (app->regul_norm == 2)
+   // {
+   //    /* 2-norm */
+   //    oneoverdt = app->ntime / app->tstop ;
+   //    if (idx > 0 && idx < app->ntime)
+   //    {
+   //       /* Backward finite differences */
+   //       fd = (app->design[idx] - app->design[idx - 1]) * oneoverdt;
+   //       regularization = 0.5*pow(fd,2);
+   //       objT += app->regul_param * regularization;
+   //    }
+   // }
+   // else
+   // {
+   //    printf("Error:  %i-norm for regularization not implemented.\n", app->regul_norm);
+   //    exit(1);
+   // }
 
    
-
-   /* --- Push towards -1,1 ---- */ 
-   
-   /* Non-convex quadratic (1-a(t))*(1+a(t)) = -a^2+1 */
-   // objT += app->push_penalty_p * 0.5 * ( -1.0 * pow(design, 2) + 1.0);
-
-   /* || a(t)*a'(t) || */
-   if (app->push_penalty_norm == 1)
-   {
-      /* 1-norm */
-      oneoverdt = app->ntime / app->tstop ;
-      if (idx > 0 && idx < app->ntime)
-      {
-         fd = (app->design[idx] - app->design[idx - 1]) * oneoverdt;
-         push = fabs(app->design[idx] * fd);
-      }
-      objT += app->push_penalty_param * push;
-   }
-   else if (app->push_penalty_norm == 2)
-   {
-      /* 2-norm */
-      oneoverdt = app->ntime / app->tstop ;
-      if (idx > 0 && idx < app->ntime)
-      {
-         fd = (app->design[idx] - app->design[idx - 1]) * oneoverdt;
-         push = 0.5 * pow(app->design[idx] * fd,2);
-      }
-      objT += app->push_penalty_param * push;
-   }
-   else
-   {
-      printf("Error:  %i-norm for push penalty not implemented.\n", app->push_penalty_norm);
-      exit(1);
-   }
-
 
 
    /* Divide by number of time-steps */
@@ -416,145 +329,75 @@ my_ObjectiveT_diff(braid_App            app,
    double oneoverdt           = 0.0;
    double diff, fd;
 
-   /* Get design */
-   int    idx;
-   braid_ObjectiveStatusGetTIndex(ostatus, &idx);
-   double design = app->design[idx];
+   // /* Get design */
+   // int    idx;
+   // braid_ObjectiveStatusGetTIndex(ostatus, &idx);
+   // double design = app->design[idx];
 
-   /* Divide by number of time steps */
-   F_bar = 1.0 / (double) app->ntime;
+   // /* Divide by number of time steps */
+   // F_bar = 1.0 / (double) app->ntime;
 
-   /* --- State Penalty 1 <= y <= 2 ---*/
+   // /* --- State Penalty 1 <= y <= 2 ---*/
 
-   if (app->state_penalty_norm == 1)
-   {
-      /* 1-norm */
-      if      (u->value < 1.0) state_penalty_diff = - 1.0;
-      else if (u->value > 2.0) state_penalty_diff =   1.0;
-      else                     state_penalty_diff = 0.0;
-      u_bar->value = app->state_penalty_param * state_penalty_diff * F_bar;
-   }
+   // if (app->state_penalty_norm == 1)
+   // {
+   //    /* 1-norm */
+   //    if      (u->value < 1.0) state_penalty_diff = - 1.0;
+   //    else if (u->value > 2.0) state_penalty_diff =   1.0;
+   //    else                     state_penalty_diff = 0.0;
+   //    u_bar->value = app->state_penalty_param * state_penalty_diff * F_bar;
+   // }
    
-   else if (app->state_penalty_norm == 2)
-   {
-      /*  2-norm */
-      if      (u->value < 1.0) state_penalty_diff = - (1.0 - u->value);
-      else if (u->value > 2.0) state_penalty_diff =   (u->value - 2.0);
-      else                   state_penalty_diff = 0.0;
-      u_bar->value = app->state_penalty_param * state_penalty_diff * F_bar;
-   }
-   else
-   {
-      printf("Error:  %i-norm for state penalty not implemented.\n", app->state_penalty_norm);
-      exit(1);
-   }
+   // else if (app->state_penalty_norm == 2)
+   // {
+   //    /*  2-norm */
+   //    if      (u->value < 1.0) state_penalty_diff = - (1.0 - u->value);
+   //    else if (u->value > 2.0) state_penalty_diff =   (u->value - 2.0);
+   //    else                   state_penalty_diff = 0.0;
+   //    u_bar->value = app->state_penalty_param * state_penalty_diff * F_bar;
+   // }
+   // else
+   // {
+   //    printf("Error:  %i-norm for state penalty not implemented.\n", app->state_penalty_norm);
+   //    exit(1);
+   // }
 
 
-   /* --- Design Penalty -1 <= a(t) <= 1 --- */
+   // /* --- Regularization on da/dt  --- */
+   // if (app->regul_norm == 1)
+   // {
+   //    /* 1-norm */
+   //    oneoverdt = app->ntime / app->tstop ;
+   //    if (idx > 0 && idx < app->ntime)
+   //    {
+   //       /* Backwards finite differences */
+   //       if      ( app->design[idx] > app->design[idx - 1] ) fd_diff = oneoverdt;
+   //       else if ( app->design[idx] < app->design[idx - 1] ) fd_diff = oneoverdt * (-1.0);
+   //       else fd_diff = 0.0;
+   //       app->gradient[idx]   += app->regul_param * fd_diff  * F_bar;
+   //       app->gradient[idx-1] += app->regul_param * (-1.0) * fd_diff * F_bar;
+   //       // printf("%d %1.14e \n", idx, app->gradient[idx]);
+   //    }
+   // }
+   // else if (app->regul_norm == 2)
+   // {
+   //    /* 2-norm */
+   //    oneoverdt = app->ntime / app->tstop ;
+   //    if (idx > 0 && idx < app->ntime)
+   //    {
+   //       /* Backwards finite differences */
+   //       fd = (app->design[idx] - app->design[idx - 1]) * oneoverdt;
+   //       app->gradient[idx]   += app->regul_param * fd * oneoverdt * F_bar;
+   //       app->gradient[idx-1] += app->regul_param * fd * (-1.0) * oneoverdt * F_bar;
+   //       // printf("%d %1.14e \n", idx, app->gradient[idx]);
+   //    }
+   // }
+   // else
+   // {
+   //    printf("Error:  %i-norm for regularization not implemented.\n", app->regul_norm);
+   //    exit(1);
+   // }
 
-   if (app->design_penalty_norm == 1)
-   {
-      /* 1-norm */ 
-      if      (design < -1.0) design_penalty_diff = -1.0;
-      else if (design >  1.0) design_penalty_diff =  1.0;
-      else                    design_penalty_diff =  0.0;
-      app->gradient[idx] += app->design_penalty_param * design_penalty_diff * F_bar;
-   }
-   else if (app->design_penalty_norm == 2)
-   {
-      /* 2-norm */ 
-      if      (design < -1.0) design_penalty_diff = - (-1.0 - design);
-      else if (design >  1.0) design_penalty_diff =   (design - 1.0);
-      else                    design_penalty_diff = 0.0;
-      app->gradient[idx] += app->design_penalty_param * design_penalty_diff * F_bar;
-   }
-   else
-   {
-      printf("Error:  %i-norm for design penalty not implemented.\n", app->design_penalty_norm);
-      exit(1);
-   }
-
-
-   /* --- Regularization on da/dt  --- */
-   if (app->regul_norm == 1)
-   {
-      /* 1-norm */
-      oneoverdt = app->ntime / app->tstop ;
-      if (idx > 0 && idx < app->ntime)
-      {
-         /* Backwards finite differences */
-         if      ( app->design[idx] > app->design[idx - 1] ) fd_diff = oneoverdt;
-         else if ( app->design[idx] < app->design[idx - 1] ) fd_diff = oneoverdt * (-1.0);
-         else fd_diff = 0.0;
-         app->gradient[idx]   += app->regul_param * fd_diff  * F_bar;
-         app->gradient[idx-1] += app->regul_param * (-1.0) * fd_diff * F_bar;
-         // printf("%d %1.14e \n", idx, app->gradient[idx]);
-      }
-   }
-   else if (app->regul_norm == 2)
-   {
-      /* 2-norm */
-      oneoverdt = app->ntime / app->tstop ;
-      if (idx > 0 && idx < app->ntime)
-      {
-         /* Backwards finite differences */
-         fd = (app->design[idx] - app->design[idx - 1]) * oneoverdt;
-         app->gradient[idx]   += app->regul_param * fd * oneoverdt * F_bar;
-         app->gradient[idx-1] += app->regul_param * fd * (-1.0) * oneoverdt * F_bar;
-         // printf("%d %1.14e \n", idx, app->gradient[idx]);
-      }
-   }
-   else
-   {
-      printf("Error:  %i-norm for regularization not implemented.\n", app->regul_norm);
-      exit(1);
-   }
-
-   /* --- Push towards -1,1 ---- */ 
-   
-   /* Non-convex quadratic (1-a(t))*(1+a(t)) = -a^2+1 */
-   // app->gradient[idx] += app->push_penalty_p * (-1.0) * design * F_bar;
-
-   /* || a(t)*a'(t) || */
-   if (app->push_penalty_norm == 1)
-   {
-      /* 1-norm */
-      oneoverdt = app->ntime / app->tstop ;
-      if (idx > 0 && idx < app->ntime)
-      {
-         double fd = (app->design[idx] - app->design[idx - 1]) * oneoverdt;
-         if      ( app->design[idx]*fd > 0 ) fd_diff = oneoverdt;
-         else if ( app->design[idx]*fd < 0 ) fd_diff = oneoverdt * (-1.0);
-         else fd_diff = 0.0;
-         
-         app->gradient[idx-1] += app->push_penalty_param * (-1.0) * app->design[idx] * fd_diff * F_bar;
-         if (idx == 1) printf("%d %1.14e\n", idx, app->gradient[idx-1]);
-         app->gradient[idx]   += app->push_penalty_param * (2.0 * app->design[idx] - app->design[idx-1]) * fd_diff * F_bar;
-      }
-   }
-   else if (app->push_penalty_norm == 2)
-   {
-      /*  2-norm */
-      oneoverdt = app->ntime / app->tstop ;
-      if (idx > 0 && idx < app->ntime)
-      {
-         fd = (app->design[idx] - app->design[idx - 1]) * oneoverdt;
-
-         diff = app->design[idx] * fd * (2.0 * app->design[idx] - app->design[idx-1]) * oneoverdt;
-         app->gradient[idx]   += app->push_penalty_param * diff * F_bar;
-
-         diff = app->design[idx] * fd * (app->design[idx] * (-1.0)) * oneoverdt ;
-         app->gradient[idx-1] += app->push_penalty_param * diff * F_bar;
-      }
-   }
-   else
-   {
-      printf("Error:  %i-norm for push penalty not implemented.\n", app->push_penalty_norm);
-      exit(1);
-   }
-
-
- 
 
 
    return 0;
@@ -575,29 +418,23 @@ my_Step_diff(braid_App           app,
    double dsigm;
    int istart;
 
-   braid_StepStatusGetTstartTstop(status, &tstart, &tstop);
-   braid_StepStatusGetTIndex(status, &istart);
-   double deltat = tstop - tstart;
+   // braid_StepStatusGetTstartTstop(status, &tstart, &tstop);
+   // braid_StepStatusGetTIndex(status, &istart);
+   // double deltat = tstop - tstart;
 
-   /* Get the design from the app */
-   double design = app->design[istart];
+   // // /* Get the ODE mode */
+   // // int mode = getMode(app->design, app->ndisc, tstart);
 
-   /* Push towards -1 or 1 */
-   design = sigmoid(app->sigmoid_param, design); 
 
-   /* Get gradient of sigmoid */
-   dsigm  = sigmoid_diff(app->sigmoid_param, app->design[istart]);
+   // // /* Transposed derivative of step wrt u times u_bar */
+   // // ddu = 1./(1. + (-mode)*deltat)*(u_bar->value);
 
-   /* Transposed derivative of step wrt u times u_bar */
-   ddu = 1./(1. + (-design)*deltat)*(u_bar->value);
+   // // /* Transposed derivative of step wrt design times u_bar */
+   // ddesign  = dsigm * (deltat * (u->value)) / pow(1. - deltat*design,2) * (u_bar->value);
 
-   /* Transposed derivative of step wrt design times u_bar */
-   ddesign  = dsigm * (deltat * (u->value)) / pow(1. - deltat*design,2) * (u_bar->value);
-   // ddesign += dsigm * ddesign;
-
-   /* Update u_bar and add to gradient */
-   u_bar->value           = ddu;              
-   app->gradient[istart] += ddesign;
+   // /* Update u_bar and add to gradient */
+   // u_bar->value           = ddu;              
+   // app->gradient[istart] += ddesign;
 
 
    return 0;
@@ -608,7 +445,7 @@ my_Step_diff(braid_App           app,
 int 
 my_ResetGradient(braid_App app)
 {
-   for (int i = 0; i < app->ntime; i++)
+   for (int i = 0; i < app->ndisc; i++)
    {
       app->gradient[i] = 0.0;
    }
@@ -666,8 +503,6 @@ int main (int argc, char *argv[])
    braid_Core    core;
    MPI_Comm      comm;
    my_App       *app;
-   double        tstart, tstop;
-   int           ntime;
    double        objective;
 
    double        gnorm;
@@ -686,18 +521,13 @@ int main (int argc, char *argv[])
    int         nrelax0    = -1;
    double      tol        = 1.0e-06;
    int         cfactor    = 2;
-   int         print_level= 0;
+   int         print_level= 1;
    int         max_iter   = 100;
    int         fmg        = 0;
    int         storage    = -1;
 
-   double      sigmoid_param        = 3;    /* Parameter for sigmoid function */
    double      state_penalty_param  = 10;   /* Param for state  penalty */
    int         state_penalty_norm   = 2;    /* p-Norm for state  penalty */
-   double      design_penalty_param = 10;   /* Param for design penalty */
-   int         design_penalty_norm  = 2;    /* p-Norm for design penalty */
-   double      push_penalty_param   = 10;   /* Param for push penalty term */
-   int         push_penalty_norm    = 2;    /* p-Norm for push penalty term */
    double      regul_param          = 1e-4; /* Regularization parameter */
    int         regul_norm           = 1;    /* Regularization parameter */
    int         maxoptimiter         = 100;  /* Maximum optimization iterations */
@@ -705,9 +535,11 @@ int main (int argc, char *argv[])
    double      gtol                 = 1e-6; /* Stopping criterion on the gradient norm */
 
    /* Define time domain: ntime intervals */
-   ntime  = 100;
-   tstart = 0.0;
-   tstop  = 2.0; 
+   int    ntime  = 100;
+   double tstart = 0.0;
+   double tstop  = 2.0; 
+   int    ndisc  = 3;            // this holds ONLY for time horizon [2,0] and y(0)=1.5!
+
 
    /* Initialize MPI */
    comm   = MPI_COMM_WORLD;
@@ -736,13 +568,8 @@ int main (int argc, char *argv[])
             printf("  -moi <int>             : max optimization iter\n");
             printf("  -dstep <double>        : step size for design updates\n");
             printf("  -gtol <double>         : optimization stopping tolerance\n");
-            printf("  -sigp <double>         : sigmoid parameter\n");
             printf("  -spp <double>          : state penalty parameter \n");
             printf("  -spn <int>             : norm for state penalty \n");
-            printf("  -dpp <double>          : design penalty parameter \n");
-            printf("  -dpn <int>             : norm for design penalty \n");
-            printf("  -ppp <double>          : push penalty parameter \n");
-            printf("  -ppn <int>             : norm for push penalty \n");
             printf("  -regulp <double>       : design regularization parameter \n");
             printf("  -reguln <int>          : norm for design regularization \n");
          }
@@ -812,11 +639,6 @@ int main (int argc, char *argv[])
          arg_index++;
          storage = atoi(argv[arg_index++]);
       }
-      else if ( strcmp(argv[arg_index], "-sigp") == 0 ) 
-      {
-         arg_index++;
-         sigmoid_param = atof(argv[arg_index++]);
-      }
       else if ( strcmp(argv[arg_index], "-spp") == 0 ) 
       {
          arg_index++;
@@ -826,26 +648,6 @@ int main (int argc, char *argv[])
       {
          arg_index++;
          state_penalty_norm  = atoi(argv[arg_index++]);
-      }
-      else if ( strcmp(argv[arg_index], "-dpp") == 0 ) 
-      {
-         arg_index++;
-         design_penalty_param = atof(argv[arg_index++]);
-      }
-      else if ( strcmp(argv[arg_index], "-dpn") == 0 ) 
-      {
-         arg_index++;
-         design_penalty_norm  = atoi(argv[arg_index++]);
-      }
-      else if ( strcmp(argv[arg_index], "-ppp") == 0 ) 
-      {
-         arg_index++;
-         push_penalty_param = atof(argv[arg_index++]);
-      }
-      else if ( strcmp(argv[arg_index], "-ppn") == 0 ) 
-      {
-         arg_index++;
-         push_penalty_norm = atoi(argv[arg_index++]);
       }
       else if ( strcmp(argv[arg_index], "-regulp") == 0 ) 
       {
@@ -875,13 +677,14 @@ int main (int argc, char *argv[])
    double* gradient;
    double* design0;
    double* gradient0;
-   design   = (double*) malloc(ntime * sizeof(double));
-   gradient = (double*) malloc(ntime * sizeof(double));
-   design0   = (double*) malloc(ntime * sizeof(double));
-   gradient0 = (double*) malloc(ntime * sizeof(double));
-   for (int i = 0; i < ntime; i++)
+   design   = (double*) malloc(ndisc * sizeof(double));
+   gradient = (double*) malloc(ndisc * sizeof(double));
+   design0   = (double*) malloc(ndisc * sizeof(double));
+   gradient0 = (double*) malloc(ndisc * sizeof(double));
+   double deltadisc = (tstop - tstart) / (ndisc+1); // equally distributed at first
+   for (int i = 0; i < ndisc; i++)
    {
-      design[i]   = -1.0;  // Initial guess
+      design[i]   =  deltadisc * (i+1); // Initial guess
       gradient[i] = 0.0;
    }
 
@@ -891,17 +694,13 @@ int main (int argc, char *argv[])
    (app->tstart)   = tstart;
    (app->tstop)    = tstop;
    (app->ntime)    = ntime;
+   (app->ndisc)    = ndisc;
    (app->rank)     = rank;
    (app->design)   = design;
    (app->gradient) = gradient;
    /* Parameters */
-   (app->sigmoid_param)        = sigmoid_param;
    (app->state_penalty_param)  = state_penalty_param;
    (app->state_penalty_norm)   = state_penalty_norm;
-   (app->design_penalty_param) = design_penalty_param;
-   (app->design_penalty_norm)  = design_penalty_norm;
-   (app->push_penalty_param)   = push_penalty_param;
-   (app->push_penalty_norm)    = push_penalty_norm;
    (app->regul_param)          = regul_param;
    (app->regul_norm)           = regul_norm;
 
@@ -953,7 +752,7 @@ int main (int argc, char *argv[])
 
       /* Compute gradient norm */
       mygradnorm = 0.0;
-      for (int id = 0; id < app->ntime; id++)
+      for (int id = 0; id < ndisc; id++)
       {
          mygradnorm += pow(app->gradient[id], 2);
       }
@@ -973,14 +772,14 @@ int main (int argc, char *argv[])
       }
 
       /* Store design and gradient */
-      for (int idx = 0; idx < app->ntime; idx++)
+      for (int idx = 0; idx < ndisc; idx++)
       {
          gradient0[idx] = app->gradient[idx];
          design0[idx]   = app->design[idx];
       }
 
       /* Design update using simple steepest descent method with fixed stepsize */
-      for (int idx = 0; idx < app->ntime; idx++)
+      for (int idx = 0; idx < ndisc; idx++)
       {
          app->design[idx] = design0[idx] - stepsize * gradient0[idx];
       }
@@ -989,7 +788,7 @@ int main (int argc, char *argv[])
 
       /* Compute wolfe condition */
       double wolfe = 0.0;
-      for (int idx = 0; idx < app->ntime; idx++)
+      for (int idx = 0; idx < ndisc; idx++)
       {
          wolfe += pow(app->gradient[idx], 2);
       } 
@@ -1020,7 +819,7 @@ int main (int argc, char *argv[])
 
             /* Go back half of the step */
             ls_stepsize = 0.5 * ls_stepsize;
-            for (int idx = 0; idx < app->ntime; idx++)
+            for (int idx = 0; idx < ndisc; idx++)
             {
                app->design[idx] = design0[idx] - ls_stepsize * gradient0[idx];
             }
@@ -1053,34 +852,25 @@ int main (int argc, char *argv[])
       }
    }
 
-   /* Print XBraid statistics */
-   braid_PrintStats(core);
-
    /* Get final access */
    braid_SetAccessLevel(core, 1);
    braid_Drive(core);
+
+   /* Print XBraid statistics */
+   braid_PrintStats(core);
+
 
    /* Finish braid */
    braid_Destroy(core);
 
    /* print */
    sprintf(filename, "%s.%03d", "design.out", rank);
-   write_vector(filename, app->design, app->ntime);
+   write_vector(filename, app->design, ndisc);
    sprintf(filename, "%s.%03d", "gradient.out", rank);
-   write_vector(filename, app->gradient, app->ntime);
-
-   /* Print Penalty(design) */
-   double* Sa = (double*) malloc(app->ntime * sizeof(double));
-   for (int i=0; i<app->ntime; i++)
-   {
-      Sa[i] = sigmoid(app->sigmoid_param, app->design[i]);
-   }
-   sprintf(filename, "%s.%03d", "Sa.out", rank);
-   write_vector(filename, Sa, app->ntime);
+   write_vector(filename, app->gradient, ndisc);
 
 
-
-#if 1
+#if 0
    /* --- Finite differences test --- */
    printf("\n\n --- FINITE DIFFERENCE TESTING ---\n\n");
 
@@ -1126,7 +916,7 @@ int main (int argc, char *argv[])
 
 
    /* Store original design and gradient */
-   for (int idx = 0; idx < app->ntime; idx++)
+   for (int idx = 0; idx < ndisc; idx++)
    {
       design0[idx]   = app->design[idx];  
       gradient0[idx] = app->gradient[idx];
@@ -1137,7 +927,7 @@ int main (int argc, char *argv[])
    /* Iterate over all design elements */
    int idx = 0;  
       // design element id
-   // for (int idx = 0; idx < app->ntime; idx ++)
+   // for (int idx = 0; idx < ndisc; idx ++)
    {
       
       /* perturb design */
