@@ -27,6 +27,7 @@ typedef struct _braid_App_struct
    int         state_penalty_norm;   /* p-Norm for state  penalty */
    double      regul_param;          /* Regularization parameter */
    int         regul_norm;           /* Regularization parameter */
+   double      path_penalty_param;   /* Param for state  penalty */
 
 } my_App;
 
@@ -39,13 +40,13 @@ typedef struct _braid_Vector_struct
 
 /* a(t) = sum_k (-1)^k*design(k)*indicatorfunction_[k,k+1)(t) */
 double getA(double* design,
-            int     ndisc,
+            int     dim,
             double  t)
 {
    double a = .0;
 
    /* Find interval */
-   for (int i=0; i < ndisc+1; i++)
+   for (int i=0; i < dim; i++)
    {
       if (i <= t &&  t < i+1)
       {
@@ -53,7 +54,6 @@ double getA(double* design,
       }
    }
 
-   printf("%f\n", a);
    return a;
 }
 
@@ -239,11 +239,14 @@ my_ObjectiveT(braid_App app,
    // double fd = 0.0;
    // double push = 0.0;
    // double oneoverdt = 0.0;
+   double pathconstraint = 0.0;
    double objT = 0.0;
 
+   /* Get current time */
+   double t;
+   braid_ObjectiveStatusGetT(ostatus, &t);
+
    // /* Get design */
-   // int    idx;
-   // braid_ObjectiveStatusGetTIndex(ostatus, &idx);
    // double design = app->design[idx];
 
    // /* --- State Penalty 1 <= y <= 2 ---*/
@@ -275,7 +278,22 @@ my_ObjectiveT(braid_App app,
    // objT = objT / (double) app->ntime;
 
    /* --- y(switchtime) is 1 or 2 -- */
-   
+
+   /* if t is an integer and not first or last time step */
+   if ( (t == floor(t)) && (t > 0) && (t < app->ndisc+1)) 
+   {
+      if ( (int) t % 2 == 0 )
+      {
+         // if t is even: y = 1 !
+         pathconstraint = 0.5 * pow(u->value-1,2);
+      }
+      else
+      {
+         // if t is odd :  y = 2 !
+         pathconstraint = 0.5 * pow(u->value-2,2);
+      }
+   }
+   objT += app->path_penalty_param * pathconstraint;
 
 
    /* set return value */
@@ -497,6 +515,7 @@ int main (int argc, char *argv[])
 
    double      state_penalty_param  = 10;   /* Param for state  penalty */
    int         state_penalty_norm   = 2;    /* p-Norm for state  penalty */
+   double      path_penalty_param   = 1;    /* Param for path constraint */
    double      regul_param          = 1e-4; /* Regularization parameter */
    int         regul_norm           = 1;    /* Regularization parameter */
    int         maxoptimiter         = 100;  /* Maximum optimization iterations */
@@ -542,6 +561,7 @@ int main (int argc, char *argv[])
             printf("  -gtol <double>         : optimization stopping tolerance\n");
             printf("  -spp <double>          : state penalty parameter \n");
             printf("  -spn <int>             : norm for state penalty \n");
+            printf("  -ppp <double>          : path constraint penalty parameter \n");
             printf("  -regulp <double>       : design regularization parameter \n");
             printf("  -reguln <int>          : norm for design regularization \n");
          }
@@ -621,6 +641,11 @@ int main (int argc, char *argv[])
          arg_index++;
          state_penalty_norm  = atoi(argv[arg_index++]);
       }
+      else if ( strcmp(argv[arg_index], "-ppp") == 0 ) 
+      {
+         arg_index++;
+         path_penalty_param = atof(argv[arg_index++]);
+      }
       else if ( strcmp(argv[arg_index], "-regulp") == 0 ) 
       {
          arg_index++;
@@ -672,6 +697,7 @@ int main (int argc, char *argv[])
    /* Parameters */
    (app->state_penalty_param)  = state_penalty_param;
    (app->state_penalty_norm)   = state_penalty_norm;
+   (app->path_penalty_param)   = path_penalty_param;
    (app->regul_param)          = regul_param;
    (app->regul_norm)           = regul_norm;
 
