@@ -91,7 +91,7 @@ my_Step(braid_App        app,
    braid_StepStatusGetTIndex(status, &istart);
 
    /* Get the control */
-   double control = getA(app->design, app->ndisc, sstart);
+   double control = getA(app->design, app->ndisc+1, sstart);
    
    /* Use backward Euler and current design to propagate solution forward */
    (u->value) = 1./(1. + (-control)*(sstop-sstart))*(u->value);
@@ -554,7 +554,7 @@ int main (int argc, char *argv[])
    double      regul_param          = 1e-4; /* Regularization parameter */
    int         regul_norm           = 1;    /* Regularization parameter */
    int         maxoptimiter         = 100;  /* Maximum optimization iterations */
-   double      stepsize             = 1.0;  /* Step size for design updates */
+   double      stepsize             = 0.1;  /* Step size for design updates */
    double      gtol                 = 1e-6; /* Stopping criterion on the gradient norm */
 
    /* Define time domain: ntime intervals */
@@ -902,7 +902,7 @@ int main (int argc, char *argv[])
    write_vector(filename, app->gradient, ndisc+1);
 
 
-#if 1
+#if 0
    /* --- Finite differences test --- */
    printf("\n\n --- FINITE DIFFERENCE TESTING ---\n\n");
 
