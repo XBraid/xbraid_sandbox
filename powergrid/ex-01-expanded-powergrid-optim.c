@@ -15,8 +15,8 @@
 typedef struct _braid_App_struct
 {
    MPI_Comm  comm;
-   double    tstart;
-   double    tstop;
+   double    sstart;
+   double    sstop;
    int       ntime;     /* Number of uniform time points */
    int       ndisc;     /* Number of switching events */
    int       rank;
@@ -37,24 +37,24 @@ typedef struct _braid_Vector_struct
 } my_Vector;
 
 
-/* Return the mode of the ODE (-1 or 1, depending on switching times in design) */
-int getMode(double* design,
+/* a(t) = sum_k (-1)^k*design(k)*indicatorfunction_[k,k+1)(t) */
+double getA(double* design,
             int     ndisc,
             double  t)
 {
-   int mode = 1; // Default mode: rising branch
+   double a = .0;
 
-   /* Switch mode when a switching time has passed */
-   for (int i=0; i < ndisc; i++)
+   /* Find interval */
+   for (int i=0; i < ndisc+1; i++)
    {
-      if (t > design[i])
+      if (i <= t &&  t < i+1)
       {
-         /* Switch mode */
-         mode = -1 * mode;
+         a += pow(-1.0,(double) i) * design[i];
       }
    }
 
-   return mode;
+   printf("%f\n", a);
+   return a;
 }
 
 int
@@ -64,21 +64,21 @@ my_Step(braid_App        app,
         braid_Vector     u,
         braid_StepStatus status)
 {
-   double tstart;             /* current time */
-   double tstop;              /* evolve to this time*/
+   double sstart;             /* current time */
+   double sstop;              /* evolve to this time*/
    int    istart;             /* time point index value corresponding to tstop on (global) fine grid */
    int    level, iter;
 
    braid_StepStatusGetLevel(status, &level);
    braid_StepStatusGetIter(status, &iter);
-   braid_StepStatusGetTstartTstop(status, &tstart, &tstop);
+   braid_StepStatusGetTstartTstop(status, &sstart, &sstop);
    braid_StepStatusGetTIndex(status, &istart);
 
-   /* Get the ODE mode */
-   int mode = getMode(app->design, app->ndisc, tstart);
+   /* Get the control */
+   double control = getA(app->design, app->ndisc, sstart);
    
    /* Use backward Euler and current design to propagate solution forward */
-   (u->value) = 1./(1. + (-mode)*(tstop-tstart))*(u->value);
+   (u->value) = 1./(1. + (-control)*(sstop-sstart))*(u->value);
 
    /* no refinement */
    braid_StepStatusSetRFactor(status, 1);
@@ -233,81 +233,50 @@ my_ObjectiveT(braid_App app,
               braid_ObjectiveStatus ostatus,
               double *objectiveT_ptr)
 {
-   double state_penalty  = 0.0;
-   double design_penalty = 0.0;
-   double regularization = 0.0;
-   double fd = 0.0;
-   double push = 0.0;
-   double oneoverdt = 0.0;
+   // double state_penalty  = 0.0;
+   // double design_penalty = 0.0;
+   // double regularization = 0.0;
+   // double fd = 0.0;
+   // double push = 0.0;
+   // double oneoverdt = 0.0;
    double objT = 0.0;
 
-   /* Get design */
-   int    idx;
-   braid_ObjectiveStatusGetTIndex(ostatus, &idx);
-   double design = app->design[idx];
+   // /* Get design */
+   // int    idx;
+   // braid_ObjectiveStatusGetTIndex(ostatus, &idx);
+   // double design = app->design[idx];
 
-   /* --- State Penalty 1 <= y <= 2 ---*/
+   // /* --- State Penalty 1 <= y <= 2 ---*/
 
-   if (app->state_penalty_norm == 1)
-   {
-      /* 1-norm  */
-      if      (u->value < 1.0) state_penalty = 1.0 - u->value;
-      else if (u->value > 2.0) state_penalty = u->value - 2.0;
-      else                     state_penalty = 0.0;
-      objT += app->state_penalty_param * state_penalty;
-   }
-   else if (app->state_penalty_norm == 2)
-   {
-      /* 2-norm */
-      if      (u->value < 1.0) state_penalty = 0.5 * pow(1.0 - u->value, 2);
-      else if (u->value > 2.0) state_penalty = 0.5 * pow(u->value - 2.0, 2);
-      else                     state_penalty = 0.0;
-      objT += app->state_penalty_param * state_penalty;
-   }
-   else
-   {
-      printf("Error:  %i-norm for state penalty not implemented.\n", app->state_penalty_norm);
-      exit(1);
-   }
-   
-
-   // /* --- Regularization on da/dt --- */
-
-   // if (app->regul_norm == 1)
+   // if (app->state_penalty_norm == 1)
    // {
-   //    /* 1-norm */
-   //    oneoverdt = app->ntime / app->tstop ;
-   //    if (idx > 0 && idx < app->ntime)
-   //    {
-   //       /* Backward finite differences */
-   //       fd = (app->design[idx] - app->design[idx - 1]) * oneoverdt;
-   //       regularization = fabs(fd);
-   //       objT += app->regul_param * regularization;
-   //    }
+   //    /* 1-norm  */
+   //    if      (u->value < 1.0) state_penalty = 1.0 - u->value;
+   //    else if (u->value > 2.0) state_penalty = u->value - 2.0;
+   //    else                     state_penalty = 0.0;
+   //    objT += app->state_penalty_param * state_penalty;
    // }
-   // else if (app->regul_norm == 2)
+   // else if (app->state_penalty_norm == 2)
    // {
    //    /* 2-norm */
-   //    oneoverdt = app->ntime / app->tstop ;
-   //    if (idx > 0 && idx < app->ntime)
-   //    {
-   //       /* Backward finite differences */
-   //       fd = (app->design[idx] - app->design[idx - 1]) * oneoverdt;
-   //       regularization = 0.5*pow(fd,2);
-   //       objT += app->regul_param * regularization;
-   //    }
+   //    if      (u->value < 1.0) state_penalty = 0.5 * pow(1.0 - u->value, 2);
+   //    else if (u->value > 2.0) state_penalty = 0.5 * pow(u->value - 2.0, 2);
+   //    else                     state_penalty = 0.0;
+   //    objT += app->state_penalty_param * state_penalty;
    // }
    // else
    // {
-   //    printf("Error:  %i-norm for regularization not implemented.\n", app->regul_norm);
+   //    printf("Error:  %i-norm for state penalty not implemented.\n", app->state_penalty_norm);
    //    exit(1);
    // }
-
    
 
+   // /* Divide by number of time-steps */
+   // objT = objT / (double) app->ntime;
 
-   /* Divide by number of time-steps */
-   objT = objT / (double) app->ntime;
+   /* --- y(switchtime) is 1 or 2 -- */
+   
+
 
    /* set return value */
    *objectiveT_ptr =  objT;
@@ -538,7 +507,10 @@ int main (int argc, char *argv[])
    int    ntime  = 100;
    double tstart = 0.0;
    double tstop  = 2.0; 
-   int    ndisc  = 3;            // this holds ONLY for time horizon [2,0] and y(0)=1.5!
+   int    ndisc  = 3;            // ONLY for time horizon [2,0] with y(0)=1.5!
+   /* Transformed time domain */
+   double sstart = 0.0;
+   double sstop  = (double) (ndisc + 1);  // [0,4] 
 
 
    /* Initialize MPI */
@@ -677,22 +649,21 @@ int main (int argc, char *argv[])
    double* gradient;
    double* design0;
    double* gradient0;
-   design   = (double*) malloc(ndisc * sizeof(double));
-   gradient = (double*) malloc(ndisc * sizeof(double));
-   design0   = (double*) malloc(ndisc * sizeof(double));
-   gradient0 = (double*) malloc(ndisc * sizeof(double));
-   double deltadisc = (tstop - tstart) / (ndisc+1); // equally distributed at first
-   for (int i = 0; i < ndisc; i++)
+   design    = (double*) malloc((ndisc+1) * sizeof(double));
+   gradient  = (double*) malloc((ndisc+1) * sizeof(double));
+   design0   = (double*) malloc((ndisc+1) * sizeof(double));
+   gradient0 = (double*) malloc((ndisc+1) * sizeof(double));
+   for (int i = 0; i < ndisc+1; i++)
    {
-      design[i]   =  deltadisc * (i+1); // Initial guess
+      design[i]   =  1; // Initial guess  s=[0,4], all mode length are 1 = sigma_k+1 - sigma_k)
       gradient[i] = 0.0;
    }
 
    /* set up app structure */
    app = (my_App *) malloc(sizeof(my_App));
    (app->comm)     = comm;
-   (app->tstart)   = tstart;
-   (app->tstop)    = tstop;
+   (app->sstart)   = sstart;
+   (app->sstop)    = sstop;
    (app->ntime)    = ntime;
    (app->ndisc)    = ndisc;
    (app->rank)     = rank;
@@ -707,7 +678,7 @@ int main (int argc, char *argv[])
 
    /* initialize XBraid */
    
-   braid_Init(comm, comm, tstart, tstop, ntime, app,
+   braid_Init(comm, comm, sstart, sstop, ntime, app,
             my_Step, my_Init, my_Clone, my_Free, my_Sum, my_SpatialNorm, 
             my_Access, my_BufSize, my_BufPack, my_BufUnpack, &core);
 
@@ -865,9 +836,9 @@ int main (int argc, char *argv[])
 
    /* print */
    sprintf(filename, "%s.%03d", "design.out", rank);
-   write_vector(filename, app->design, ndisc);
+   write_vector(filename, app->design, ndisc+1);
    sprintf(filename, "%s.%03d", "gradient.out", rank);
-   write_vector(filename, app->gradient, ndisc);
+   write_vector(filename, app->gradient, ndisc+1);
 
 
 #if 0
