@@ -40,13 +40,13 @@ typedef struct _braid_Vector_struct
 
 /* a(t) = sum_k (-1)^k*design(k)*indicatorfunction_[k,k+1)(t) */
 double getA(double* design,
-            int     dim,
+            int     ndesign,
             double  t)
 {
    double a = .0;
 
    /* Find interval */
-   for (int i=0; i < dim; i++)
+   for (int i=0; i < ndesign; i++)
    {
       if (i <= t &&  t < i+1)
       {
@@ -59,11 +59,11 @@ double getA(double* design,
 
 /* Derivative of getA times a_bar */
 void getA_diff(double* gradient,
-               int     dim,
+               int     ndesign,
                double  t,
                double  a_bar)
 {
-   for (int i=0; i < dim; i++)
+   for (int i=0; i < ndesign; i++)
    {
       if (i <= t &&  t < i+1)
       {
@@ -71,6 +71,33 @@ void getA_diff(double* gradient,
          gradient[i] += tmp;
       }
    }
+}
+
+/* Get original time t(s) */
+double getOriginalTime(double *design, 
+                    int     ndesign, 
+                    double  s)
+{
+   double ts = 0.0;
+
+   int i;
+   for (i = 0; i < ndesign; i++)
+   {
+      /* Find interval such that s \in [k,k+1]*/
+      if (i <= s && s < i+1)
+      {
+         break;
+      }
+      else
+      {
+         ts += design[i];
+      }
+   }
+
+   /* Add remaining time (k_0,s)*/
+   ts += (s - i) * design[i];
+
+   return ts;
 }
 
 int
@@ -179,22 +206,25 @@ my_Access(braid_App          app,
           braid_AccessStatus astatus)
 {
    int        index;
-   double     t;
+   double     s, ts;
    char       filename[255];
    FILE      *file;
    
    braid_AccessStatusGetTIndex(astatus, &index);
-   braid_AccessStatusGetT(astatus, &t);
+   braid_AccessStatusGetT(astatus, &s);
    // sprintf(filename, "%s.%04d.%03d", "ex-01-expanded.out", index, app->rank);
    // file = fopen(filename, "w");
    // fprintf(file, "%1.4f  %.14e\n", t, (u->value));
    // fflush(file);
    // fclose(file);
 
+   /* Get original time */
+   ts = getOriginalTime(app->design, app->ndisc+1, s);
+
    /* Append all into one file. */
    sprintf(filename, "%s.%03d", "ex-01-expanded.out", app->rank);
    file = fopen(filename, "a");
-   fprintf(file, "%04d %1.4f  %.14e\n", index, t, (u->value));
+   fprintf(file, "%04d %1.4f %1.4f %.14e\n", index, s, ts, (u->value));
    fflush(file);
    fclose(file);
 
@@ -203,6 +233,7 @@ my_Access(braid_App          app,
 
    return 0;
 }
+
 
 int
 my_BufSize(braid_App          app,
@@ -715,7 +746,7 @@ int main (int argc, char *argv[])
    gradient0 = (double*) malloc((ndisc+1) * sizeof(double));
    for (int i = 0; i < ndisc+1; i++)
    {
-      design[i]   =  1; // Initial guess  s=[0,4], all mode length are 1 = sigma_k+1 - sigma_k)
+      design[i]   =  .5; // Initial guess  t\in[0,2], equally distributed length
       gradient[i] = 0.0;
    }
 
@@ -873,6 +904,7 @@ int main (int argc, char *argv[])
       {
          printf("\n");
          printf("  Optimization has converged.\n");
+         printf("  Be happy and go home!      \n");
          printf("\n"); 
          printf("  Objective function value = %1.8e\n", objective);
          printf("  Gradient norm            = %1.8e\n", gnorm);
@@ -887,6 +919,7 @@ int main (int argc, char *argv[])
    /* Get final access */
    braid_SetAccessLevel(core, 1);
    braid_Drive(core);
+
 
    /* Print XBraid statistics */
    braid_PrintStats(core);
