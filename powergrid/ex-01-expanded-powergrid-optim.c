@@ -57,6 +57,22 @@ double getA(double* design,
    return a;
 }
 
+/* Derivative of getA times a_bar */
+void getA_diff(double* gradient,
+               int     dim,
+               double  t,
+               double  a_bar)
+{
+   for (int i=0; i < dim; i++)
+   {
+      if (i <= t &&  t < i+1)
+      {
+         double tmp = pow(-1.0, (double) i) * a_bar;
+         gradient[i] += tmp;
+      }
+   }
+}
+
 int
 my_Step(braid_App        app,
         braid_Vector     ustop,
@@ -314,12 +330,12 @@ my_ObjectiveT_diff(braid_App            app,
    double design_penalty_diff = 0.0;
    double fd_diff             = 0.0;
    double oneoverdt           = 0.0;
+   double ddpathconstraint    = 0.0;
    double diff, fd;
 
-   // /* Get design */
-   // int    idx;
-   // braid_ObjectiveStatusGetTIndex(ostatus, &idx);
-   // double design = app->design[idx];
+   /* Get current time */
+   double t;
+   braid_ObjectiveStatusGetT(ostatus, &t);
 
    // /* Divide by number of time steps */
    // F_bar = 1.0 / (double) app->ntime;
@@ -385,6 +401,24 @@ my_ObjectiveT_diff(braid_App            app,
    //    exit(1);
    // }
 
+   /* --- y(switchtime) is 1 or 2 -- */
+
+   /* if t is an integer and not first or last time step */
+   if ( (t == floor(t)) && (t > 0) && (t < app->ndisc+1)) 
+   {
+      if ( (int) t % 2 == 0 )
+      {
+         // if t is even: y = 1 !
+         ddpathconstraint += u->value - 1.0;
+      }
+      else
+      {
+         // if t is odd :  y = 2 !
+         ddpathconstraint += u->value - 2.0;
+      }
+   }
+   u_bar->value = app->path_penalty_param * ddpathconstraint * F_bar;
+
 
 
    return 0;
@@ -399,30 +433,31 @@ my_Step_diff(braid_App           app,
              braid_StepStatus    status)
 {
    double ddu;      /* Derivative wrt u */
+   double ddc;      /* Derivative wrt control */
    double ddesign;  /* Derivative wrt design */
-   double tstart;             /* current time */
-   double tstop;              /* evolve to this time*/
+   double sstart;             /* current time */
+   double sstop;              /* evolve to this time*/
    double dsigm;
    int istart;
 
-   // braid_StepStatusGetTstartTstop(status, &tstart, &tstop);
-   // braid_StepStatusGetTIndex(status, &istart);
-   // double deltat = tstop - tstart;
+   braid_StepStatusGetTstartTstop(status, &sstart, &sstop);
+   braid_StepStatusGetTIndex(status, &istart);
+   double deltat = sstop - sstart;
 
-   // // /* Get the ODE mode */
-   // // int mode = getMode(app->design, app->ndisc, tstart);
+   /* Get the control */
+   double control = getA(app->design, app->ndisc+1, sstart);
 
+   /* Transposed derivative of step wrt u times u_bar */
+   ddu = 1./(1. + (-control)*deltat)*(u_bar->value);
 
-   // // /* Transposed derivative of step wrt u times u_bar */
-   // // ddu = 1./(1. + (-mode)*deltat)*(u_bar->value);
+   /* Transposed derivative of step wrt control times u_bar */
+   ddc = (deltat * (u->value)) / pow(1. - deltat*control,2) * (u_bar->value);
 
-   // // /* Transposed derivative of step wrt design times u_bar */
-   // ddesign  = dsigm * (deltat * (u->value)) / pow(1. - deltat*design,2) * (u_bar->value);
+   /* Transposed derivative of step wrt design times cbar */
+   getA_diff(app->gradient, app->ndisc+1, sstart, ddc); 
 
-   // /* Update u_bar and add to gradient */
-   // u_bar->value           = ddu;              
-   // app->gradient[istart] += ddesign;
-
+   /* Update u_bar */
+   u_bar->value = ddu;              
 
    return 0;
 }
@@ -432,7 +467,7 @@ my_Step_diff(braid_App           app,
 int 
 my_ResetGradient(braid_App app)
 {
-   for (int i = 0; i < app->ndisc; i++)
+   for (int i = 0; i < app->ndisc+1; i++)
    {
       app->gradient[i] = 0.0;
    }
@@ -867,7 +902,7 @@ int main (int argc, char *argv[])
    write_vector(filename, app->gradient, ndisc+1);
 
 
-#if 0
+#if 1
    /* --- Finite differences test --- */
    printf("\n\n --- FINITE DIFFERENCE TESTING ---\n\n");
 
@@ -877,7 +912,7 @@ int main (int argc, char *argv[])
 
 
    /* Compute original objective and gradient */ 
-   braid_Init(comm, comm, tstart, tstop, ntime, app,
+   braid_Init(comm, comm, sstart, sstop, ntime, app,
             my_Step, my_Init, my_Clone, my_Free, my_Sum, my_SpatialNorm, 
             my_Access, my_BufSize, my_BufPack, my_BufUnpack, &core);
    braid_InitAdjoint( my_ObjectiveT, my_ObjectiveT_diff, my_Step_diff, my_ResetGradient, &core);
@@ -913,25 +948,24 @@ int main (int argc, char *argv[])
 
 
    /* Store original design and gradient */
-   for (int idx = 0; idx < ndisc; idx++)
+   for (int idx = 0; idx < ndisc+1; idx++)
    {
       design0[idx]   = app->design[idx];  
       gradient0[idx] = app->gradient[idx];
    }
 
    /* FD step size */
-   double EPS = 1e-11;
+   double EPS = 1e-6;
    /* Iterate over all design elements */
-   int idx = 0;  
-      // design element id
-   // for (int idx = 0; idx < ndisc; idx ++)
+   // int idx = 0;  
+   for (int idx = 0; idx < ndisc+1; idx ++)
    {
       
       /* perturb design */
       app->design[idx] += EPS;
 
       /* Create and run another braid instance */ 
-      braid_Init(comm, comm, tstart, tstop, ntime, app,
+      braid_Init(comm, comm, sstart, sstop, ntime, app,
                my_Step, my_Init, my_Clone, my_Free, my_Sum, my_SpatialNorm, 
                my_Access, my_BufSize, my_BufPack, my_BufUnpack, &core);
       braid_InitAdjoint( my_ObjectiveT, my_ObjectiveT_diff, my_Step_diff, my_ResetGradient, &core);
