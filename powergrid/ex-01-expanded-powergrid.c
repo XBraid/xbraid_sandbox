@@ -259,11 +259,11 @@ my_Init(braid_App     app,
    
    if (t == 0.0) /* Initial condition */
    {
-      (u->value) = 1.0;
+      (u->value) = 1.5;
    }
    else /* All other time points set to arbitrary value */
    {
-      (u->value) = 1.0;
+      (u->value) = 1.5;
    }
    *u_ptr = u;
 
@@ -430,9 +430,9 @@ int main (int argc, char *argv[])
    MPI_Comm_rank(comm, &rank);
 
    /* Define time domain: ntime intervals */
-   ntime  = 200;
+   ntime  = 800;
    tstart = 0.0;
-   tstop  = 4.0; 
+   tstop  = 8.0; 
    
    /* Parse command line */
    arg_index = 1;
