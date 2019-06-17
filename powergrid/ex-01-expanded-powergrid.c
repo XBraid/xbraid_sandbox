@@ -154,6 +154,7 @@ my_Step(braid_App        app,
    {
       (u->value) += (fstop->value);
    }
+
    
    /* Compute nonlinear PDE coefficient (based on ustop, or u?) */
    if (u->value >= 2.0) 
@@ -168,6 +169,7 @@ my_Step(braid_App        app,
 
    /* Use backward Euler to propagate solution */
    (u->value) = 1./(1. + (-u->coeff)*(tstop-tstart))*(u->value);
+
 
    /* no refinement */
    braid_StepStatusSetRFactor(status, 1);
@@ -327,17 +329,30 @@ my_Access(braid_App          app,
           braid_Vector       u,
           braid_AccessStatus astatus)
 {
-   int        index;
+   int        index, iter, level;
+   double     t;
    char       filename[255];
    FILE      *file;
    
    braid_AccessStatusGetTIndex(astatus, &index);
-   sprintf(filename, "%s.%04d.%03d", "ex-01-expanded.out", index, app->rank);
-   file = fopen(filename, "w");
-   fprintf(file, "%.14e\n", (u->value));
-   fflush(file);
-   fclose(file);
+   braid_AccessStatusGetT(astatus, &t);
+   braid_AccessStatusGetIter(astatus, &iter);
+   braid_AccessStatusGetLevel(astatus, &level);
+   // sprintf(filename, "%s.%04d.%03d", "ex-01-expanded.out", index, app->rank);
+   // file = fopen(filename, "w");
+   // fprintf(file, "%.14e\n", (u->value));
+   // fflush(file);
+   // fclose(file);
 
+   /* Append all into one file. */
+   if (level == 0)
+   {
+      sprintf(filename, "%s.%03d.%03d", "ex-01-expanded.out", iter, app->rank);
+      file = fopen(filename, "a");
+      fprintf(file, "%04d %1.4f  %.14e\n", index, t, (u->value));
+      fflush(file);
+      fclose(file);
+   }
    return 0;
 }
 
@@ -404,6 +419,7 @@ int main (int argc, char *argv[])
    int           res        = 0;
    int           mydt       = 0;
    int           storage    = -1;
+   int           print_level= 1;
 
    int           arg_index;
    int           rank;
@@ -414,9 +430,9 @@ int main (int argc, char *argv[])
    MPI_Comm_rank(comm, &rank);
 
    /* Define time domain: ntime intervals */
-   ntime  = 10;
+   ntime  = 200;
    tstart = 0.0;
-   tstop  = 2.0; 
+   tstop  = 4.0; 
    
    /* Parse command line */
    arg_index = 1;
@@ -433,6 +449,7 @@ int main (int argc, char *argv[])
             printf("  -nu0 <nrelax>     : set num F-C relaxations on level 0\n");
             printf("  -tol <tol>        : set stopping tolerance\n");
             printf("  -cf  <cfactor>    : set coarsening factor\n");
+            printf("  -pl  <printlevel> : set print level\n");
             printf("  -mi  <max_iter>   : set max iterations\n");
             printf("  -fmg              : use FMG cycling\n");
             printf("  -res              : use my residual\n");
@@ -470,6 +487,11 @@ int main (int argc, char *argv[])
       {
          arg_index++;
          cfactor = atoi(argv[arg_index++]);
+      }
+      else if ( strcmp(argv[arg_index], "-pl") == 0 )
+      {
+         arg_index++;
+         print_level = atoi(argv[arg_index++]);
       }
       else if ( strcmp(argv[arg_index], "-mi") == 0 )
       {
@@ -523,7 +545,7 @@ int main (int argc, char *argv[])
              my_Step, my_Init, my_Clone, my_Free, my_Sum, my_SpatialNorm, 
              my_Access, my_BufSize, my_BufPack, my_BufUnpack, &core);
 
-   braid_SetPrintLevel( core, 1);
+   braid_SetPrintLevel( core, print_level);
    braid_SetMaxLevels(core, max_levels);
    braid_SetNRelax(core, -1, nrelax);
    if (nrelax0 > -1)
@@ -552,6 +574,7 @@ int main (int argc, char *argv[])
    }
 
    /* Run simulation, and then clean up */
+   braid_SetAccessLevel(core, 2);
    braid_Drive(core);
 
    braid_Destroy(core);
