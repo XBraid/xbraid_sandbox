@@ -324,7 +324,7 @@ my_ObjectiveT(braid_App app,
    // /* Divide by number of time-steps */
    // objT = objT / (double) app->ntime;
 
-   /* --- y(switchtime) is 1 or 2 -- */
+   /* --- y(2k)=1 & y(2k+1) = 2 -- */
 
    /* if t is an integer and not first or last time step */
    if ( (t == floor(t)) && (t > 0) && (t < app->ndisc+1)) 
@@ -432,7 +432,7 @@ my_ObjectiveT_diff(braid_App            app,
    //    exit(1);
    // }
 
-   /* --- y(switchtime) is 1 or 2 -- */
+   /* --- y(2k)=1 & y(2k+1) = 2 -- */
 
    /* if t is an integer and not first or last time step */
    if ( (t == floor(t)) && (t > 0) && (t < app->ndisc+1)) 
@@ -589,13 +589,19 @@ int main (int argc, char *argv[])
    double      gtol                 = 1e-6; /* Stopping criterion on the gradient norm */
 
    /* Define time domain: ntime intervals */
-   int    ntime  = 100;
-   double tstart = 0.0;
-   double tstop  = 2.0; 
-   int    ndisc  = 3;            // ONLY for time horizon [2,0] with y(0)=1.5!
+   int    ntime  = 400;
+   // double tstart = 0.0;
+   // double tstop  = 2.0; 
+   int    ndisc  = 7;            
    /* Transformed time domain */
    double sstart = 0.0;
-   double sstop  = (double) (ndisc + 1);  // [0,4] 
+   double sstop  = (double) (ndisc + 1);  
+   /* Sanity check: ntime / (ndisc + 1) must be integer for objective function evaluation */
+   if (ntime % (ndisc + 1) != 0)
+   {
+      printf("\nError: Choose ntime, ndisc such that ntime / (ndisc+1) is integer. \n\n");
+      exit(1);
+   }
 
 
    /* Initialize MPI */
