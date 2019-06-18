@@ -506,19 +506,25 @@ my_ResetGradient(braid_App app)
    return 0;
 }
 
-// * Function to allow for the computation of the gradient */
-// int
-// gradient_allreduce(braid_App app)
-// {
-//    double mygradient = app->gradient;
-//    double gradient; 
+/* Function to allow for the computation of the gradient */
+int
+gradient_allreduce(braid_App app)
+{
+   /* Copy gradient */
+   double *mygradient = (double*) malloc((app->ndisc+1)*sizeof(double)); 
+   for (int i = 0; i<app->ndisc+1; i++)
+   {
+      mygradient[i] = app->gradient[i];
+   }
 
-//    /* Collect sensitivities from all processors and broadcast it */
-//    MPI_Allreduce(&mygradient, &gradient, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
-//    app->gradient = gradient;
+   /* Collect sensitivities from all processors and broadcast it */
+   MPI_Allreduce(mygradient, app->gradient, app->ndisc+1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 
-//    return 0;
-// }
+   /* Clean up */
+   free(mygradient);
+
+   return 0;
+}
 
 
 void write_vector(char   *filename,
@@ -834,13 +840,13 @@ int main (int argc, char *argv[])
       braid_GetObjective(core, &objective);
       if (optimiter == 0) obj_init = objective;
 
-      /* Compute gradient norm */
-      mygradnorm = 0.0;
-      for (int id = 0; id < ndisc; id++)
+      /* Allreduce gradient and compute its norm */
+      gradient_allreduce(app);
+      gnorm = 0.0;
+      for (int id = 0; id < ndisc+1; id++)
       {
-         mygradnorm += pow(app->gradient[id], 2);
+         gnorm += pow(app->gradient[id], 2);
       }
-      MPI_Allreduce(&mygradnorm, &gnorm, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
       gnorm = sqrt(gnorm);
       if (optimiter == 0) gnorm_init = gnorm;
 
@@ -954,10 +960,13 @@ int main (int argc, char *argv[])
    braid_Destroy(core);
 
    /* print */
-   sprintf(filename, "%s.%03d", "design.out", rank);
-   write_vector(filename, app->design, ndisc+1);
-   sprintf(filename, "%s.%03d", "gradient.out", rank);
-   write_vector(filename, app->gradient, ndisc+1);
+   if (rank == 0)
+   {
+      sprintf(filename, "%s.%03d", "design.out", rank);
+      write_vector(filename, app->design, ndisc+1);
+      sprintf(filename, "%s.%03d", "gradient.out", rank);
+      write_vector(filename, app->gradient, ndisc+1);
+   }
 
    /* Close optimization output file */
    if (rank == 0) fclose(optimfile);
