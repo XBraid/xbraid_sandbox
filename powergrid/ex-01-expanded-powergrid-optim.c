@@ -563,6 +563,7 @@ int main (int argc, char *argv[])
    int           arg_index;
    int           rank;
    double        mygradnorm;
+   FILE         *optimfile;
 
    double ls_objective;
    double ls_param    = 1e-4;
@@ -758,7 +759,7 @@ int main (int argc, char *argv[])
    gradient0 = (double*) malloc((ndisc+1) * sizeof(double));
    for (int i = 0; i < ndisc+1; i++)
    {
-      design[i]   =  .5; // Initial guess segment length in original time t.
+      design[i]   =  .5; // Initial segment length in original time t.
       gradient[i] = 0.0;
    }
 
@@ -781,7 +782,6 @@ int main (int argc, char *argv[])
 
 
    /* initialize XBraid */
-   
    braid_Init(comm, comm, sstart, sstop, ntime, app,
             my_Step, my_Init, my_Clone, my_Free, my_Sum, my_SpatialNorm, 
             my_Access, my_BufSize, my_BufPack, my_BufUnpack, &core);
@@ -812,11 +812,11 @@ int main (int argc, char *argv[])
 
    /* Prepare output */
    sprintf(filename, "%s", "optim.out");
-   file = fopen(filename, "w");
+   optimfile = fopen(filename, "w");
    if (rank == 0) 
    {
       printf("#Iter Objective            rel.obj     ||grad||             rel.||grad||    stepsize\n"); 
-      fprintf(file, "#Iter Objective            rel.obj      ||grad||           rel.||grad||    stepsize\n"); 
+      fprintf(optimfile, "#Iter Objective            rel.obj      ||grad||           rel.||grad||    stepsize\n"); 
    }
 
    /* Optimization iteration */
@@ -848,7 +848,7 @@ int main (int argc, char *argv[])
       if (rank == 0) 
       {
          printf("%3d: %1.14e  %1.4e  %1.14e  %1.4e  %.8f\n", optimiter, objective, objective/obj_init, gnorm, gnorm/gnorm_init, ls_stepsize);
-         fprintf(file, "%3d: %1.14e  %1.4e  %1.14e  %1.4e  %.8f\n", optimiter, objective, objective/obj_init, gnorm, gnorm/gnorm_init, ls_stepsize);
+         fprintf(optimfile, "%3d: %1.14e  %1.4e  %1.14e  %1.4e  %.8f\n", optimiter, objective, objective/obj_init, gnorm, gnorm/gnorm_init, ls_stepsize);
       }
 
       /* Check optimization convergence */
@@ -900,8 +900,8 @@ int main (int argc, char *argv[])
             /* Test for line-search failure */
             if (ls_iter == ls_maxiter - 1)
             {
-               printf("\n WARNING: LINESEARCH FAILED! \n");
-               fprintf(file,"# WARNING: LINESEARCH FAILED! \n");
+               if (rank == 0) printf("\n WARNING: LINESEARCH FAILED! \n");
+               if (rank == 0) fprintf(optimfile,"# WARNING: LINESEARCH FAILED! \n");
             }
 
             /* Go back half of the step */
@@ -923,7 +923,7 @@ int main (int argc, char *argv[])
       if (optimiter == maxoptimiter)
       {
          printf("\n Max. number of iterations reached! \n\n"); 
-         fprintf(file, "#Max. number of iterations reached! \n\n"); 
+         fprintf(optimfile, "#Max. number of iterations reached! \n\n"); 
       }
       else
       {
@@ -960,7 +960,7 @@ int main (int argc, char *argv[])
    write_vector(filename, app->gradient, ndisc+1);
 
    /* Close optimization output file */
-   fclose(file);
+   if (rank == 0) fclose(optimfile);
 
 #if 0
    /* --- Finite differences test --- */
