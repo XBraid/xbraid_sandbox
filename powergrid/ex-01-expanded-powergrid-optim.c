@@ -808,9 +808,18 @@ int main (int argc, char *argv[])
       braid_SetStorage(core, storage);
    }
 
+   /* Prepare output */
+   sprintf(filename, "%s", "optim.out");
+   file = fopen(filename, "w");
+   if (rank == 0) 
+   {
+      printf("#Iter Objective            rel.obj     ||grad||             rel.||grad||    stepsize\n"); 
+      fprintf(file, "#Iter Objective            rel.obj      ||grad||           rel.||grad||    stepsize\n"); 
+   }
+
    /* Optimization iteration */
-   printf("Iter   Objective     rel. obj      ||grad||    stepsize\n"); 
    double obj_init    = 1.0;
+   double gnorm_init  = 1.0;
    double ls_stepsize = -1.0;
    for (optimiter = 0; optimiter < maxoptimiter; optimiter++)
    {
@@ -831,11 +840,13 @@ int main (int argc, char *argv[])
       }
       MPI_Allreduce(&mygradnorm, &gnorm, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
       gnorm = sqrt(gnorm);
+      if (optimiter == 0) gnorm_init = gnorm;
 
       /* Output */
       if (rank == 0) 
       {
-         printf("%3d: %1.14e  %1.2e  %1.14e  %.14f\n", optimiter, objective, objective/obj_init, gnorm, ls_stepsize);
+         printf("%3d: %1.14e  %1.4e  %1.14e  %1.4e  %.8f\n", optimiter, objective, objective/obj_init, gnorm, gnorm/gnorm_init, ls_stepsize);
+         fprintf(file, "%3d: %1.14e  %1.4e  %1.14e  %1.4e  %.8f\n", optimiter, objective, objective/obj_init, gnorm, gnorm/gnorm_init, ls_stepsize);
       }
 
       /* Check optimization convergence */
@@ -888,6 +899,7 @@ int main (int argc, char *argv[])
             if (ls_iter == ls_maxiter - 1)
             {
                printf("\n WARNING: LINESEARCH FAILED! \n");
+               fprintf(file,"# WARNING: LINESEARCH FAILED! \n");
             }
 
             /* Go back half of the step */
@@ -909,6 +921,7 @@ int main (int argc, char *argv[])
       if (optimiter == maxoptimiter)
       {
          printf("\n Max. number of iterations reached! \n\n"); 
+         fprintf(file, "#Max. number of iterations reached! \n\n"); 
       }
       else
       {
@@ -944,6 +957,8 @@ int main (int argc, char *argv[])
    sprintf(filename, "%s.%03d", "gradient.out", rank);
    write_vector(filename, app->gradient, ndisc+1);
 
+   /* Close optimization output file */
+   fclose(file);
 
 #if 0
    /* --- Finite differences test --- */
