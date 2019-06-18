@@ -430,9 +430,9 @@ int main (int argc, char *argv[])
    MPI_Comm_rank(comm, &rank);
 
    /* Define time domain: ntime intervals */
-   ntime  = 800;
+   ntime  = 400;
    tstart = 0.0;
-   tstop  = 8.0; 
+   tstop  = 5.0; 
    
    /* Parse command line */
    arg_index = 1;
