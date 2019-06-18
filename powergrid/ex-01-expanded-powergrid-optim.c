@@ -588,24 +588,21 @@ int main (int argc, char *argv[])
    double      stepsize             = 0.1;  /* Step size for design updates */
    double      gtol                 = 1e-6; /* Stopping criterion on the gradient norm */
 
-   /* Define time domain: ntime intervals */
-   int    ntime  = 400;
-   int    ndisc  = 7;            
-   /* Transformed time domain */
-   double sstart = 0.0;
-   double sstop  = (double) (ndisc + 1);  
-   /* Sanity check: ntime / (ndisc + 1) must be integer for objective function evaluation */
-   if (ntime % (ndisc + 1) != 0)
-   {
-      printf("\nError: Choose ntime, ndisc such that ntime / (ndisc+1) is integer. \n\n");
-      exit(1);
-   }
-
+   /* Default time domain */
+   int ntime  = 400;          /* Number of time steps */
+   int ndisc  = 7;            /* Number of discontinuities / switches */
 
    /* Initialize MPI */
    comm   = MPI_COMM_WORLD;
    MPI_Init(&argc, &argv);
    MPI_Comm_rank(comm, &rank);
+
+   /* Hack: Open and close output file. */
+   char       filename[255];
+   FILE      *file;
+   sprintf(filename, "%s.%03d", "ex-01-expanded.out", rank);
+   file = fopen(filename, "w");
+   fclose(file);
 
    /* Parse command line */
    arg_index = 1;
@@ -738,12 +735,17 @@ int main (int argc, char *argv[])
       }
    }
 
-   /* Hack: Open and close output file. */
-   char       filename[255];
-   FILE      *file;
-   sprintf(filename, "%s.%03d", "ex-01-expanded.out", rank);
-   file = fopen(filename, "w");
-   fclose(file);
+   /* Transformed time domain */
+   double sstart = 0.0;
+   double sstop  = (double) (ndisc + 1);  
+   /* Sanity check: ntime / (ndisc + 1) must be integer for objective function evaluation */
+   if (ntime % (ndisc + 1) != 0)
+   {
+      printf("\nError: Choose ntime, ndisc such that ntime / (ndisc+1) is integer.\n");
+      printf("This is required for evaluating the objective function.\n\n");
+      exit(1);
+   }
+
 
    /* initialize design and gradient */
    double* design;
