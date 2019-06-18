@@ -860,7 +860,7 @@ int main (int argc, char *argv[])
       }
 
       /* Check optimization convergence */
-      if (gnorm < gtol)
+      if (gnorm/gnorm_init < gtol)
       {
          break;
       }
@@ -950,7 +950,7 @@ int main (int argc, char *argv[])
          printf("\n");
          printf("  optimization iterations  = %d\n", optimiter);
          printf("  max optim iterations     = %d\n", maxoptimiter);
-         printf("  gradient norm tolerance  = %1.1e", gtol);
+         printf("  rel. gradient norm tolerance = %1.1e", gtol);
          printf("\n");
       }
    }
