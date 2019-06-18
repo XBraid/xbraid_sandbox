@@ -80,8 +80,8 @@ double getOriginalTime(double *design,
 {
    double ts = 0.0;
 
-   int i;
-   for (i = 0; i < ndesign; i++)
+   int i=0;
+   for (i = 0; i < ndesign-1; i++)
    {
       /* Find interval such that s \in [k,k+1]*/
       if (i <= s && s < i+1)
