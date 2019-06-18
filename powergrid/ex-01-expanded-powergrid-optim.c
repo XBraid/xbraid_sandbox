@@ -567,7 +567,7 @@ int main (int argc, char *argv[])
    double        gnorm;
    int           optimiter;
    int           arg_index;
-   int           rank;
+   int           rank, size;
    double        mygradnorm;
    FILE         *optimfile;
 
@@ -603,6 +603,7 @@ int main (int argc, char *argv[])
    comm   = MPI_COMM_WORLD;
    MPI_Init(&argc, &argv);
    MPI_Comm_rank(comm, &rank);
+   MPI_Comm_size(comm, &size);
 
    /* Hack: Open and close output file. */
    char       filename[255];
@@ -829,6 +830,7 @@ int main (int argc, char *argv[])
    double obj_init    = 1.0;
    double gnorm_init  = 1.0;
    double ls_stepsize = -1.0;
+   double StartTime = MPI_Wtime();
    for (optimiter = 0; optimiter < maxoptimiter; optimiter++)
    {
       /* Run adjoint XBraid to compute objective function and gradient */
@@ -922,6 +924,12 @@ int main (int argc, char *argv[])
 
    }
 
+   /* Timing */
+   double myUsedTime = MPI_Wtime() - StartTime;
+   double UsedTime;
+   MPI_Allreduce(&myUsedTime, &UsedTime, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+   UsedTime = UsedTime / ((double) size);
+   if (rank == 0) printf("\n Used time: %f sec\n", UsedTime);
 
    /* Print some statistics about the optimization run */
    if (rank == 0)
