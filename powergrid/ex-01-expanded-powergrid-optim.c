@@ -590,8 +590,6 @@ int main (int argc, char *argv[])
 
    /* Define time domain: ntime intervals */
    int    ntime  = 400;
-   // double tstart = 0.0;
-   // double tstop  = 2.0; 
    int    ndisc  = 7;            
    /* Transformed time domain */
    double sstart = 0.0;
@@ -619,6 +617,7 @@ int main (int argc, char *argv[])
          {
             printf("\nExample 1: Solve a scalar ODE \n\n");
             printf("  -ntime <ntime>         : set num time points\n");
+            printf("  -ndisc <ndisc>         : set num of switching points\n");
             printf("  -ml  <max_levels>      : set max levels\n");
             printf("  -nu  <nrelax>          : set num F-C relaxations\n");
             printf("  -nu0 <nrelax>          : set num F-C relaxations on level 0\n");
@@ -643,6 +642,11 @@ int main (int argc, char *argv[])
       {
          arg_index++;
          ntime = atoi(argv[arg_index++]);
+      }
+      else if ( strcmp(argv[arg_index], "-ndisc") == 0 )
+      {
+         arg_index++;
+         ndisc = atoi(argv[arg_index++]);
       }
       else if ( strcmp(argv[arg_index], "-ml") == 0 )
       {
@@ -752,7 +756,7 @@ int main (int argc, char *argv[])
    gradient0 = (double*) malloc((ndisc+1) * sizeof(double));
    for (int i = 0; i < ndisc+1; i++)
    {
-      design[i]   =  .5; // Initial guess  t\in[0,2], equally distributed length
+      design[i]   =  .5; // Initial guess segment length in original time t.
       gradient[i] = 0.0;
    }
 
