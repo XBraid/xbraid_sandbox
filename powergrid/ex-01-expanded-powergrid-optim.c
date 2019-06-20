@@ -141,11 +141,11 @@ my_Init(braid_App     app,
    
    if (t == 0.0) /* Initial condition */
    {
-      (u->value) = 1.5;
+      (u->value) = 1.0;
    }
    else /* All other time points set to arbitrary value */
    {
-      (u->value) = 1.5;
+      (u->value) = 1.0;
    }
    *u_ptr = u;
 
@@ -576,7 +576,7 @@ int main (int argc, char *argv[])
    double ls_maxiter  = 40;
 
    /* Setting defaults */
-   int         max_levels = 1;
+   int         max_levels = 5;
    int         nrelax     = 1;
    int         nrelax0    = -1;
    double      tol        = 1.0e-06;
