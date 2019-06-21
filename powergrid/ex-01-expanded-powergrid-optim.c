@@ -101,6 +101,24 @@ double getOriginalTime(double *design,
 }
 
 int
+my_Residual(braid_App        app,
+            braid_Vector     ustop,
+            braid_Vector     r,
+            braid_StepStatus status)
+{
+   double sstart;             /* current time */
+   double sstop;              /* evolve to this time*/
+   braid_StepStatusGetTstartTstop(status, &sstart, &sstop);
+
+   double control = getA(app->design, app->ndisc+1, sstart);
+
+   /* compute A(u_i, u_{i-1}) */
+   (r->value) = (1. + (-control)*(sstop-sstart))*(ustop->value) - (r->value);
+
+   return 0;
+}
+
+int
 my_Step(braid_App        app,
         braid_Vector     ustop,
         braid_Vector     fstop,
@@ -116,6 +134,12 @@ my_Step(braid_App        app,
    braid_StepStatusGetIter(status, &iter);
    braid_StepStatusGetTstartTstop(status, &sstart, &sstop);
    braid_StepStatusGetTIndex(status, &istart);
+
+   /* Account for XBraid right-hand-side */
+   if (fstop != NULL)
+   {
+      (u->value) += (fstop->value);
+   }
 
    /* Get the control */
    double control = getA(app->design, app->ndisc+1, sstart);
@@ -584,6 +608,7 @@ int main (int argc, char *argv[])
    int         print_level= 1;
    int         max_iter   = 100;
    int         fmg        = 0;
+   int         res        = 0;
    int         storage    = -1;
 
    double      state_penalty_param  = 10;   /* Param for state  penalty */
@@ -630,6 +655,7 @@ int main (int argc, char *argv[])
             printf("  -cf  <cfactor>         : set coarsening factor\n");
             printf("  -pl  <printlevel>      : set print level\n");
             printf("  -fmg                   : use FMG cycling\n");
+            printf("  -res                   : use my residual\n");
             printf("  -storage <level>       : full storage on levels >= level\n");
             printf("  -mi  <max_iter>        : max braid iterations\n");
             printf("  -moi <int>             : max optimization iter\n");
@@ -707,6 +733,11 @@ int main (int argc, char *argv[])
       {
          arg_index++;
          fmg = 1;
+      }
+      else if ( strcmp(argv[arg_index], "-res") == 0 )
+      {
+         arg_index++;
+         res = 1;
       }
       else if ( strcmp(argv[arg_index], "-storage") == 0 ){
          arg_index++;
@@ -811,6 +842,10 @@ int main (int argc, char *argv[])
    if (fmg)
    {
       braid_SetFMG(core);
+   }
+   if (res)
+   {
+      braid_SetResidual(core, my_Residual);
    }
    if (storage >= -2)
    {
