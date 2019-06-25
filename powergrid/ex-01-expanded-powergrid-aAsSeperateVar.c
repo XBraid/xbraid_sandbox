@@ -382,7 +382,7 @@ my_BufPack(braid_App          app,
            void               *buffer,
            braid_BufferStatus bstatus)
 {
-   double *dbuffer = buffer;
+   double *dbuffer = (double*) buffer;
 
    dbuffer[0] = (u->value);
    dbuffer[1] = (u->coeff);
@@ -397,7 +397,7 @@ my_BufUnpack(braid_App          app,
              braid_Vector       *u_ptr,
              braid_BufferStatus bstatus)
 {
-   double    *dbuffer = buffer;
+   double    *dbuffer = (double*) buffer;
    my_Vector *u;
 
    u = (my_Vector *) malloc(sizeof(my_Vector));

@@ -4,6 +4,7 @@
 #include <math.h>
 #include <string.h>
 
+#include "hessianApprox.hpp"
 #include "braid.h"
 
 
@@ -274,7 +275,7 @@ my_BufPack(braid_App          app,
            void               *buffer,
            braid_BufferStatus bstatus)
 {
-   double *dbuffer = buffer;
+   double *dbuffer = (double*)buffer;
 
    dbuffer[0] = (u->value);
    braid_BufferStatusSetSize( bstatus, sizeof(double) );
@@ -288,7 +289,7 @@ my_BufUnpack(braid_App          app,
              braid_Vector       *u_ptr,
              braid_BufferStatus bstatus)
 {
-   double    *dbuffer = buffer;
+   double    *dbuffer = (double*)buffer;
    my_Vector *u;
 
    u = (my_Vector *) malloc(sizeof(my_Vector));
@@ -621,8 +622,8 @@ int main (int argc, char *argv[])
    double      gtol                 = 1e-6; /* Stopping criterion on the gradient norm */
 
    /* Default time domain */
-   int ntime  = 400;          /* Number of time steps */
-   int ndisc  = 7;            /* Number of discontinuities / switches */
+   int ntime  = 200;          /* Number of time steps */
+   int ndisc  = 3;            /* Number of discontinuities / switches */
 
    /* Initialize MPI */
    comm   = MPI_COMM_WORLD;
@@ -786,20 +787,25 @@ int main (int argc, char *argv[])
    }
 
 
-   /* initialize design and gradient */
+   /* initialize optimization */
    double* design;
    double* gradient;
    double* design0;
    double* gradient0;
+   double* ascentdir;
    design    = (double*) malloc((ndisc+1) * sizeof(double));
    gradient  = (double*) malloc((ndisc+1) * sizeof(double));
    design0   = (double*) malloc((ndisc+1) * sizeof(double));
    gradient0 = (double*) malloc((ndisc+1) * sizeof(double));
+   ascentdir = (double*) malloc((ndisc+1) * sizeof(double));
    for (int i = 0; i < ndisc+1; i++)
    {
-      design[i]   =  .5; // Initial segment length in original time t.
-      gradient[i] = 0.0;
+      design[i]    =  .5; // Initial segment length in original time t.
+      gradient[i]  = 0.0;
+      ascentdir[i] = 0.0;
    }
+   // HessianApprox* hessian = new L_BFGS(MPI_COMM_WORLD, ndisc+1, 5);
+   HessianApprox* hessian = new L_BFGS(MPI_COMM_WORLD, ndisc+1, 50);
 
    /* set up app structure */
    app = (my_App *) malloc(sizeof(my_App));
@@ -861,6 +867,7 @@ int main (int argc, char *argv[])
       fprintf(optimfile, "#Iter Objective            rel.obj      ||grad||           rel.||grad||    stepsize\n"); 
    }
 
+
    /* Optimization iteration */
    double obj_init    = 1.0;
    double gnorm_init  = 1.0;
@@ -907,10 +914,14 @@ int main (int argc, char *argv[])
          design0[idx]   = app->design[idx];
       }
 
+      /* Update hessian approximation */
+      hessian->updateMemory(optimiter, app->design, app->gradient);
+      hessian->computeAscentDir(optimiter, app->gradient, ascentdir);
+
       /* Design update using simple steepest descent method with fixed stepsize */
       for (int idx = 0; idx < ndisc; idx++)
       {
-         app->design[idx] = design0[idx] - stepsize * gradient0[idx];
+         app->design[idx] = design0[idx] - stepsize * ascentdir[idx];
       }
 
       /* --- Backtracking linesearch -- */
@@ -951,7 +962,7 @@ int main (int argc, char *argv[])
             ls_stepsize = 0.5 * ls_stepsize;
             for (int idx = 0; idx < ndisc; idx++)
             {
-               app->design[idx] = design0[idx] - ls_stepsize * gradient0[idx];
+               app->design[idx] = design0[idx] - ls_stepsize * ascentdir[idx];
             }
          }
          
@@ -1127,11 +1138,13 @@ int main (int argc, char *argv[])
 #endif
 
    /* Clean up */
+   delete hessian;
    free(app);
    free(design);
    free(gradient);
    free(design0);
    free(gradient0);
+   free(ascentdir);
    MPI_Finalize();
 
    return (0);
