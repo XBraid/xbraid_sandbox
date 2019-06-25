@@ -618,7 +618,7 @@ int main (int argc, char *argv[])
    double      regul_param          = 1e-4; /* Regularization parameter */
    int         regul_norm           = 1;    /* Regularization parameter */
    int         maxoptimiter         = 100;  /* Maximum optimization iterations */
-   double      stepsize             = 0.1;  /* Step size for design updates */
+   double      stepsize_init        = 1.0;  /* Set initial Step size for design updates */
    double      gtol                 = 1e-6; /* Stopping criterion on the gradient norm */
 
    /* Default time domain */
@@ -708,7 +708,7 @@ int main (int argc, char *argv[])
       else if ( strcmp(argv[arg_index], "-dstep") == 0 ) 
       {
          arg_index++;
-         stepsize = atof(argv[arg_index++]);
+         stepsize_init = atof(argv[arg_index++]);
       }
       else if ( strcmp(argv[arg_index], "-cf") == 0 )
       {
@@ -804,7 +804,6 @@ int main (int argc, char *argv[])
       gradient[i]  = 0.0;
       ascentdir[i] = 0.0;
    }
-   // HessianApprox* hessian = new L_BFGS(MPI_COMM_WORLD, ndisc+1, 5);
    HessianApprox* hessian = new L_BFGS(MPI_COMM_WORLD, ndisc+1, 50);
 
    /* set up app structure */
@@ -871,10 +870,12 @@ int main (int argc, char *argv[])
    /* Optimization iteration */
    double obj_init    = 1.0;
    double gnorm_init  = 1.0;
-   double ls_stepsize = -1.0;
+   double ls_stepsize = 0.002;  // HACK!
    double StartTime = MPI_Wtime();
    for (optimiter = 0; optimiter < maxoptimiter; optimiter++)
+
    {
+
       /* Run adjoint XBraid to compute objective function and gradient */
       braid_SetAccessLevel(core, 0);
       braid_SetObjectiveOnly(core, 0);
@@ -918,10 +919,10 @@ int main (int argc, char *argv[])
       hessian->updateMemory(optimiter, app->design, app->gradient);
       hessian->computeAscentDir(optimiter, app->gradient, ascentdir);
 
-      /* Design update using simple steepest descent method with fixed stepsize */
+      /* Design update using simple steepest descent method */
       for (int idx = 0; idx < ndisc; idx++)
       {
-         app->design[idx] = design0[idx] - stepsize * ascentdir[idx];
+         app->design[idx] = design0[idx] - ls_stepsize * ascentdir[idx];
       }
 
       /* --- Backtracking linesearch -- */
@@ -933,9 +934,8 @@ int main (int argc, char *argv[])
          wolfe += pow(app->gradient[idx], 2);
       } 
       
-      
-
-      ls_stepsize = stepsize;
+      /* Reset stepsize */
+      ls_stepsize = stepsize_init;
       for (int ls_iter = 0; ls_iter < ls_maxiter; ls_iter++)
       {
          /* Get objective */
