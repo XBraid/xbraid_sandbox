@@ -130,6 +130,8 @@ my_Step(braid_App        app,
    double sstop;              /* evolve to this time*/
    int    istart;             /* time point index value corresponding to tstop on (global) fine grid */
    int    level, iter;
+   double ds;
+   double control;
 
    braid_StepStatusGetLevel(status, &level);
    braid_StepStatusGetIter(status, &iter);
@@ -142,11 +144,45 @@ my_Step(braid_App        app,
       (u->value) += (fstop->value);
    }
 
-   /* Get the control */
-   double control = getA(app->design, app->ndisc+1, sstart);
+   /* Find the number of switches in between sstop and sstart */
+   int nswitches = (int) ceil(sstop) - (int) floor(sstart) - 1;
+
+   double u_curr = u->value;
+   if (nswitches > 0)
+   {
+      printf("%f -> %f, %d switches: \n", sstart, sstop, nswitches);
+
+      /* Step from sstart to first switch */
+      ds = ceil(sstart) - sstart;
+      control = getA(app->design, app->ndisc+1, sstart);
+      u_curr = 1./(1. - control * ds) * u_curr;
+      printf("first to %f: %f %f, ", ceil(sstart), ds, control);
+
+      /* Step through all intermediate switches */
+      for (int iswitch = 0; iswitch < nswitches-1; iswitch++)
+      {
+         ds = 1.0;
+         control = getA(app->design, app->ndisc+1, ceil(sstart) + (double) iswitch);
+         u_curr = 1./(1. - control * ds) * u_curr;
+         printf("%d %f %f, ", iswitch, ds, control);
+      }
+
+      /* Step from last switch to sstop */
+      ds = sstop - floor(sstop);
+      control = getA(app->design, app->ndisc+1, ceil(sstart) + nswitches-1);
+      u_curr = 1./(1. - control * ds) * u_curr;
+      printf("last to %f: %f %f\n, ", sstop, ds, control);
+   }
+   else
+   {
+      /* Step from sstart to sstop */
+      control = getA(app->design, app->ndisc+1, sstart);
+      ds = sstop - sstart;
+      u_curr = 1./(1. - control * ds) * u_curr;
+   }
    
-   /* Use backward Euler and current design to propagate solution forward */
-   (u->value) = 1./(1. + (-control)*(sstop-sstart))*(u->value);
+   /* Set u */
+   u->value = u_curr;
 
    /* no refinement */
    braid_StepStatusSetRFactor(status, 1);
