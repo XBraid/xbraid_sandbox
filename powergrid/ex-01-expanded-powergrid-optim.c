@@ -269,10 +269,14 @@ my_Access(braid_App          app,
           braid_AccessStatus astatus)
 {
    int        index;
+   int        iter;
+   int        level;
    double     s, ts;
    char       filename[255];
    FILE      *file;
    
+   braid_AccessStatusGetLevel(astatus, &level);
+   braid_AccessStatusGetIter(astatus, &iter);
    braid_AccessStatusGetTIndex(astatus, &index);
    braid_AccessStatusGetT(astatus, &s);
    // sprintf(filename, "%s.%04d.%03d", "ex-01-expanded.out", index, app->rank);
@@ -285,12 +289,16 @@ my_Access(braid_App          app,
    ts = getOriginalTime(app->design, app->ndisc+1, s);
 
    /* Append all into one file. */
-   sprintf(filename, "%s.%03d", "ex-01-expanded.out", app->rank);
-   file = fopen(filename, "a");
-   fprintf(file, "%04d %1.4f %1.4f %.14e\n", index, s, ts, (u->value));
-   fflush(file);
-   fclose(file);
+   if (level == 0)
+   {
+      sprintf(filename, "%s.iter%03d.%03d", "ex-01-expanded.out", iter, app->rank);
+      // sprintf(filename, "%s.%03d", "ex-01-expanded.out", app->rank);
+      file = fopen(filename, "a");
+      fprintf(file, "%04d %1.4f %1.4f %.14e\n", index, s, ts, (u->value));
+      fflush(file);
+      fclose(file);
 
+   }
 
    // if (index == app->ntime) printf("Last: %d  %4f  %1.14e\n", index, t, u->value);
 
@@ -1100,7 +1108,8 @@ int main (int argc, char *argv[])
    }
 
    /* Get final access */
-   braid_SetAccessLevel(core, 1);
+   braid_SetAccessLevel(core, 2);
+   braid_SetObjectiveOnly(core, 1);
    braid_Drive(core);
 
 
@@ -1123,7 +1132,7 @@ int main (int argc, char *argv[])
    /* Close optimization output file */
    if (rank == 0) fclose(optimfile);
 
-#if 1
+#if 0
    /* --- Finite differences test --- */
    printf("\n\n --- FINITE DIFFERENCE TESTING ---\n\n");
 
