@@ -139,39 +139,41 @@ my_Step(braid_App        app,
    braid_StepStatusGetTIndex(status, &istart);
 
    /* Account for XBraid right-hand-side */
-   if (fstop != NULL)
-   {
-      (u->value) += (fstop->value);
-   }
+   // if (fstop != NULL)
+   // {
+   //    (u->value) += (fstop->value);
+   // }
 
    /* Find the number of switches in between sstop and sstart */
    int nswitches = (int) ceil(sstop) - (int) floor(sstart) - 1;
 
+
    double u_curr = u->value;
    if (nswitches > 0)
    {
-      printf("%f -> %f, %d switches: \n", sstart, sstop, nswitches);
+      // if (nswitches > 1) printf("%f -> %f, %d switches: \n", sstart, sstop, nswitches);
+      // printf("%f -> %f, %d switches: \n", sstart, sstop, nswitches);
 
       /* Step from sstart to first switch */
       ds = ceil(sstart) - sstart;
       control = getA(app->design, app->ndisc+1, sstart);
       u_curr = 1./(1. - control * ds) * u_curr;
-      printf("first to %f: %f %f, ", ceil(sstart), ds, control);
+      // printf("first to %f: %f %f, ", ceil(sstart), ds, control);
 
       /* Step through all intermediate switches */
       for (int iswitch = 0; iswitch < nswitches-1; iswitch++)
       {
-         ds = 1.0;
+         ds = 1.0; // since switches happen at integer times 
          control = getA(app->design, app->ndisc+1, ceil(sstart) + (double) iswitch);
          u_curr = 1./(1. - control * ds) * u_curr;
-         printf("%d %f %f, ", iswitch, ds, control);
+         // printf("%d %f %f, ", iswitch, ds, control);
       }
 
       /* Step from last switch to sstop */
       ds = sstop - floor(sstop);
-      control = getA(app->design, app->ndisc+1, ceil(sstart) + nswitches-1);
+      control = getA(app->design, app->ndisc+1, floor(sstop));
       u_curr = 1./(1. - control * ds) * u_curr;
-      printf("last to %f: %f %f\n, ", sstop, ds, control);
+      // printf("last to %f: %f %f\n, ", sstop, ds, control);
    }
    else
    {
@@ -531,22 +533,82 @@ my_Step_diff(braid_App           app,
    double sstop;              /* evolve to this time*/
    double dsigm;
    int istart;
+   double ds;
+   double control;
+   double u_curr;
 
    braid_StepStatusGetTstartTstop(status, &sstart, &sstop);
    braid_StepStatusGetTIndex(status, &istart);
    double deltat = sstop - sstart;
 
-   /* Get the control */
-   double control = getA(app->design, app->ndisc+1, sstart);
+   /* Find the number of switches in between sstop and sstart */
+   int nswitches = (int) ceil(sstop) - (int) floor(sstart) - 1;
 
-   /* Transposed derivative of step wrt u times u_bar */
-   ddu = 1./(1. + (-control)*deltat)*(u_bar->value);
+   u_curr = u->value;
+   ddu    = u_bar->value;
 
-   /* Transposed derivative of step wrt control times u_bar */
-   ddc = (deltat * (u->value)) / pow(1. - deltat*control,2) * (u_bar->value);
+   if (nswitches > 0)
+   {
 
-   /* Transposed derivative of step wrt design times cbar */
-   getA_diff(app->gradient, app->ndisc+1, sstart, ddc); 
+      /* Move forward, storing u */
+
+      double* utmp = new double[nswitches];
+      /* First step */
+      ds = ceil(sstart) - sstart;
+      control = getA(app->design, app->ndisc+1, sstart);
+      u_curr = 1./(1. - control * ds) * u_curr;
+      utmp[0] = u_curr;
+      /* Intermediate steps */
+      for (int iswitch = 0; iswitch < nswitches-1; iswitch++)
+      {
+         ds = 1.0; 
+         control = getA(app->design, app->ndisc+1, ceil(sstart) + (double) iswitch);
+         u_curr = 1./(1. - control * ds) * u_curr;
+         utmp[iswitch+1] = u_curr;
+      }
+      /* last step */
+      ds = sstop - floor(sstop);
+      control = getA(app->design, app->ndisc+1, ceil(sstart) + nswitches-1);
+      u_curr = 1./(1. - control * ds) * u_curr;
+
+
+      /* Step backwards */
+
+      /* Last step */
+      ds = sstop - floor(sstop);
+      control = getA(app->design, app->ndisc+1, floor(sstop));
+      ddu = 1./(1. - control * ds) * u_bar->value;
+      ddc = (ds* (u_curr)) / pow(1. - ds*control,2) * (u_bar->value);
+      getA_diff(app->gradient, app->ndisc+1, floor(sstop), ddc); 
+      /* Intermediate switches */
+      for (int iswitch = nswitches - 2; iswitch > -1; iswitch--)
+      {
+         ds = 1.0; 
+         control = getA(app->design, app->ndisc+1, ceil(sstart) + (double) iswitch);
+         ddc = (ds* (utmp[iswitch])) / pow(1. - ds*control,2) * (ddu);
+         ddu  = 1./(1. - control * ds) * ddu;
+         getA_diff(app->gradient, app->ndisc+1, ceil(sstart) + (double) iswitch, ddc); 
+      }
+      /* first step */
+      ds = ceil(sstart) - sstart;
+      control = getA(app->design, app->ndisc+1, sstart);
+      ddc = (ds* (utmp[0])) / pow(1. - ds*control,2) * (ddu);
+      ddu = 1./(1. - control * ds) * ddu;
+      getA_diff(app->gradient, app->ndisc+1, sstart, ddc); 
+
+      delete [] utmp;
+
+   }
+   else
+   {
+      /* Step from sstart to sstop */
+      control = getA(app->design, app->ndisc+1, sstart);
+      ds = sstop - sstart;
+      ddc = (ds* (u->value)) / pow(1. - ds*control,2) * (ddu);
+      ddu = 1./(1. - control * ds) * ddu;
+      getA_diff(app->gradient, app->ndisc+1, sstart, ddc); 
+   }
+
 
    /* Update u_bar */
    u_bar->value = ddu;              
@@ -1061,7 +1123,7 @@ int main (int argc, char *argv[])
    /* Close optimization output file */
    if (rank == 0) fclose(optimfile);
 
-#if 0
+#if 1
    /* --- Finite differences test --- */
    printf("\n\n --- FINITE DIFFERENCE TESTING ---\n\n");
 
