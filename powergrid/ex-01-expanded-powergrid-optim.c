@@ -1040,8 +1040,7 @@ int main (int argc, char *argv[])
          wolfe += pow(app->gradient[idx], 2);
       } 
       
-      /* Reset stepsize */
-      ls_stepsize = stepsize_init;
+      /* Perform linesearch updates */
       for (int ls_iter = 0; ls_iter < ls_maxiter; ls_iter++)
       {
          /* Get objective */
@@ -1073,6 +1072,9 @@ int main (int argc, char *argv[])
          }
          
       }
+
+      /* Reset stepsize */
+      ls_stepsize = stepsize_init;
 
    }
 
@@ -1108,7 +1110,7 @@ int main (int argc, char *argv[])
    }
 
    /* Get final access */
-   braid_SetAccessLevel(core, 2);
+   braid_SetAccessLevel(core, 1);
    braid_SetObjectiveOnly(core, 1);
    braid_Drive(core);
 
