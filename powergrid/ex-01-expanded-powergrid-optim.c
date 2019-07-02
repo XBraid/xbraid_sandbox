@@ -24,10 +24,6 @@ typedef struct _braid_App_struct
    double*   design;    /* Stores the switching times */
    double*   gradient;  /* dJ/dDesign */
 
-   double      state_penalty_param;  /* Param for state  penalty */
-   int         state_penalty_norm;   /* p-Norm for state  penalty */
-   double      regul_param;          /* Regularization parameter */
-   int         regul_norm;           /* Regularization parameter */
    double      path_penalty_param;   /* Param for state  penalty */
 
 } my_App;
@@ -351,49 +347,12 @@ my_ObjectiveT(braid_App app,
               braid_ObjectiveStatus ostatus,
               double *objectiveT_ptr)
 {
-   // double state_penalty  = 0.0;
-   // double design_penalty = 0.0;
-   // double regularization = 0.0;
-   // double fd = 0.0;
-   // double push = 0.0;
-   // double oneoverdt = 0.0;
    double pathconstraint = 0.0;
    double objT = 0.0;
 
    /* Get current time */
    double t;
    braid_ObjectiveStatusGetT(ostatus, &t);
-
-   // /* Get design */
-   // double design = app->design[idx];
-
-   // /* --- State Penalty 1 <= y <= 2 ---*/
-
-   // if (app->state_penalty_norm == 1)
-   // {
-   //    /* 1-norm  */
-   //    if      (u->value < 1.0) state_penalty = 1.0 - u->value;
-   //    else if (u->value > 2.0) state_penalty = u->value - 2.0;
-   //    else                     state_penalty = 0.0;
-   //    objT += app->state_penalty_param * state_penalty;
-   // }
-   // else if (app->state_penalty_norm == 2)
-   // {
-   //    /* 2-norm */
-   //    if      (u->value < 1.0) state_penalty = 0.5 * pow(1.0 - u->value, 2);
-   //    else if (u->value > 2.0) state_penalty = 0.5 * pow(u->value - 2.0, 2);
-   //    else                     state_penalty = 0.0;
-   //    objT += app->state_penalty_param * state_penalty;
-   // }
-   // else
-   // {
-   //    printf("Error:  %i-norm for state penalty not implemented.\n", app->state_penalty_norm);
-   //    exit(1);
-   // }
-   
-
-   // /* Divide by number of time-steps */
-   // objT = objT / (double) app->ntime;
 
    /* --- y(2k)=1 & y(2k+1) = 2 -- */
 
@@ -428,8 +387,6 @@ my_ObjectiveT_diff(braid_App            app,
                   braid_Real            F_bar,
                   braid_ObjectiveStatus ostatus)
 {
-   double state_penalty_diff  = 0.0;
-   double design_penalty_diff = 0.0;
    double fd_diff             = 0.0;
    double oneoverdt           = 0.0;
    double ddpathconstraint    = 0.0;
@@ -438,70 +395,6 @@ my_ObjectiveT_diff(braid_App            app,
    /* Get current time */
    double t;
    braid_ObjectiveStatusGetT(ostatus, &t);
-
-   // /* Divide by number of time steps */
-   // F_bar = 1.0 / (double) app->ntime;
-
-   // /* --- State Penalty 1 <= y <= 2 ---*/
-
-   // if (app->state_penalty_norm == 1)
-   // {
-   //    /* 1-norm */
-   //    if      (u->value < 1.0) state_penalty_diff = - 1.0;
-   //    else if (u->value > 2.0) state_penalty_diff =   1.0;
-   //    else                     state_penalty_diff = 0.0;
-   //    u_bar->value = app->state_penalty_param * state_penalty_diff * F_bar;
-   // }
-   
-   // else if (app->state_penalty_norm == 2)
-   // {
-   //    /*  2-norm */
-   //    if      (u->value < 1.0) state_penalty_diff = - (1.0 - u->value);
-   //    else if (u->value > 2.0) state_penalty_diff =   (u->value - 2.0);
-   //    else                   state_penalty_diff = 0.0;
-   //    u_bar->value = app->state_penalty_param * state_penalty_diff * F_bar;
-   // }
-   // else
-   // {
-   //    printf("Error:  %i-norm for state penalty not implemented.\n", app->state_penalty_norm);
-   //    exit(1);
-   // }
-
-
-   // /* --- Regularization on da/dt  --- */
-   // if (app->regul_norm == 1)
-   // {
-   //    /* 1-norm */
-   //    oneoverdt = app->ntime / app->tstop ;
-   //    if (idx > 0 && idx < app->ntime)
-   //    {
-   //       /* Backwards finite differences */
-   //       if      ( app->design[idx] > app->design[idx - 1] ) fd_diff = oneoverdt;
-   //       else if ( app->design[idx] < app->design[idx - 1] ) fd_diff = oneoverdt * (-1.0);
-   //       else fd_diff = 0.0;
-   //       app->gradient[idx]   += app->regul_param * fd_diff  * F_bar;
-   //       app->gradient[idx-1] += app->regul_param * (-1.0) * fd_diff * F_bar;
-   //       // printf("%d %1.14e \n", idx, app->gradient[idx]);
-   //    }
-   // }
-   // else if (app->regul_norm == 2)
-   // {
-   //    /* 2-norm */
-   //    oneoverdt = app->ntime / app->tstop ;
-   //    if (idx > 0 && idx < app->ntime)
-   //    {
-   //       /* Backwards finite differences */
-   //       fd = (app->design[idx] - app->design[idx - 1]) * oneoverdt;
-   //       app->gradient[idx]   += app->regul_param * fd * oneoverdt * F_bar;
-   //       app->gradient[idx-1] += app->regul_param * fd * (-1.0) * oneoverdt * F_bar;
-   //       // printf("%d %1.14e \n", idx, app->gradient[idx]);
-   //    }
-   // }
-   // else
-   // {
-   //    printf("Error:  %i-norm for regularization not implemented.\n", app->regul_norm);
-   //    exit(1);
-   // }
 
    /* --- y(2k)=1 & y(2k+1) = 2 -- */
 
@@ -718,11 +611,7 @@ int main (int argc, char *argv[])
    int         res        = 0;
    int         storage    = -1;
 
-   double      state_penalty_param  = 10;   /* Param for state  penalty */
-   int         state_penalty_norm   = 2;    /* p-Norm for state  penalty */
    double      path_penalty_param   = 1;    /* Param for path constraint */
-   double      regul_param          = 1e-4; /* Regularization parameter */
-   int         regul_norm           = 1;    /* Regularization parameter */
    int         maxoptimiter         = 100;  /* Maximum optimization iterations */
    double      stepsize_init        = 1.0;  /* Set initial Step size for design updates */
    double      gtol                 = 1e-6; /* Stopping criterion on the gradient norm */
@@ -768,11 +657,7 @@ int main (int argc, char *argv[])
             printf("  -moi <int>             : max optimization iter\n");
             printf("  -dstep <double>        : step size for design updates\n");
             printf("  -gtol <double>         : optimization stopping tolerance\n");
-            printf("  -spp <double>          : state penalty parameter \n");
-            printf("  -spn <int>             : norm for state penalty \n");
             printf("  -ppp <double>          : path constraint penalty parameter \n");
-            printf("  -regulp <double>       : design regularization parameter \n");
-            printf("  -reguln <int>          : norm for design regularization \n");
          }
          exit(1);
       } 
@@ -850,30 +735,10 @@ int main (int argc, char *argv[])
          arg_index++;
          storage = atoi(argv[arg_index++]);
       }
-      else if ( strcmp(argv[arg_index], "-spp") == 0 ) 
-      {
-         arg_index++;
-         state_penalty_param = atof(argv[arg_index++]);
-      }
-      else if ( strcmp(argv[arg_index], "-spn") == 0 ) 
-      {
-         arg_index++;
-         state_penalty_norm  = atoi(argv[arg_index++]);
-      }
       else if ( strcmp(argv[arg_index], "-ppp") == 0 ) 
       {
          arg_index++;
          path_penalty_param = atof(argv[arg_index++]);
-      }
-      else if ( strcmp(argv[arg_index], "-regulp") == 0 ) 
-      {
-         arg_index++;
-         regul_param = atof(argv[arg_index++]);
-      }
-      else if ( strcmp(argv[arg_index], "-reguln") == 0 ) 
-      {
-         arg_index++;
-         regul_norm  = atoi(argv[arg_index++]);
       }
       else
       {
@@ -923,11 +788,7 @@ int main (int argc, char *argv[])
    (app->design)   = design;
    (app->gradient) = gradient;
    /* Parameters */
-   (app->state_penalty_param)  = state_penalty_param;
-   (app->state_penalty_norm)   = state_penalty_norm;
    (app->path_penalty_param)   = path_penalty_param;
-   (app->regul_param)          = regul_param;
-   (app->regul_norm)           = regul_norm;
 
 
    /* initialize XBraid */
@@ -1026,6 +887,7 @@ int main (int argc, char *argv[])
       hessian->computeAscentDir(optimiter, app->gradient, ascentdir);
 
       /* Design update using simple steepest descent method */
+      // printf("Init design update stepsize %f\n", ls_stepsize);
       for (int idx = 0; idx < ndisc; idx++)
       {
          app->design[idx] = design0[idx] - ls_stepsize * ascentdir[idx];
@@ -1065,6 +927,7 @@ int main (int argc, char *argv[])
 
             /* Go back half of the step */
             ls_stepsize = 0.5 * ls_stepsize;
+            // printf("LS design update stepsize %f\n", ls_stepsize);
             for (int idx = 0; idx < ndisc; idx++)
             {
                app->design[idx] = design0[idx] - ls_stepsize * ascentdir[idx];
