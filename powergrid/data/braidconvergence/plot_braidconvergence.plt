@@ -1,16 +1,16 @@
 set logscale y
 set format y "%g"
 set grid
-set yrange[1e-7:1e+5]
-set title 'optimiter 1, design=0.5: event every 0.5sec'
+set title 'excitermodel with limits, ml5, cf 2'
 
 set xlabel 'braid iteration'
 set ylabel 'braid tnorm'
 
 p \
-    'unknownswitchtimes_ndisc3ntime200sstop4.out.cycle.new'        u 3:5 t 'ndisc3   sstop4   tstop2  ntime200',\
-    'unknownswitchtimes_ndisc7ntime400sstop8.out.cycle.new'        u 3:5 t 'ndisc7   sstop8   tstop4  ntime400',\
-    'unknownswitchtimes_ndisc15ntime800sstop16.out.cycle.new'      u 3:5 t 'ndisc15  sstop16  tstop8  ntime800',\
-    'unknownswitchtimes_ndisc31ntime1600sstop32.out.cycle.new'     u 3:5 t 'ndisc31  sstop32  tstop16 ntime1600',\
-    'unknownswitchtimes_ndisc63ntime3200sstop64.out.cycle.new'     u 3:5 t 'ndisc63  sstop64  tstop32 ntime3200',\
-    'unknownswitchtimes_ndisc127ntime6400sstop128.out.cycle.new'   u 3:5 t 'ndisc127 sstop128 tstop64 ntime6400',\
+    'excitermodel-limits-sstop10-ntime200.braid.out.ml5'    u 3:5 t 'sstop10' ,\
+    'excitermodel-limits-sstop20-ntime400.braid.out.ml5'    u 3:5 t 'sstop20' ,\
+    'excitermodel-limits-sstop40-ntime800.braid.out.ml5'    u 3:5 t 'sstop40' ,\
+    'excitermodel-limits-sstop80-ntime1600.braid.out.ml5'   u 3:5 t 'sstop80' ,\
+    'excitermodel-limits-sstop160-ntime3200.braid.out.ml5'  u 3:5 t 'sstop160',\
+    'excitermodel-limits-sstop320-ntime6400.braid.out.ml5'  u 3:5 t 'sstop320',\
+

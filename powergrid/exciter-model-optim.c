@@ -198,9 +198,23 @@ my_Step(braid_App        app,
    /* NO LIMITS */
    ds = sstop - sstart;
    double ratio  = app->exciter_param / app->tau;
-   u->volt = 1./(1. + ratio * ds) * (u_curr + ds * ratio * app->exciter_param * inputVoltage(sstop));
+   double unext = 1./(1. + ratio * ds) * (u_curr + ds * ratio * app->exciter_param * inputVoltage(sstop));
    // printf("step %f->%f, ds=%f, u: %f -> %f\n", sstart, sstop, ds, u_curr, u->volt);
 
+   /* Enforce the limits: If limits are exceeded, set dV/dt = 0 */
+   if (unext > app->Vmax)
+   {
+      // unext = u_curr;
+      unext = app->Vmax;
+   } 
+   else if (unext < app->Vmin)
+   {
+      // unext = u_curr;
+      unext = app->Vmin;
+   }
+
+   /* Set the output voltage */
+   u->volt = unext;   
 
    /* no refinement */
    braid_StepStatusSetRFactor(status, 1);
@@ -307,8 +321,8 @@ my_Access(braid_App          app,
    /* Append all into one file. */
    if (level == 0)
    {
-      sprintf(filename, "%s.iter%03d.%03d", "exciter-model-optim.out", iter, app->rank);
-      // sprintf(filename, "%s.%03d", "ex-01-expanded.out", app->rank);
+      // sprintf(filename, "%s.iter%03d.%03d", "exciter-model-optim.out", iter, app->rank);
+      sprintf(filename, "%s.%03d", "exciter-model-optim.out", app->rank);
       file = fopen(filename, "a");
       fprintf(file, "%04d %1.4f %1.4f %.14e %1.14e\n", index, s, ts, (u->volt), exactSolution(app, s));
       fflush(file);
@@ -637,13 +651,13 @@ int main (int argc, char *argv[])
    double      gtol                 = 1e-6; /* Stopping criterion on the gradient norm */
    // Exciter model
    double      exciter_param   = 2.0;   /* G0 parameter in exciter model */
-   double      Vmax            = 0.0;   /* Max limit of exciter */
-   double      Vmin            = 2.0;   /* Min limit of exciter */
+   double      Vmax            = 1.0;   /* Max limit of exciter */
+   double      Vmin            = -1.0;   /* Min limit of exciter */
    double      V0              = 0.0;   /* Min limit of exciter */
    double      tau             = .1;    /* Time constant */
 
    /* Default time domain */
-   int ntime  = 200;          /* Number of time steps */
+   int ntime  = 400;          /* Number of time steps */
    int ndisc  = 3;            /* Number of discontinuities / switches */
 
    /* Initialize MPI */
@@ -770,6 +784,8 @@ int main (int argc, char *argv[])
    double sstart = 0.0;
    // double sstop  = (double) (ndisc + 1);  
    double sstop  = 10;  
+   sstop = 320;
+   ntime = 6400;
    /* Sanity check: ntime / (ndisc + 1) must be integer for objective function evaluation */
    if (ntime % (ndisc + 1) != 0)
    {
