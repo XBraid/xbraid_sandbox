@@ -7,7 +7,8 @@ BRAID_LIB_FILE = $(BRAID_DIR)/libbraid.a
 
 LFLAGS=-lm
 
-C_NOHYPRE = ex-01-expanded-powergrid ex-01-expanded-powergrid-aAsSeperateVar ex-01-expanded-powergrid-aAsSeperateVar2 ex-01-expanded-powergrid-doublevector ex-01-expanded-powergrid-optim
+C_NOHYPRE = ex-01-expanded-powergrid ex-01-expanded-powergrid-aAsSeperateVar ex-01-expanded-powergrid-aAsSeperateVar2 ex-01-expanded-powergrid-doublevector ex-01-expanded-powergrid-optim exciter-model-optim
+
 
 CPP_FILES = hessianApprox.cpp
 
@@ -39,9 +40,14 @@ ex-01-expanded-powergrid-aAsSeperateVar: ex-01-expanded-powergrid-aAsSeperateVar
 ex-01-expanded-powergrid-aAsSeperateVar2: ex-01-expanded-powergrid-aAsSeperateVar2.c $(BRAID_LIB_FILE)
 	@echo "Building" $@ "..."
 	$(CXX) $(CFLAGS) $(BRAID_FLAGS) $(@).c -o $@ $(BRAID_LIB_FILE) $(LFLAGS)
-#
+
 # Rule for building ex-01-expanded-powergrid-optim
 ex-01-expanded-powergrid-optim: ex-01-expanded-powergrid-optim.c $(BRAID_LIB_FILE)
+	@echo "Building" $@ "..."
+	$(CXX) $(CFLAGS) $(BRAID_FLAGS) $(@).c hessianApprox.cpp linalg.cpp -o $@ $(BRAID_LIB_FILE) $(LFLAGS)
+
+# Rule for building exciter-model-optim
+exciter-model-optim: exciter-model-optim.c $(BRAID_LIB_FILE)
 	@echo "Building" $@ "..."
 	$(CXX) $(CFLAGS) $(BRAID_FLAGS) $(@).c hessianApprox.cpp linalg.cpp -o $@ $(BRAID_LIB_FILE) $(LFLAGS)
 
