@@ -151,7 +151,7 @@ my_Step(braid_App        app,
       // printf("%f -> %f, %d switches: \n", sstart, sstop, nswitches);
 
       /* Step from sstart to first switch */
-      ds = ceil(sstart) - sstart;
+      ds = floor(sstart+1.0) - sstart;
       control = getA(app->design, app->ndisc+1, sstart);
       u_curr = 1./(1. - control * ds) * u_curr;
       // printf("first to %f: %f %f, ", ceil(sstart), ds, control);
@@ -160,14 +160,14 @@ my_Step(braid_App        app,
       for (int iswitch = 0; iswitch < nswitches-1; iswitch++)
       {
          ds = 1.0; // since switches happen at integer times 
-         control = getA(app->design, app->ndisc+1, ceil(sstart) + (double) iswitch);
+         control = getA(app->design, app->ndisc+1, floor(sstart+1.0) + (double) iswitch);
          u_curr = 1./(1. - control * ds) * u_curr;
          // printf("%d %f %f, ", iswitch, ds, control);
       }
 
       /* Step from last switch to sstop */
-      ds = sstop - floor(sstop);
-      control = getA(app->design, app->ndisc+1, floor(sstop));
+      ds = sstop - ceil(sstop-1.0);
+      control = getA(app->design, app->ndisc+1, ceil(sstop-1.0));
       u_curr = 1./(1. - control * ds) * u_curr;
       // printf("last to %f: %f %f\n, ", sstop, ds, control);
    }
