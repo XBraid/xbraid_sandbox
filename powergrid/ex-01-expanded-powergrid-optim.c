@@ -144,42 +144,66 @@ my_Step(braid_App        app,
    int nswitches = (int) ceil(sstop) - (int) floor(sstart) - 1;
 
 
+
    double u_curr = u->value;
-   if (nswitches > 0)
-   {
-      // if (nswitches > 1) printf("%f -> %f, %d switches: \n", sstart, sstop, nswitches);
-      // printf("%f -> %f, %d switches: \n", sstart, sstop, nswitches);
 
-      /* Step from sstart to first switch */
-      ds = floor(sstart+1.0) - sstart;
-      control = getA(app->design, app->ndisc+1, sstart);
-      u_curr = 1./(1. - control * ds) * u_curr;
-      // printf("first to %f: %f %f, ", ceil(sstart), ds, control);
-
-      /* Step through all intermediate switches */
-      for (int iswitch = 0; iswitch < nswitches-1; iswitch++)
-      {
-         ds = 1.0; // since switches happen at integer times 
-         control = getA(app->design, app->ndisc+1, floor(sstart+1.0) + (double) iswitch);
-         u_curr = 1./(1. - control * ds) * u_curr;
-         // printf("%d %f %f, ", iswitch, ds, control);
-      }
-
-      /* Step from last switch to sstop */
-      ds = sstop - ceil(sstop-1.0);
-      control = getA(app->design, app->ndisc+1, ceil(sstop-1.0));
-      u_curr = 1./(1. - control * ds) * u_curr;
-      // printf("last to %f: %f %f\n, ", sstop, ds, control);
-   }
-   else
+   if (level == 0)
+   /* Fine grid */
    {
       /* Step from sstart to sstop */
       control = getA(app->design, app->ndisc+1, sstart);
       ds = sstop - sstart;
       u_curr = 1./(1. - control * ds) * u_curr;
+      // printf("Fine-grid step %f->%f, ds=%f, a=%1.1f ustart=%f ustop=%f\n", sstart, sstop, ds, control, u->value, u_curr );
    }
-   
+   else
+   /* Coarse grid */
+   {
+      // /* Only step if no switch passing */
+      if (nswitches == 0)
+      {
+         /* Step from sstart to sstop */
+         control = getA(app->design, app->ndisc+1, sstart);
+         ds = sstop - sstart;
+         u_curr = 1./(1. - control * ds) * u_curr;
+      }
+      else
+      {
+         // from sstart to first switch 
+         ds = ceil(sstart) - sstart;
+         control = getA(app->design, app->ndisc+1, sstart);
+         u_curr = 1./(1. - control * ds) * u_curr;
+         /* Step through all switches */
+         for (int i = 0; i<nswitches-1; i++)
+         {
+            ds = 1.0;
+            control = getA(app->design, app->ndisc+1, ceil(sstart) + (double) i);
+            u_curr = 1./(1. - control * ds) * u_curr;
+         }
+         /* last  */
+         ds = sstop - floor(sstop);
+         control = getA(app->design, app->ndisc+1, floor(sstop));
+         u_curr = 1./(1. - control * ds) * u_curr;
+      }
+      
+
+      // printf("Coarse-grid stepping %f->%f, ustart=%f\n", sstart, sstop, u->value);
+
+      /* Do fine-grid steps */
+      // double dtinit = (app->sstop - app->sstart) / app->ntime;
+      // int nsteps = ( sstop - sstart ) / dtinit;
+      // ds = dtinit;
+      // for (int istep = 0; istep < nsteps; istep++)
+      // {
+      //    control = getA(app->design, app->ndisc+1, sstart + istep*ds);
+      //    u_curr = 1./(1. - control * ds) * u_curr;
+      //    // printf(" %1.14f -> %1.14f, a=%f, ucurr=%f\n", sstart + istep*ds, sstart + (istep+1)*ds, control, u_curr);
+      // }
+   }
+
+  
    /* Set u */
+   /* if fine grid: do step */
    u->value = u_curr;
 
    /* no refinement */
