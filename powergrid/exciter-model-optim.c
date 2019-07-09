@@ -197,8 +197,8 @@ my_Step(braid_App        app,
    /* Step from sstart to sstop */
    /* NO LIMITS */
    ds = sstop - sstart;
-   double ratio  = app->exciter_param / app->tau;
-   double unext = 1./(1. + ratio * ds) * (u_curr + ds * ratio * app->exciter_param * inputVoltage(sstop));
+   double ratio  = ds / app->tau;
+   double unext = 1./(1. + ratio) * (u_curr + ratio * app->exciter_param * inputVoltage(sstop, app->sstop) );
    // printf("step %f->%f, ds=%f, u: %f -> %f\n", sstart, sstop, ds, u_curr, u->volt);
 
    /* Enforce the limits: If limits are exceeded, set dV/dt = 0 */
@@ -653,7 +653,7 @@ int main (int argc, char *argv[])
    double      exciter_param   = 2.0;   /* G0 parameter in exciter model */
    double      Vmax            = 1.0;   /* Max limit of exciter */
    double      Vmin            = -1.0;   /* Min limit of exciter */
-   double      V0              = 0.0;   /* Min limit of exciter */
+   double      V0              = 0.0;   /* Initial condition */
    double      tau             = .1;    /* Time constant */
 
    /* Default time domain */
