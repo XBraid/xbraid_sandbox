@@ -673,6 +673,9 @@ int main (int argc, char *argv[])
    file = fopen(filename, "w");
    fclose(file);
 
+   double sstart = 0.0;
+   double sstop = 0.0;
+
    /* Parse command line */
    arg_index = 1;
    while (arg_index < argc)
@@ -683,6 +686,7 @@ int main (int argc, char *argv[])
          {
             printf("\nExample 1: Solve a scalar ODE \n\n");
             printf("  -ntime <ntime>         : set num time points\n");
+            printf("  -sstop <sstop>         : set final time\n");
             printf("  -ndisc <ndisc>         : set num of switching points\n");
             printf("  -ml  <max_levels>      : set max levels\n");
             printf("  -nu  <nrelax>          : set num F-C relaxations\n");
@@ -704,6 +708,11 @@ int main (int argc, char *argv[])
       {
          arg_index++;
          ntime = atoi(argv[arg_index++]);
+      }
+      else if ( strcmp(argv[arg_index], "-sstop") == 0 )
+      {
+         arg_index++;
+         sstop = atof(argv[arg_index++]);
       }
       else if ( strcmp(argv[arg_index], "-ndisc") == 0 )
       {
@@ -781,18 +790,17 @@ int main (int argc, char *argv[])
    }
 
    /* Transformed time domain */
-   double sstart = 0.0;
    // double sstop  = (double) (ndisc + 1);  
-   double sstop  = 10;  
-   sstop = 320;
-   ntime = 6400;
+   // double sstop  = 10;  
+   // sstop = 16;
+   // ntime = 320;
    /* Sanity check: ntime / (ndisc + 1) must be integer for objective function evaluation */
-   if (ntime % (ndisc + 1) != 0)
-   {
-      printf("\nError: Choose ntime, ndisc such that ntime / (ndisc+1) is integer.\n");
-      printf("This is required for evaluating the objective function.\n\n");
-      exit(1);
-   }
+   // if (ntime % (ndisc + 1) != 0)
+   // {
+   //    printf("\nError: Choose ntime, ndisc such that ntime / (ndisc+1) is integer.\n");
+   //    printf("This is required for evaluating the objective function.\n\n");
+   //    exit(1);
+   // }
 
 
    /* initialize optimization */
