@@ -60,12 +60,20 @@ double exactSolution(braid_App app,
 }
 
 /* Dynamic input voltage */
-double inputVoltage(double t)
+double inputVoltage(double t, double finalT)
 {
-   // Put some oscillation here. TODO: ASK PHILIPP!
-   // double volt = 2.*sin(t) + 2.;
-   // double volt = 2.*sin(t - M_PI/2.0) + 2.;
-   double volt = sin(t);
+   // Put some oscillation here. 
+   // double volt = sin(t);
+
+   /* triangular pulse of amplitude 1 and length 1, applied every 2seconds */
+   double volt = 0;
+   for (int k=0; k < finalT+1; k++)
+   {
+      if ((double) k - 0.5 <= t && t < (double)k + 0.5)
+      {
+         volt += (2.*t - 2.*k) * pow(-1.0,(double)k);
+      }
+   }
 
    return volt;
 }
@@ -324,7 +332,7 @@ my_Access(braid_App          app,
       // sprintf(filename, "%s.iter%03d.%03d", "exciter-model-optim.out", iter, app->rank);
       sprintf(filename, "%s.%03d", "exciter-model-optim.out", app->rank);
       file = fopen(filename, "a");
-      fprintf(file, "%04d %1.4f %1.4f %.14e %1.14e\n", index, s, ts, (u->volt), exactSolution(app, s));
+      fprintf(file, "%04d %1.4f %1.4f %.14e %1.14e\n", index, s, ts, (u->volt), app->exciter_param * inputVoltage(s, app->sstop));
       fflush(file);
       fclose(file);
 
