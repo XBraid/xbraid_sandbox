@@ -33,12 +33,14 @@ typedef struct _braid_App_struct
    double    V0;             /* Initial condition */
    double    tau;            /* Time constant */
 
+
 } my_App;
 
 /* Vector structure can contain anything, and be name anything as well */
 typedef struct _braid_Vector_struct
 {
    double volt;      // Exciter voltage
+   int    branch;    // Vin branch 
 } my_Vector;
 
 
@@ -94,7 +96,7 @@ double inputVoltage(double t, double finalT)
    double volt = 0.0;
 
    // Sinusoidat pulse
-   // volt = sin(t);
+   volt = sin(t);
 
    /* triangular pulse of amplitude +/-1 */
    // volt = triangularPulse(t, finalT);
@@ -103,10 +105,10 @@ double inputVoltage(double t, double finalT)
    // volt = squarePulse(t, finalT);
 
    /* Noisy triangular pulse */   
-   double amp  = 0.5;
-   double freq = 2.*M_PI * 10.0;
-   volt = triangularPulse(t, finalT);
-   volt += amp * sin(freq * t);
+   // double amp  = 0.5;
+   // double freq = 2.*M_PI * 10.0;
+   // volt = triangularPulse(t, finalT);
+   // volt += amp * sin(freq * t);
 
    return volt;
 }
@@ -235,19 +237,18 @@ my_Step(braid_App        app,
    // /* Set u */
    // u->volt = u_curr;
 
-
    /* Step from sstart to sstop */
-   /* NO LIMITS */
    ds = sstop - sstart;
    double ratio  = ds / app->tau;
-   double unext = 1./(1. + ratio) * (u_curr + ratio * app->exciter_param * inputVoltage(sstop, app->sstop) );
+   double unext = 1./(1. + ratio) * (u_curr + ratio * app->exciter_param * u->branch * inputVoltage(sstop, app->sstop) );
    // printf("step %f->%f, ds=%f, u: %f -> %f\n", sstart, sstop, ds, u_curr, u->volt);
 
-   /* Enforce the limits: If limits are exceeded, set dV/dt = 0 */
+    /* Enforce the limits: If limits are exceeded, flip the input */
    if (unext > app->Vmax)
    {
       // unext = u_curr;
-      unext = app->Vmax;
+      // unext = app->Vmax;
+      u->branch = -1 * u->branch;
    } 
    else if (unext < app->Vmin)
    {
@@ -255,6 +256,7 @@ my_Step(braid_App        app,
       unext = app->Vmin;
    }
 
+  
    /* Set the output voltage */
    u->volt = unext;   
 
@@ -282,6 +284,7 @@ my_Init(braid_App     app,
    {
       (u->volt) = app->V0;
    }
+   u->branch = 1;
    *u_ptr = u;
 
    return 0;
@@ -296,6 +299,7 @@ my_Clone(braid_App     app,
 
    v = (my_Vector *) malloc(sizeof(my_Vector));
    (v->volt) = (u->volt);
+   (v->branch) = (u->branch);
    *v_ptr = v;
 
    return 0;
@@ -318,6 +322,7 @@ my_Sum(braid_App     app,
        braid_Vector  y)
 {
    (y->volt) = alpha*(x->volt) + beta*(y->volt);
+   (y->branch) = alpha*(x->branch) + beta*(y->branch);
    
    return 0;
 }
@@ -329,7 +334,8 @@ my_SpatialNorm(braid_App     app,
 {
    double dot;
 
-   dot = (u->volt)*(u->volt);
+   dot = (u->volt)*(u->volt) + (u->branch) * (u->branch);
+   // dot = (u->volt)*(u->volt);
    *norm_ptr = sqrt(dot);
 
    return 0;
@@ -366,7 +372,7 @@ my_Access(braid_App          app,
       // sprintf(filename, "%s.iter%03d.%03d", "exciter-model-optim.out", iter, app->rank);
       sprintf(filename, "%s.%03d", "exciter-model-optim.out", app->rank);
       file = fopen(filename, "a");
-      fprintf(file, "%04d %1.4f %1.4f %.14e %1.14e\n", index, s, ts, (u->volt), app->exciter_param * inputVoltage(s, app->sstop));
+      fprintf(file, "%04d %1.4f %1.4f %.14e %1.14e\n", index, s, ts, (u->volt), app->exciter_param * u->branch* inputVoltage(s, app->sstop));
       fflush(file);
       fclose(file);
 
@@ -383,7 +389,7 @@ my_BufSize(braid_App          app,
            int                *size_ptr,
            braid_BufferStatus bstatus)
 {
-   *size_ptr = sizeof(double);
+   *size_ptr = 2*sizeof(double);
    return 0;
 }
 
@@ -396,6 +402,7 @@ my_BufPack(braid_App          app,
    double *dbuffer = (double*)buffer;
 
    dbuffer[0] = (u->volt);
+   dbuffer[0] = (u->branch);
    braid_BufferStatusSetSize( bstatus, sizeof(double) );
 
    return 0;
@@ -412,6 +419,7 @@ my_BufUnpack(braid_App          app,
 
    u = (my_Vector *) malloc(sizeof(my_Vector));
    (u->volt) = dbuffer[0];
+   (u->branch) = dbuffer[0];
    *u_ptr = u;
 
    return 0;
@@ -693,8 +701,8 @@ int main (int argc, char *argv[])
    double      gtol                 = 1e-6; /* Stopping criterion on the gradient norm */
    // Exciter model
    double      exciter_param   = 2.0;   /* G0 parameter in exciter model */
-   double      Vmax            = 0.7;   /* Max limit of exciter */
-   double      Vmin            = -0.7;   /* Min limit of exciter */
+   double      Vmax            = 1.0;   /* Max limit of exciter */
+   double      Vmin            = -100000;   /* Min limit of exciter */
    double      V0              = 0.0;   /* Initial condition */
    double      tau             = .1;    /* Time constant */
 
