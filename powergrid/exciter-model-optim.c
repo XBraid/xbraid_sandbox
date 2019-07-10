@@ -59,14 +59,25 @@ double exactSolution(braid_App app,
    return exact;
 }
 
-/* Dynamic input voltage */
-double inputVoltage(double t, double finalT)
-{
-   // Put some oscillation here. 
-   // double volt = sin(t);
 
-   /* triangular pulse of amplitude 1 and length 1, applied every 2seconds */
-   double volt = 0;
+
+double squarePulse(double t, double finalT)
+{
+   double volt = 0.0;
+   for (int k=0; k < finalT+1; k++)
+   {
+      if ((double) k <= t && t < (double) k +1 )
+      {
+         volt += pow(-1.0,(double)k);
+      }
+   }
+
+   return volt;
+}
+
+double triangularPulse(double t, double finalT)
+{
+   double volt = 0.0;
    for (int k=0; k < finalT+1; k++)
    {
       if ((double) k - 0.5 <= t && t < (double)k + 0.5)
@@ -74,9 +85,32 @@ double inputVoltage(double t, double finalT)
          volt += (2.*t - 2.*k) * pow(-1.0,(double)k);
       }
    }
+   return volt;
+}
+
+/* Dynamic input voltage */
+double inputVoltage(double t, double finalT)
+{
+   double volt = 0.0;
+
+   // Sinusoidat pulse
+   // volt = sin(t);
+
+   /* triangular pulse of amplitude +/-1 */
+   // volt = triangularPulse(t, finalT);
+
+   /* square pulse of amplitude +/-1 */
+   // volt = squarePulse(t, finalT);
+
+   /* Noisy triangular pulse */   
+   double amp  = 0.5;
+   double freq = 2.*M_PI * 10.0;
+   volt = triangularPulse(t, finalT);
+   volt += amp * sin(freq * t);
 
    return volt;
 }
+
 
 /* a(t) = sum_k (-1)^k*design(k)*indicatorfunction_[k,k+1)(t) */
 double getA(double* design,
@@ -659,8 +693,8 @@ int main (int argc, char *argv[])
    double      gtol                 = 1e-6; /* Stopping criterion on the gradient norm */
    // Exciter model
    double      exciter_param   = 2.0;   /* G0 parameter in exciter model */
-   double      Vmax            = 1.0;   /* Max limit of exciter */
-   double      Vmin            = -1.0;   /* Min limit of exciter */
+   double      Vmax            = 0.7;   /* Max limit of exciter */
+   double      Vmin            = -0.7;   /* Min limit of exciter */
    double      V0              = 0.0;   /* Initial condition */
    double      tau             = .1;    /* Time constant */
 
@@ -682,7 +716,7 @@ int main (int argc, char *argv[])
    fclose(file);
 
    double sstart = 0.0;
-   double sstop = 0.0;
+   double sstop = 8.0;
 
    /* Parse command line */
    arg_index = 1;
