@@ -159,46 +159,46 @@ my_Step(braid_App        app,
    else
    /* Coarse grid */
    {
-      // /* Only step if no switch passing */
-      if (nswitches == 0)
-      {
-         /* Step from sstart to sstop */
-         control = getA(app->design, app->ndisc+1, sstart);
-         ds = sstop - sstart;
-         u_curr = 1./(1. - control * ds) * u_curr;
-      }
-      else
-      {
-         // from sstart to first switch 
-         ds = ceil(sstart) - sstart;
-         control = getA(app->design, app->ndisc+1, sstart);
-         u_curr = 1./(1. - control * ds) * u_curr;
-         /* Step through all switches */
-         for (int i = 0; i<nswitches-1; i++)
-         {
-            ds = 1.0;
-            control = getA(app->design, app->ndisc+1, ceil(sstart) + (double) i);
-            u_curr = 1./(1. - control * ds) * u_curr;
-         }
-         /* last  */
-         ds = sstop - floor(sstop);
-         control = getA(app->design, app->ndisc+1, floor(sstop));
-         u_curr = 1./(1. - control * ds) * u_curr;
-      }
+   //    // /* Only step if no switch passing */
+   //    if (nswitches == 0)
+   //    {
+   //       /* Step from sstart to sstop */
+   //       control = getA(app->design, app->ndisc+1, sstart);
+   //       ds = sstop - sstart;
+   //       u_curr = 1./(1. - control * ds) * u_curr;
+   //    }
+   //    else
+   //    {
+   //       // from sstart to first switch 
+   //       ds = ceil(sstart) - sstart;
+   //       control = getA(app->design, app->ndisc+1, sstart);
+   //       u_curr = 1./(1. - control * ds) * u_curr;
+   //       /* Step through all switches */
+   //       for (int i = 0; i<nswitches-1; i++)
+   //       {
+   //          ds = 1.0;
+   //          control = getA(app->design, app->ndisc+1, ceil(sstart) + (double) i);
+   //          u_curr = 1./(1. - control * ds) * u_curr;
+   //       }
+   //       /* last  */
+   //       ds = sstop - floor(sstop);
+   //       control = getA(app->design, app->ndisc+1, floor(sstop));
+   //       u_curr = 1./(1. - control * ds) * u_curr;
+   //    }
       
 
       // printf("Coarse-grid stepping %f->%f, ustart=%f\n", sstart, sstop, u->value);
 
       /* Do fine-grid steps */
-      // double dtinit = (app->sstop - app->sstart) / app->ntime;
-      // int nsteps = ( sstop - sstart ) / dtinit;
-      // ds = dtinit;
-      // for (int istep = 0; istep < nsteps; istep++)
-      // {
-      //    control = getA(app->design, app->ndisc+1, sstart + istep*ds);
-      //    u_curr = 1./(1. - control * ds) * u_curr;
-      //    // printf(" %1.14f -> %1.14f, a=%f, ucurr=%f\n", sstart + istep*ds, sstart + (istep+1)*ds, control, u_curr);
-      // }
+      double dtinit = (app->sstop - app->sstart) / app->ntime;
+      int nsteps = ( sstop - sstart ) / dtinit;
+      ds = dtinit;
+      for (int istep = 0; istep < nsteps; istep++)
+      {
+         control = getA(app->design, app->ndisc+1, sstart + istep*ds);
+         u_curr = 1./(1. - control * ds) * u_curr;
+         // printf(" %1.14f -> %1.14f, a=%f, ucurr=%f\n", sstart + istep*ds, sstart + (istep+1)*ds, control, u_curr);
+      }
    }
 
   
@@ -309,10 +309,10 @@ my_Access(braid_App          app,
    ts = getOriginalTime(app->design, app->ndisc+1, s);
 
    /* Append all into one file. */
-   if (level == 0)
+   // if (level == 0)
    {
-      sprintf(filename, "%s.iter%03d.%03d", "ex-01-expanded.out", iter, app->rank);
-      // sprintf(filename, "%s.%03d", "ex-01-expanded.out", app->rank);
+      sprintf(filename, "%s.iter%03d.%03d.%03d", "ex-01-expanded.out", iter, level, app->rank);
+      // printf("Append to %s, iter %d, level %d\n", filename, iter, level);
       file = fopen(filename, "a");
       fprintf(file, "%04d %1.4f %1.4f %.14e\n", index, s, ts, (u->value));
       fflush(file);
@@ -997,7 +997,7 @@ int main (int argc, char *argv[])
    }
 
    /* Get final access */
-   braid_SetAccessLevel(core, 1);
+   braid_SetAccessLevel(core, 3);
    braid_SetObjectiveOnly(core, 1);
    braid_Drive(core);
 
