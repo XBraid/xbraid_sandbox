@@ -54,14 +54,14 @@ else:
 
 
 # set dt 
-dt = 0.05
+dt = 0.01
 
 out = []
 #for i in range(len(sstop)):
 sstop = sstopmin
 while sstop <= int(sstopmax):
     # get ntime
-    ntime = sstop / dt
+    ntime = int(sstop / dt)
    
     out.append("#sstop" + str(sstop) + "\n")
     # set upt command string
