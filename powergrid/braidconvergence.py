@@ -16,7 +16,8 @@ parser.add_argument("--cfactor", "-cf", help="set coarsening factor, default 2")
 parser.add_argument("--maxlevels", "-ml", help="set maxlevels, default 5")
 parser.add_argument("--sstopmin", "-smin", help="set smallest sstop, default 8")
 parser.add_argument("--sstopmax", "-smax", help="set biggest sstop, default 512")
-parser.add_argument("--sstopfactor", "-sf", help="set factor for increasing sstop, 2")
+parser.add_argument("--sstopfactor", "-sf", help="set factor for increasing sstop, default 2")
+parser.add_argument("--deltat", "-dt", help="set time step size dt, default 0.05")
 args = parser.parse_args()
 
 if args.maxlevels:
@@ -51,10 +52,13 @@ if args.sstopfactor:
 else:
     sstopfactor= 2
     print("using default sstopfactor = ", sstopfactor)
+if args.deltat:
+    dt = float(args.deltat)
+    print("setting dt to ", dt)
+else:
+    dt = 0.05
+    print("using default dt = ", dt)
 
-
-# set dt 
-dt = 0.01
 
 out = []
 #for i in range(len(sstop)):
