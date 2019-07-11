@@ -24,7 +24,7 @@ if args.maxlevels:
     print("setting maxlevels to ", maxlevels)
 else:
     maxlevels = 5
-    print("using default cfactor = ", cfactor)
+    print("using default maxlevels = ", maxlevels)
 if args.cfactor:
     cfactor = int(args.cfactor)
     print("setting cfactor to ", cfactor)
