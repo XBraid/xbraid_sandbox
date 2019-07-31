@@ -49,16 +49,16 @@ double exactSolution(braid_App app,
                      double t)
 {
 
-   double ratio = app->exciter_param / app->tau;
+   // double ratio = app->exciter_param / app->tau;
 
-   double exact = exp(-ratio*t) * app->V0;
+   // double exact = exp(-ratio*t) * app->V0;
    // InputVoltage = 2*sin(t-pi/2) + 2
    // exact += 2. * ratio * app->exciter_param / (pow(ratio,3) + ratio) * ( - pow(ratio,2) * cos(t) + pow(ratio,2) - ratio * sin(t) + 1. - exp(-ratio*t));
    // InputVoltage = sin(t) 
-   exact += ratio * app->exciter_param / (pow(ratio,2) + 1) * ( ratio * sin(t) - cos(t) + exp(-ratio*t));
+   // exact += ratio * app->exciter_param / (pow(ratio,2) + 1) * ( ratio * sin(t) - cos(t) + exp(-ratio*t));
 
-
-   return exact;
+   // return exact;
+   return 0.0;
 }
 
 
@@ -189,6 +189,7 @@ my_Step(braid_App        app,
    int    level, iter;
    double ds;
    double control;
+   double Vin;
 
    braid_StepStatusGetLevel(status, &level);
    braid_StepStatusGetIter(status, &iter);
@@ -200,60 +201,39 @@ my_Step(braid_App        app,
 
 
    double u_curr = u->volt;
-   // if (nswitches > 0)
-   // {
-   //    // if (nswitches > 1) printf("%f -> %f, %d switches: \n", sstart, sstop, nswitches);
-   //    // printf("%f -> %f, %d switches: \n", sstart, sstop, nswitches);
 
-   //    /* Step from sstart to first switch */
-   //    ds = ceil(sstart) - sstart;
-   //    control = getA(app->design, app->ndisc+1, sstart);
-   //    u_curr = 1./(1. - control * ds) * u_curr;
-   //    // printf("first to %f: %f %f, ", ceil(sstart), ds, control);
-
-   //    /* Step through all intermediate switches */
-   //    for (int iswitch = 0; iswitch < nswitches-1; iswitch++)
-   //    {
-   //       ds = 1.0; // since switches happen at integer times 
-   //       control = getA(app->design, app->ndisc+1, ceil(sstart) + (double) iswitch);
-   //       u_curr = 1./(1. - control * ds) * u_curr;
-   //       // printf("%d %f %f, ", iswitch, ds, control);
-   //    }
-
-   //    /* Step from last switch to sstop */
-   //    ds = sstop - floor(sstop);
-   //    control = getA(app->design, app->ndisc+1, floor(sstop));
-   //    u_curr = 1./(1. - control * ds) * u_curr;
-   //    // printf("last to %f: %f %f\n, ", sstop, ds, control);
-   // }
+   /* Get V_in */
+   // if      (fabs(u->branch - 1.0) < 1e-12)  Vin = app->Vmax;   // branch = 1
+   // else if (fabs(u->branch + 1.0) < 1e-12)  Vin = app->Vmin;   // branch = -1
    // else
    // {
-   //    /* Step from sstart to sstop */
-   //    control = getA(app->design, app->ndisc+1, sstart);
-   //    ds = sstop - sstart;
-   //    u_curr = 1./(1. - control * ds) * u_curr;
+   //    printf("ERROR: This should not happen! Branch in {-1,1}!! %f\n", u->branch);
+   //    exit(0);
    // }
-
-   // /* Set u */
-   // u->volt = u_curr;
+   
 
    /* Step from sstart to sstop */
    ds = sstop - sstart;
    double ratio  = ds / app->tau;
-   double unext = 1./(1. + ratio) * (u_curr + ratio * app->exciter_param * u->branch * inputVoltage(sstop, app->sstop) );
+
+   double unext;
+   unext = 1./(1. + ratio) * (u_curr + ratio * app->exciter_param * u->branch);
+   
+   // double unext = 1./(1. + ratio) * (u_curr + ratio * Vin);
    // printf("step %f->%f, ds=%f, u: %f -> %f\n", sstart, sstop, ds, u_curr, u->volt);
 
     /* Enforce the limits: If limits are exceeded, flip the input */
    if (unext > app->Vmax)
    {
-      // unext = u_curr;
-      // unext = app->Vmax;
-      u->branch = -1 * u->branch;
+   //    // unext = u_curr;
+   //    // unext = app->Vmax;
+      u->branch = app->Vmin;
    } 
    else if (unext < app->Vmin)
    {
       // unext = u_curr;
-      unext = app->Vmin;
+      // unext = app->Vmin;
+      u->branch = app->Vmax;
    }
 
   
@@ -284,7 +264,7 @@ my_Init(braid_App     app,
    {
       (u->volt) = app->V0;
    }
-   u->branch = 1;
+   u->branch = app->Vmax;
    *u_ptr = u;
 
    return 0;
@@ -372,7 +352,7 @@ my_Access(braid_App          app,
       // sprintf(filename, "%s.iter%03d.%03d", "exciter-model-optim.out", iter, app->rank);
       sprintf(filename, "%s.%03d", "exciter-model-optim.out", app->rank);
       file = fopen(filename, "a");
-      fprintf(file, "%04d %1.4f %1.4f %.14e %1.14e\n", index, s, ts, (u->volt), app->exciter_param * u->branch* inputVoltage(s, app->sstop));
+      fprintf(file, "%04d %1.4f %1.4f %.14e \n", index, s, ts, (u->volt));
       fflush(file);
       fclose(file);
 
@@ -702,9 +682,9 @@ int main (int argc, char *argv[])
    // Exciter model
    double      exciter_param   = 2.0;   /* G0 parameter in exciter model */
    double      Vmax            = 1.0;   /* Max limit of exciter */
-   double      Vmin            = -100000;   /* Min limit of exciter */
+   double      Vmin            = -1.0;   /* Min limit of exciter */
    double      V0              = 0.0;   /* Initial condition */
-   double      tau             = .1;    /* Time constant */
+   double      tau             = .5;    /* Time constant */
 
    /* Default time domain */
    int ntime  = 400;          /* Number of time steps */
