@@ -34,22 +34,38 @@ typedef struct _braid_Vector_struct
    double value;  // PDE solution value
 } my_Vector;
 
+/* Return index k such that t \in [k, k+1) */
+int getInterval(int ndesign,
+                double t)
+{
+   int k0=-1;
+   /* Find interval */
+   for (int i=0; i < ndesign; i++)
+   {
+      if (i <= t &&  t < i+1)
+      {
+         k0 = i;
+         break;
+      }
+   }
+
+   /* Sanity check */
+   if (k0 < 0 || k0 >= ndesign) {
+      printf("ERROR finding the interval for t=%f, giving k0=%d\n", t, k0);
+      exit(0);
+   }
+
+   return k0;
+}
+
 
 /* a(t) = sum_k (-1)^k*design(k)*indicatorfunction_[k,k+1)(t) */
 double getA(double* design,
             int     ndesign,
             double  t)
 {
-   double a = .0;
-
-   /* Find interval */
-   for (int i=0; i < ndesign; i++)
-   {
-      if (i <= t &&  t < i+1)
-      {
-         a += pow(-1.0,(double) i) * design[i];
-      }
-   }
+   int   k0 = getInterval(ndesign, t);
+   double a = pow(-1.0,(double) k0) * design[k0];
 
    return a;
 }
@@ -60,14 +76,10 @@ void getA_diff(double* gradient,
                double  t,
                double  a_bar)
 {
-   for (int i=0; i < ndesign; i++)
-   {
-      if (i <= t &&  t < i+1)
-      {
-         double tmp = pow(-1.0, (double) i) * a_bar;
-         gradient[i] += tmp;
-      }
-   }
+   int k0 = getInterval(ndesign, t);
+   double tmp = pow(-1.0, (double) k0) * a_bar;
+   gradient[k0] += tmp;
+
 }
 
 /* Get original time t(s) */
@@ -80,12 +92,10 @@ double getOriginalTime(double *design,
    int i=0;
    for (i = 0; i < ndesign-1; i++)
    {
-      /* Find interval such that s \in [k,k+1]*/
-      if (i <= s && s < i+1)
-      {
-         break;
-      }
-      else
+      int k0 = getInterval(ndesign, s);
+
+      /* Add up time */
+      for (int i = 0; i < k0; i++)
       {
          ts += design[i];
       }
