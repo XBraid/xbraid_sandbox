@@ -589,6 +589,7 @@ int main (int argc, char *argv[])
    /* Default time domain */
    int ntime  = 400;          /* Number of time steps */
    int ndisc  = 3;            /* Number of discontinuities / switches */
+   double sstop = 4;
 
    /* Initialize MPI */
    comm   = MPI_COMM_WORLD;
@@ -613,7 +614,7 @@ int main (int argc, char *argv[])
          {
             printf("\nExample 1: Solve a scalar ODE \n\n");
             printf("  -ntime <ntime>         : set num time points\n");
-            printf("  -ndisc <ndisc>         : set num of switching points\n");
+            printf("  -sstop <sstop>         : set final s-time \n");
             printf("  -ml  <max_levels>      : set max levels\n");
             printf("  -nu  <nrelax>          : set num F-C relaxations\n");
             printf("  -nu0 <nrelax>          : set num F-C relaxations on level 0\n");
@@ -635,10 +636,10 @@ int main (int argc, char *argv[])
          arg_index++;
          ntime = atoi(argv[arg_index++]);
       }
-      else if ( strcmp(argv[arg_index], "-ndisc") == 0 )
+      else if ( strcmp(argv[arg_index], "-sstop") == 0 )
       {
          arg_index++;
-         ndisc = atoi(argv[arg_index++]);
+         sstop = atof(argv[arg_index++]);
       }
       else if ( strcmp(argv[arg_index], "-ml") == 0 )
       {
@@ -712,7 +713,8 @@ int main (int argc, char *argv[])
 
    /* Transformed time domain */
    double sstart = 0.0;
-   double sstop  = (double) (ndisc + 1);  
+   ndisc = (int) (sstop - 1.);
+   // double sstop  = (double) (ndisc + 1);  
    /* Sanity check: ntime / (ndisc + 1) must be integer for objective function evaluation */
    if (ntime % (ndisc + 1) != 0)
    {
@@ -963,7 +965,7 @@ int main (int argc, char *argv[])
    /* Close optimization output file */
    if (rank == 0) fclose(optimfile);
 
-#if 1
+#if 0
    /* --- Finite differences test --- */
    printf("\n\n --- FINITE DIFFERENCE TESTING ---\n\n");
 

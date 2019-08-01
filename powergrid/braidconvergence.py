@@ -56,7 +56,7 @@ if args.deltat:
     dt = float(args.deltat)
     print("setting dt to ", dt)
 else:
-    dt = 0.05
+    dt = 0.01
     print("using default dt = ", dt)
 
 
