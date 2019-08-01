@@ -40,141 +40,104 @@ typedef struct _braid_App_struct
 typedef struct _braid_Vector_struct
 {
    double volt;      // Exciter voltage
-   int    branch;    // Vin branch 
 } my_Vector;
 
-
-/* analytic solution for inputVoltage 2*sin x + 2 */
-double exactSolution(braid_App app,
-                     double t)
+/* Return index k such that t \in [k, k+1) */
+int getInterval(int ndesign,
+                double t)
 {
-
-   // double ratio = app->exciter_param / app->tau;
-
-   // double exact = exp(-ratio*t) * app->V0;
-   // InputVoltage = 2*sin(t-pi/2) + 2
-   // exact += 2. * ratio * app->exciter_param / (pow(ratio,3) + ratio) * ( - pow(ratio,2) * cos(t) + pow(ratio,2) - ratio * sin(t) + 1. - exp(-ratio*t));
-   // InputVoltage = sin(t) 
-   // exact += ratio * app->exciter_param / (pow(ratio,2) + 1) * ( ratio * sin(t) - cos(t) + exp(-ratio*t));
-
-   // return exact;
-   return 0.0;
-}
-
-
-
-double squarePulse(double t, double finalT)
-{
-   double volt = 0.0;
-   for (int k=0; k < finalT+1; k++)
-   {
-      if ((double) k <= t && t < (double) k +1 )
-      {
-         volt += pow(-1.0,(double)k);
-      }
-   }
-
-   return volt;
-}
-
-double triangularPulse(double t, double finalT)
-{
-   double volt = 0.0;
-   for (int k=0; k < finalT+1; k++)
-   {
-      if ((double) k - 0.5 <= t && t < (double)k + 0.5)
-      {
-         volt += (2.*t - 2.*k) * pow(-1.0,(double)k);
-      }
-   }
-   return volt;
-}
-
-/* Dynamic input voltage */
-double inputVoltage(double t, double finalT)
-{
-   double volt = 0.0;
-
-   // Sinusoidat pulse
-   volt = sin(t);
-
-   /* triangular pulse of amplitude +/-1 */
-   // volt = triangularPulse(t, finalT);
-
-   /* square pulse of amplitude +/-1 */
-   // volt = squarePulse(t, finalT);
-
-   /* Noisy triangular pulse */   
-   // double amp  = 0.5;
-   // double freq = 2.*M_PI * 10.0;
-   // volt = triangularPulse(t, finalT);
-   // volt += amp * sin(freq * t);
-
-   return volt;
-}
-
-
-/* a(t) = sum_k (-1)^k*design(k)*indicatorfunction_[k,k+1)(t) */
-double getA(double* design,
-            int     ndesign,
-            double  t)
-{
-   double a = .0;
-
+   int k0=-1;
    /* Find interval */
    for (int i=0; i < ndesign; i++)
    {
       if (i <= t &&  t < i+1)
       {
-         a += pow(-1.0,(double) i) * design[i];
+         k0 = i;
+         break;
       }
    }
 
-   return a;
+   /* Sanity check */
+   if (k0 < 0 || k0 >= ndesign) {
+      printf("ERROR finding the interval for t=%f, giving k0=%d\n", t, k0);
+      exit(0);
+   }
+
+   return k0;
 }
 
-/* Derivative of getA times a_bar */
-void getA_diff(double* gradient,
-               int     ndesign,
-               double  t,
-               double  a_bar)
-{
-   for (int i=0; i < ndesign; i++)
-   {
-      if (i <= t &&  t < i+1)
-      {
-         double tmp = pow(-1.0, (double) i) * a_bar;
-         gradient[i] += tmp;
-      }
-   }
-}
+// double squarePulse(double t, double finalT)
+// {
+//    double volt = 0.0;
+//    for (int k=0; k < finalT+1; k++)
+//    {
+//       if ((double) k <= t && t < (double) k +1 )
+//       {
+//          volt += pow(-1.0,(double)k);
+//       }
+//    }
+
+//    return volt;
+// }
+
+// double triangularPulse(double t, double finalT)
+// {
+//    double volt = 0.0;
+//    for (int k=0; k < finalT+1; k++)
+//    {
+//       if ((double) k - 0.5 <= t && t < (double)k + 0.5)
+//       {
+//          volt += (2.*t - 2.*k) * pow(-1.0,(double)k);
+//       }
+//    }
+//    return volt;
+// }
+
+// /* Dynamic input voltage */
+// double inputVoltage(double t, double finalT)
+// {
+//    double volt = 0.0;
+
+//    // Sinusoidat pulse
+//    volt = sin(t);
+
+//    /* triangular pulse of amplitude +/-1 */
+//    // volt = triangularPulse(t, finalT);
+
+//    /* square pulse of amplitude +/-1 */
+//    // volt = squarePulse(t, finalT);
+
+//    /* Noisy triangular pulse */   
+//    // double amp  = 0.5;
+//    // double freq = 2.*M_PI * 10.0;
+//    // volt = triangularPulse(t, finalT);
+//    // volt += amp * sin(freq * t);
+
+//    return volt;
+// }
+
 
 /* Get original time t(s) */
 double getOriginalTime(double *design, 
                     int     ndesign, 
                     double  s)
 {
-   double ts = 0.0;
+   double t = 0.0;
 
-   int i=0;
-   for (i = 0; i < ndesign-1; i++)
+   int k0 = getInterval(ndesign, s);
+
+   /* Add up time until k0 */
+   for (int i = 0; i < k0; i++)
    {
-      /* Find interval such that s \in [k,k+1]*/
-      if (i <= s && s < i+1)
-      {
-         break;
-      }
-      else
-      {
-         ts += design[i];
-      }
+      t += design[i];
    }
 
-   /* Add remaining time (k_0,s)*/
-   ts += (s - i) * design[i];
+   /* Add remaining time [k_0,s)*/
+   t += (s - k0) * design[k0];
 
-   return ts;
+   return t;
 }
+
 
 int
 my_Step(braid_App        app,
@@ -188,53 +151,36 @@ my_Step(braid_App        app,
    int    istart;             /* time point index value corresponding to tstop on (global) fine grid */
    int    level, iter;
    double ds;
-   double control;
    double Vin;
+   double unext;
+   double control;
 
    braid_StepStatusGetLevel(status, &level);
    braid_StepStatusGetIter(status, &iter);
    braid_StepStatusGetTstartTstop(status, &sstart, &sstop);
    braid_StepStatusGetTIndex(status, &istart);
 
-   /* Find the number of switches in between sstop and sstart */
-   int nswitches = (int) ceil(sstop) - (int) floor(sstart) - 1;
 
+   /* Find interval */
+   int k0 = getInterval(app->ndisc+1, sstart);
 
-   double u_curr = u->volt;
+   /* Get control */
+   control = app->design[k0];
 
-   /* Get V_in */
-   // if      (fabs(u->branch - 1.0) < 1e-12)  Vin = app->Vmax;   // branch = 1
-   // else if (fabs(u->branch + 1.0) < 1e-12)  Vin = app->Vmin;   // branch = -1
-   // else
-   // {
-   //    printf("ERROR: This should not happen! Branch in {-1,1}!! %f\n", u->branch);
-   //    exit(0);
-   // }
-   
+   /* Get Vin */
+   if (k0 % 2 == 0) Vin = app->Vmax;
+   else             Vin = app->Vmin;
+
 
    /* Step from sstart to sstop */
    ds = sstop - sstart;
    double ratio  = ds / app->tau;
 
-   double unext;
-   unext = 1./(1. + ratio) * (u_curr + ratio * app->exciter_param * u->branch);
+   double u_curr = u->volt;
+   unext = 1./(1. + ratio * control) * (u_curr + ratio * app->exciter_param * Vin * control);
    
    // double unext = 1./(1. + ratio) * (u_curr + ratio * Vin);
    // printf("step %f->%f, ds=%f, u: %f -> %f\n", sstart, sstop, ds, u_curr, u->volt);
-
-    /* Enforce the limits: If limits are exceeded, flip the input */
-   if (unext > app->Vmax)
-   {
-   //    // unext = u_curr;
-   //    // unext = app->Vmax;
-      u->branch = app->Vmin;
-   } 
-   else if (unext < app->Vmin)
-   {
-      // unext = u_curr;
-      // unext = app->Vmin;
-      u->branch = app->Vmax;
-   }
 
   
    /* Set the output voltage */
@@ -264,9 +210,8 @@ my_Init(braid_App     app,
    {
       (u->volt) = app->V0;
    }
-   u->branch = app->Vmax;
-   *u_ptr = u;
 
+   *u_ptr = u;
    return 0;
 }
 
@@ -279,7 +224,6 @@ my_Clone(braid_App     app,
 
    v = (my_Vector *) malloc(sizeof(my_Vector));
    (v->volt) = (u->volt);
-   (v->branch) = (u->branch);
    *v_ptr = v;
 
    return 0;
@@ -302,7 +246,6 @@ my_Sum(braid_App     app,
        braid_Vector  y)
 {
    (y->volt) = alpha*(x->volt) + beta*(y->volt);
-   (y->branch) = alpha*(x->branch) + beta*(y->branch);
    
    return 0;
 }
@@ -314,8 +257,7 @@ my_SpatialNorm(braid_App     app,
 {
    double dot;
 
-   dot = (u->volt)*(u->volt) + (u->branch) * (u->branch);
-   // dot = (u->volt)*(u->volt);
+   dot = (u->volt)*(u->volt);
    *norm_ptr = sqrt(dot);
 
    return 0;
@@ -329,7 +271,7 @@ my_Access(braid_App          app,
    int        index;
    int        iter;
    int        level;
-   double     s, ts;
+   double     s, t;
    char       filename[255];
    FILE      *file;
    
@@ -343,8 +285,14 @@ my_Access(braid_App          app,
    // fflush(file);
    // fclose(file);
 
+   /* Don't write first and last step */
+   if ( s <=0 || s >= app->sstop)
+   {
+      return 0;
+   }
+
    /* Get original time */
-   ts = getOriginalTime(app->design, app->ndisc+1, s);
+   t = getOriginalTime(app->design, app->ndisc+1, s);
 
    /* Append all into one file. */
    if (level == 0)
@@ -352,7 +300,7 @@ my_Access(braid_App          app,
       // sprintf(filename, "%s.iter%03d.%03d", "exciter-model-optim.out", iter, app->rank);
       sprintf(filename, "%s.%03d", "exciter-model-optim.out", app->rank);
       file = fopen(filename, "a");
-      fprintf(file, "%04d %1.4f %1.4f %.14e \n", index, s, ts, (u->volt));
+      fprintf(file, "%04d %1.4f %1.4f %.14e \n", index, s, t, (u->volt));
       fflush(file);
       fclose(file);
 
@@ -369,7 +317,7 @@ my_BufSize(braid_App          app,
            int                *size_ptr,
            braid_BufferStatus bstatus)
 {
-   *size_ptr = 2*sizeof(double);
+   *size_ptr = sizeof(double);
    return 0;
 }
 
@@ -382,7 +330,6 @@ my_BufPack(braid_App          app,
    double *dbuffer = (double*)buffer;
 
    dbuffer[0] = (u->volt);
-   dbuffer[0] = (u->branch);
    braid_BufferStatusSetSize( bstatus, sizeof(double) );
 
    return 0;
@@ -399,7 +346,6 @@ my_BufUnpack(braid_App          app,
 
    u = (my_Vector *) malloc(sizeof(my_Vector));
    (u->volt) = dbuffer[0];
-   (u->branch) = dbuffer[0];
    *u_ptr = u;
 
    return 0;
@@ -420,21 +366,21 @@ my_ObjectiveT(braid_App app,
 
    /* --- y(2k)=1 & y(2k+1) = 2 -- */
 
-   // /* if t is an integer and not first or last time step */
-   // if ( (t == floor(t)) && (t > 0) && (t < app->ndisc+1)) 
-   // {
-   //    if ( (int) t % 2 == 0 )
-   //    {
-   //       // if t is even: y = 1 !
-   //       pathconstraint = 0.5 * pow(u->volt-1,2);
-   //    }
-   //    else
-   //    {
-   //       // if t is odd :  y = 2 !
-   //       pathconstraint = 0.5 * pow(u->volt-2,2);
-   //    }
-   // }
-   // objT += app->path_penalty_param * pathconstraint;
+   /* if t is an integer and not first or last time step */
+   if ( (t == floor(t)) && (t > 0) && (t < app->ndisc+1)) 
+   {
+      if ( (int) t % 2 == 0 )
+      {
+         /* if t is even : u = Vmin ! */
+         pathconstraint = 0.5 * pow(u->volt - app->Vmin,2);
+      }
+      else
+      {
+         // if t is odd :  u = Vmax !
+         pathconstraint = 0.5 * pow(u->volt - app->Vmax,2);
+      }
+   }
+   objT += app->path_penalty_param * pathconstraint;
 
 
    /* set return value */
@@ -462,21 +408,21 @@ my_ObjectiveT_diff(braid_App            app,
 
    /* --- y(2k)=1 & y(2k+1) = 2 -- */
 
-   // /* if t is an integer and not first or last time step */
-   // if ( (t == floor(t)) && (t > 0) && (t < app->ndisc+1)) 
-   // {
-   //    if ( (int) t % 2 == 0 )
-   //    {
-   //       // if t is even: y = 1 !
-   //       ddpathconstraint += u->volt - 1.0;
-   //    }
-   //    else
-   //    {
-   //       // if t is odd :  y = 2 !
-   //       ddpathconstraint += u->volt - 2.0;
-   //    }
-   // }
-   // u_bar->volt = app->path_penalty_param * ddpathconstraint * F_bar;
+   /* if t is an integer and not first or last time step */
+   if ( (t == floor(t)) && (t > 0) && (t < app->ndisc+1)) 
+   {
+      if ( (int) t % 2 == 0 )
+      {
+         // if t is even: u = Vmin !
+         ddpathconstraint += u->volt - app->Vmin;
+      }
+      else
+      {
+         // if t is odd :  u = Vmax !
+         ddpathconstraint += u->volt - app->Vmax;
+      }
+   }
+   u_bar->volt = app->path_penalty_param * ddpathconstraint * F_bar;
 
 
 
@@ -501,81 +447,35 @@ my_Step_diff(braid_App           app,
    double ds;
    double control;
    double u_curr;
+   double ratio;
+   double Vin;
 
    braid_StepStatusGetTstartTstop(status, &sstart, &sstop);
    braid_StepStatusGetTIndex(status, &istart);
    double deltat = sstop - sstart;
 
-   /* Find the number of switches in between sstop and sstart */
-   int nswitches = (int) ceil(sstop) - (int) floor(sstart) - 1;
-
    u_curr = u->volt;
    ddu    = u_bar->volt;
 
-   // if (nswitches > 0)
-   // {
+   /* Find interval */
+   int k0 = getInterval(app->ndisc+1, sstart);
 
-   //    /* Move forward, storing u */
+   /* Get control */
+   control = app->design[k0];
 
-   //    double* utmp = new double[nswitches];
-   //    /* First step */
-   //    ds = ceil(sstart) - sstart;
-   //    control = getA(app->design, app->ndisc+1, sstart);
-   //    u_curr = 1./(1. - control * ds) * u_curr;
-   //    utmp[0] = u_curr;
-   //    /* Intermediate steps */
-   //    for (int iswitch = 0; iswitch < nswitches-1; iswitch++)
-   //    {
-   //       ds = 1.0; 
-   //       control = getA(app->design, app->ndisc+1, ceil(sstart) + (double) iswitch);
-   //       u_curr = 1./(1. - control * ds) * u_curr;
-   //       utmp[iswitch+1] = u_curr;
-   //    }
-   //    /* last step */
-   //    ds = sstop - floor(sstop);
-   //    control = getA(app->design, app->ndisc+1, ceil(sstart) + nswitches-1);
-   //    u_curr = 1./(1. - control * ds) * u_curr;
+   /* Get Vin */
+   if (k0 % 2 == 0) Vin = app->Vmax;
+   else             Vin = app->Vmin;
 
+   /* Backwards step */
+   ds = sstop - sstart;
+   ratio  = ds / app->tau;
+   double nenner = 1. + ratio * control;
+   ddc = (ratio*app->exciter_param * Vin * nenner - (u_curr + ratio * app->exciter_param * control * Vin)*ratio ) / ( pow(nenner,2) ) * ddu;
+   ddu = 1./nenner * ddu;
 
-   //    /* Step backwards */
-
-   //    /* Last step */
-   //    ds = sstop - floor(sstop);
-   //    control = getA(app->design, app->ndisc+1, floor(sstop));
-   //    ddu = 1./(1. - control * ds) * u_bar->volt;
-   //    ddc = (ds* (u_curr)) / pow(1. - ds*control,2) * (u_bar->volt);
-   //    getA_diff(app->gradient, app->ndisc+1, floor(sstop), ddc); 
-   //    /* Intermediate switches */
-   //    for (int iswitch = nswitches - 2; iswitch > -1; iswitch--)
-   //    {
-   //       ds = 1.0; 
-   //       control = getA(app->design, app->ndisc+1, ceil(sstart) + (double) iswitch);
-   //       ddc = (ds* (utmp[iswitch])) / pow(1. - ds*control,2) * (ddu);
-   //       ddu  = 1./(1. - control * ds) * ddu;
-   //       getA_diff(app->gradient, app->ndisc+1, ceil(sstart) + (double) iswitch, ddc); 
-   //    }
-   //    /* first step */
-   //    ds = ceil(sstart) - sstart;
-   //    control = getA(app->design, app->ndisc+1, sstart);
-   //    ddc = (ds* (utmp[0])) / pow(1. - ds*control,2) * (ddu);
-   //    ddu = 1./(1. - control * ds) * ddu;
-   //    getA_diff(app->gradient, app->ndisc+1, sstart, ddc); 
-
-      // delete [] utmp;
-
-   // }
-   // else
-   // {
-   //    /* Step from sstart to sstop */
-   //    control = getA(app->design, app->ndisc+1, sstart);
-   //    ds = sstop - sstart;
-   //    ddc = (ds* (u->volt)) / pow(1. - ds*control,2) * (ddu);
-   //    ddu = 1./(1. - control * ds) * ddu;
-   //    getA_diff(app->gradient, app->ndisc+1, sstart, ddc); 
-   // }
-
-
-   /* Update u_bar */
+   /* Update u_bar and gradient */
+   app->gradient[k0] += ddc;
    u_bar->volt = ddu;              
 
    return 0;
@@ -683,7 +583,7 @@ int main (int argc, char *argv[])
    double      exciter_param   = 2.0;   /* G0 parameter in exciter model */
    double      Vmax            = 1.0;   /* Max limit of exciter */
    double      Vmin            = -1.0;   /* Min limit of exciter */
-   double      V0              = 0.0;   /* Initial condition */
+   double      V0              = Vmin;   /* Initial condition */
    double      tau             = .5;    /* Time constant */
 
    /* Default time domain */
@@ -703,9 +603,6 @@ int main (int argc, char *argv[])
    file = fopen(filename, "w");
    fclose(file);
 
-   double sstart = 0.0;
-   double sstop = 8.0;
-
    /* Parse command line */
    arg_index = 1;
    while (arg_index < argc)
@@ -716,7 +613,6 @@ int main (int argc, char *argv[])
          {
             printf("\nExample 1: Solve a scalar ODE \n\n");
             printf("  -ntime <ntime>         : set num time points\n");
-            printf("  -sstop <sstop>         : set final time\n");
             printf("  -ndisc <ndisc>         : set num of switching points\n");
             printf("  -ml  <max_levels>      : set max levels\n");
             printf("  -nu  <nrelax>          : set num F-C relaxations\n");
@@ -738,11 +634,6 @@ int main (int argc, char *argv[])
       {
          arg_index++;
          ntime = atoi(argv[arg_index++]);
-      }
-      else if ( strcmp(argv[arg_index], "-sstop") == 0 )
-      {
-         arg_index++;
-         sstop = atof(argv[arg_index++]);
       }
       else if ( strcmp(argv[arg_index], "-ndisc") == 0 )
       {
@@ -820,17 +711,16 @@ int main (int argc, char *argv[])
    }
 
    /* Transformed time domain */
-   // double sstop  = (double) (ndisc + 1);  
-   // double sstop  = 10;  
-   // sstop = 16;
-   // ntime = 320;
+   double sstart = 0.0;
+   double sstop  = (double) (ndisc + 1);  
    /* Sanity check: ntime / (ndisc + 1) must be integer for objective function evaluation */
-   // if (ntime % (ndisc + 1) != 0)
-   // {
-   //    printf("\nError: Choose ntime, ndisc such that ntime / (ndisc+1) is integer.\n");
-   //    printf("This is required for evaluating the objective function.\n\n");
-   //    exit(1);
-   // }
+   if (ntime % (ndisc + 1) != 0)
+   {
+      printf("\nError: Choose ntime, ndisc such that ntime / (ndisc+1) is integer.\n");
+      printf("This is required for evaluating the objective function.\n\n");
+      exit(1);
+   }
+   printf("Simulating in transformed time s in [%f,%f]\n", sstart, sstop);
 
 
    /* initialize optimization */
@@ -908,6 +798,7 @@ int main (int argc, char *argv[])
       printf("#Iter Objective            rel.obj     ||grad||             rel.||grad||    stepsize\n"); 
       fprintf(optimfile, "#Iter Objective            rel.obj      ||grad||           rel.||grad||    stepsize\n"); 
    }
+
 
 
    /* Optimization iteration */
@@ -1072,7 +963,7 @@ int main (int argc, char *argv[])
    /* Close optimization output file */
    if (rank == 0) fclose(optimfile);
 
-#if 0
+#if 1
    /* --- Finite differences test --- */
    printf("\n\n --- FINITE DIFFERENCE TESTING ---\n\n");
 
