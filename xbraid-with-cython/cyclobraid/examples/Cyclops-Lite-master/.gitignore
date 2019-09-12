@@ -1,0 +1,6 @@
+_build
+build/
+_static
+_templates
+*.dat
+*.pyc
