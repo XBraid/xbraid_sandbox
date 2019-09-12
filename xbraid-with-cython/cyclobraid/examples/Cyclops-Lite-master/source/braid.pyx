@@ -1,4 +1,5 @@
 cdef extern from "braid_status.h":
+
     cdef struct _braid_Status_struct:
         pass
     ctypedef _braid_Status_struct *braid_Status
@@ -46,5 +47,6 @@ cdef extern from "braid.h":
     ctypedef int (*braid_PtFcnBufUnpack)(braid_App app, void *buffer, braid_Vector *u_ptr, braid_BufferStatus status)
 
     int braid_Init(libmpi.MPI_Comm comm_world, libmpi.MPI_Comm comm, double tstart, double tstop, int ntime, braid_App app, braid_PtFcnStep step, braid_PtFcnInit init, braid_PtFcnClone clone, braid_PtFcnFree free, braid_PtFcnSum sum, braid_PtFcnSpatialNorm spatialnorm, braid_PtFcnAccess access,  braid_PtFcnBufSize bufsize, braid_PtFcnBufPack bufpack, braid_PtFcnBufUnpack bufunpack, braid_Core *core_ptr)
+    int braid_SetMaxLevels(braid_Core core, int max_levels)
 
     int braid_Drive(braid_Core core)

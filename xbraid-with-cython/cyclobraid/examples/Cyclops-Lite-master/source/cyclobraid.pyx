@@ -44,10 +44,9 @@ cdef int my_step(braid_App app, braid_Vector ustop, braid_Vector fstop, braid_Ve
     cdef double tstart
     cdef double tstop
     braid_StepStatusGetTstartTstop(status, &tstart, &tstop)
-
-    cdef double[:] v1_view = <double[:1]> u.v1
-    cdef double[:] v2_view = <double[:1]> u.v2
-    cdef double[:] h_view = <double[:1]> u.h
+    cdef double[:] v1_view = <double[:control['Nx']]> u.v1
+    cdef double[:] v2_view = <double[:control['Nx']]> u.v2
+    cdef double[:] h_view = <double[:control['Nx']]> u.h
 
     v1_arr = np.asarray(v1_view)
     v2_arr = np.asarray(v2_view)
@@ -65,9 +64,9 @@ cdef int my_init(braid_App app, double t, braid_Vector *u_ptr):
     cdef my_Vector* u
     u = <my_Vector*>PyMem_Malloc(sizeof(my_Vector))
 
-    cdef double[:] v1_view = <double[:1]> u.v1
-    cdef double[:] v2_view = <double[:1]> u.v2
-    cdef double[:] h_view = <double[:1]> u.h
+    cdef double[:] v1_view = <double[:control['Nx']]> u.v1
+    cdef double[:] v2_view = <double[:control['Nx']]> u.v2
+    cdef double[:] h_view = <double[:control['Nx']]> u.h
 
     v1_arr = np.asarray(v1_view)
     v2_arr = np.asarray(v2_view)
@@ -90,17 +89,17 @@ cdef int my_clone(braid_App app, braid_Vector u, braid_Vector *v_ptr):
     cdef my_Vector* v
     v = <my_Vector*>PyMem_Malloc(sizeof(my_Vector))
 
-    cdef double[:] u_v1_view = <double[:1]> u.v1
-    cdef double[:] u_v2_view = <double[:1]> u.v2
-    cdef double[:] u_h_view = <double[:1]> u.h
+    cdef double[:] u_v1_view = <double[:control['Nx']]> u.v1
+    cdef double[:] u_v2_view = <double[:control['Nx']]> u.v2
+    cdef double[:] u_h_view = <double[:control['Nx']]> u.h
 
     u_v1_arr = np.asarray(u_v1_view)
     u_v2_arr = np.asarray(u_v2_view)
     u_h_arr = np.asarray(u_h_view)
         
-    cdef double[:] v_v1_view = <double[:1]> v.v1
-    cdef double[:] v_v2_view = <double[:1]> v.v2
-    cdef double[:] v_h_view = <double[:1]> v.h
+    cdef double[:] v_v1_view = <double[:control['Nx']]> v.v1
+    cdef double[:] v_v2_view = <double[:control['Nx']]> v.v2
+    cdef double[:] v_h_view = <double[:control['Nx']]> v.h
 
     v_v1_arr = np.asarray(v_v1_view)
     v_v2_arr = np.asarray(v_v2_view)
@@ -123,17 +122,17 @@ cdef int my_free(braid_App app, braid_Vector u):
 
 cdef int my_sum(braid_App app, double alpha, braid_Vector x, double beta, braid_Vector y):
     #y.value = alpha*x.value + beta*y.value
-    cdef double[:] x_v1_view = <double[:1]> x.v1
-    cdef double[:] x_v2_view = <double[:1]> x.v2
-    cdef double[:] x_h_view = <double[:1]> x.h
+    cdef double[:] x_v1_view = <double[:control['Nx']]> x.v1
+    cdef double[:] x_v2_view = <double[:control['Nx']]> x.v2
+    cdef double[:] x_h_view = <double[:control['Nx']]> x.h
 
     x_v1_arr = np.asarray(x_v1_view)
     x_v2_arr = np.asarray(x_v2_view)
     x_h_arr = np.asarray(x_h_view)
         
-    cdef double[:] y_v1_view = <double[:1]> y.v1
-    cdef double[:] y_v2_view = <double[:1]> y.v2
-    cdef double[:] y_h_view = <double[:1]> y.h
+    cdef double[:] y_v1_view = <double[:control['Nx']]> y.v1
+    cdef double[:] y_v2_view = <double[:control['Nx']]> y.v2
+    cdef double[:] y_h_view = <double[:control['Nx']]> y.h
 
     y_v1_arr = np.asarray(y_v1_view)
     y_v2_arr = np.asarray(y_v2_view)
@@ -149,9 +148,9 @@ cdef int my_sum(braid_App app, double alpha, braid_Vector x, double beta, braid_
 cdef int my_norm(braid_App app, braid_Vector u, double *norm_ptr):
     cdef double dot
 
-    cdef double[:] v1_view = <double[:1]> u.v1
-    cdef double[:] v2_view = <double[:1]> u.v2
-    cdef double[:] h_view = <double[:1]> u.h
+    cdef double[:] v1_view = <double[:control['Nx']]> u.v1
+    cdef double[:] v2_view = <double[:control['Nx']]> u.v2
+    cdef double[:] h_view = <double[:control['Nx']]> u.h
 
     v1_arr = np.asarray(v1_view)
     v2_arr = np.asarray(v2_view)
@@ -174,19 +173,24 @@ cdef int my_bufsize(braid_App app, int *size_ptr, braid_BufferStatus status):
 cdef int my_bufpack(braid_App app, braid_Vector u, void *buffer, braid_BufferStatus status):
     cdef double *dbuffer = <double*> buffer
 
-    cdef double[:] v1_view = <double[:1]> u.v1
-    cdef double[:] v2_view = <double[:1]> u.v2
-    cdef double[:] h_view = <double[:1]> u.h
+    #cdef double[:] v1_view = <double[:control['Nx']]> u.v1
+    #cdef double[:] v2_view = <double[:control['Nx']]> u.v2
+    #cdef double[:] h_view = <double[:control['Nx']]> u.h
 
-    v1_arr = np.asarray(v1_view)
-    v2_arr = np.asarray(v2_view)
-    h_arr = np.asarray(h_view)
+    #v1_arr = np.asarray(v1_view)
+    #v2_arr = np.asarray(v2_view)
+    #h_arr = np.asarray(h_view)
 
-    dbuffer[0:control['Nx']] = v1_arr[:]
-    dbuffer[control['Nx']:2*control['Nx']] = v2_arr[:]
-    dbuffer[2*control['Nx']:3*control['Nx']] = h_arr[:]
+    #dbuffer[0:control['Nx']] = v1_arr[:]
+    #dbuffer[control['Nx']:2*control['Nx']] = v2_arr[:]
+    #dbuffer[2*control['Nx']:3*control['Nx']] = h_arr[:]
 
-    # Use meryview trick dbuffer[0:Nx] = v1_arr[:], dbuffer[Nx:2Nx] = v2_arr[:], ....
+    for i in range(control['Nx']):
+        dbuffer[i] = u.v1[i]
+        dbuffer[control['Nx']+i] = u.v2[i]
+        dbuffer[2*control['Nx']+i] = u.h[i]
+
+
     braid_BufferStatusSetSize(status, sizeof(double))
     return 0
 
@@ -195,17 +199,22 @@ cdef int my_bufunpack(braid_App app, void *buffer, braid_Vector *u_ptr, braid_Bu
     cdef my_Vector *u
     u = <my_Vector*>PyMem_Malloc(sizeof(my_Vector))
 
-    cdef double[:] v1_view = <double[:1]> u.v1
-    cdef double[:] v2_view = <double[:1]> u.v2
-    cdef double[:] h_view = <double[:1]> u.h
+    for i in range(control['Nx']):
+        u.v1[i] = dbuffer[i]
+        u.v2[i] = dbuffer[control['Nx']+i]
+        u.h[i] = dbuffer[2*control['Nx']+i]
 
-    v1_arr = np.asarray(v1_view)
-    v2_arr = np.asarray(v2_view)
-    h_arr = np.asarray(h_view)
+    #cdef double[:] v1_view = <double[:control['Nx']]> u.v1
+    #cdef double[:] v2_view = <double[:control['Nx']]> u.v2
+    #cdef double[:] h_view = <double[:control['Nx']]> u.h
 
-    v1_arr[:] = dbuffer[0:control['Nx']] 
-    v2_arr[:] = dbuffer[control['Nx']:2*control['Nx']] 
-    h_arr[:] = dbuffer[2*control['Nx']:3*control['Nx']]
+    #v1_arr = np.asarray(v1_view)
+    #v2_arr = np.asarray(v2_view)
+    #h_arr = np.asarray(h_view)
+
+    #v1_arr[:] = dbuffer[0:control['Nx']] 
+    #v2_arr[:] = dbuffer[control['Nx']:2*control['Nx']] 
+    #h_arr[:] = dbuffer[2*control['Nx']:3*control['Nx']]
 
     u_ptr[0] = u
     return 0
@@ -228,5 +237,7 @@ def braid_init_py():
 
     braid_Init(comm.ob_mpi, comm.ob_mpi, tstart, tstop, ntime, app, my_step, my_init, my_clone, my_free, my_sum, my_norm, my_access, my_bufsize, my_bufpack, my_bufunpack, &core)
     
+    braid_SetMaxLevels(core, 1)
+
     braid_Drive(core)
     

@@ -9,7 +9,7 @@ os.environ["LDSHARED"] = "mpicc -shared"
 
 cyclobraid_extension = Extension(
     name="cyclobraid",
-    sources=["cyclobraid"],
+    sources=["cyclobraid.pyx"],
     libraries=["braid"],
     library_dirs=["../../../braid"],
     include_dirs=["../../../braid"], ##, numpy.get_include()],

@@ -192,6 +192,7 @@ if __name__ == "__main__":
     for k in range(3):
         IC_hat = np.zeros((3, control['Nx']), dtype=complex)
         IC_hat[k,:] = st.forward_fft(ICs[k,:])
+        print(IC_hat)
 
     # Kernel. Call to solver.
     errs, U_hat_new = APinT_solver(control, st, expInt, IC_hat)
@@ -200,6 +201,7 @@ if __name__ == "__main__":
     for i in range(control['Nt']):
         for k in range(3):
             U_hat_new[i,k,:] = st.inverse_fft(U_hat_new[i,k,:])
+            print(U_hat_new[i,k,:])
 
     with open("{}_APinT.dat".format(control['outFileStem']), 'wb') as f:
 
