@@ -56,6 +56,7 @@ def make_control():
     control = dict()
 
     # General Parameters
+    control['start_time'] = 0 # Start time of simulation
     control['Nx'] = 64  # Number of grid points. Domain is square.
     control['Lx'] = 2.0*np.pi  # Side length of square domain
     control['coarse_timestep'] = 0.1  # Coarse timestep

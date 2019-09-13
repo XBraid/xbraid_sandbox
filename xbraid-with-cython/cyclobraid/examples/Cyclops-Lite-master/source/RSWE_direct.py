@@ -52,8 +52,11 @@ class Solvers:
         U_hat_new = np.zeros(np.shape(U_hat), dtype = 'complex')
         U_hat_old = U_hat.copy()
 
-        t = 0
-        while t < control['final_time']:
+        # Use 0.9999999999 * final_time as stopping criteria because IEEE arithmetic is not associative, 
+        # i.e, the way Braid hacks this time-stepping routine needs 
+        # (final_time - start_time) + start_time >= alpha*final_time
+        t = control['start_time']
+        while t < 0.9999999999999*control['final_time']:
             # limit fine timestep size to avoid overshooting the last timestep
             dt = min(control['fine_timestep'], control['final_time']-t)
 
@@ -85,8 +88,12 @@ class Solvers:
         """
 
         U_hat_old = U_hat.copy()
-        t = 0
-        while t < control['final_time']:
+
+        # Use 0.9999999999 * final_time as stopping criteria because IEEE arithmetic is not associative, 
+        # i.e, the way Braid hacks this time-stepping routine needs 
+        # (final_time - start_time) + start_time >= alpha*final_time
+        t = control['start_time']
+        while t < 0.9999999999999*control['final_time']:
             # limit fine timestep size to avoid overshooting the last timestep
             dt = min(control['coarse_timestep'], control['final_time']-t)
 

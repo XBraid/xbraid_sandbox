@@ -41,6 +41,8 @@ ctypedef _braid_App_struct *braid_App
 
 include "braid.pyx"
 
+# Set up global objects that traditionally go into "app", but in Python can be
+# easily declared here.
 control = cyclops_control.setup_control(None)
 expInt = ExponentialIntegrator(control)
 st = SpectralToolbox(control['Nx'], control['Lx'])
@@ -49,8 +51,12 @@ ICs = cyclops_base.h_init(control)
 cdef int my_step(braid_App app, braid_Vector ustop, braid_Vector fstop, braid_Vector u, braid_StepStatus status):
     cdef double tstart
     cdef double tstop
+    cdef int level
     braid_StepStatusGetTstartTstop(status, &tstart, &tstop)
-
+    braid_StepStatusGetLevel(status, &level)
+    
+    ##
+    # Create Python data type "memory views" of the double * arrays in braid_Vector
     cdef double[:] v1_view = <double[:control['Nx']]> u.v1
     cdef double[:] v2_view = <double[:control['Nx']]> u.v2
     cdef double[:] h_view = <double[:control['Nx']]> u.h
@@ -67,14 +73,31 @@ cdef int my_step(braid_App app, braid_Vector ustop, braid_Vector fstop, braid_Ve
     v2_i_arr = np.asarray(v2_i_view)
     h_i_arr = np.asarray(h_i_view)
 
-    state = np.array((3,(control['Nx'])), dtype='complex')
-
-    output = RSWE_direct.solve(control, expInt, st, state, solver = 'fine_propagator', realspace = False)
+    state = np.zeros((3,control['Nx']), dtype='complex')
     
+    ##
+    # Copy braid_Vector into state
+    state[0,:].real = v1_arr[:] 
+    state[1,:].real = v2_arr[:] 
+    state[2,:].real = h_arr[:]
+    state[0,:].imag = v1_i_arr[:] 
+    state[1,:].imag = v2_i_arr[:] 
+    state[2,:].imag = h_i_arr[:] 
+
+    control['final_time'] = tstop
+    control['start_time'] = tstart
+    if level == 0:
+        control['fine_timestep'] = tstop - tstart
+        output = RSWE_direct.solve(control, expInt, st, state, solver = 'fine_propagator', realspace = False)
+    else:
+        control['coarse_timestep'] = tstop - tstart
+        output = RSWE_direct.solve(control, expInt, st, state, solver = 'coarse_propagator', realspace = False)
+
+    ##
+    # Copy output into braid_Vector
     v1_arr[:] = output[0,:].real
     v2_arr[:] = output[1,:].real
     h_arr[:] = output[2,:].real
-
     v1_i_arr[:] = output[0,:].imag
     v2_i_arr[:] = output[1,:].imag
     h_i_arr[:] = output[2,:].imag
@@ -117,7 +140,7 @@ cdef int my_init(braid_App app, double t, braid_Vector *u_ptr):
     v2_i_arr = np.asarray(v2_i_view)
     h_i_arr = np.asarray(h_i_view)
 
-    state = np.array((3,(control['Nx'])), dtype='complex')
+    state = np.zeros((3, control['Nx']), dtype='complex')
     for k in range(3):
         state[k,:] = st.forward_fft(ICs[k,:])
 
@@ -139,10 +162,9 @@ cdef int my_init(braid_App app, double t, braid_Vector *u_ptr):
         v2_i_arr[:] = np.random.rand(control['Nx'])
         h_i_arr[:] = np.random.rand(control['Nx'])
 
-    
-
     #Copy ICs to v1[:] v2[:] h[:] for time 0, else skip option/randomness
 
+    u_ptr[0] = u
     return 0
 
 cdef int my_clone(braid_App app, braid_Vector u, braid_Vector *v_ptr):
@@ -332,6 +354,10 @@ def braid_init_py():
     rank = 0
     app = <my_App*>PyMem_Malloc(sizeof(my_App))
     app.rank = rank
+    
+    # Update final_time value so Cyclops and Braid agree
+    # Not sure that it's safe to overwrite other control values here 
+    control['final_time'] = tstop
 
     braid_Init(comm.ob_mpi, comm.ob_mpi, tstart, tstop, ntime, app, my_step, my_init, my_clone, my_free, my_sum, my_norm, my_access, my_bufsize, my_bufpack, my_bufunpack, &core)
     
