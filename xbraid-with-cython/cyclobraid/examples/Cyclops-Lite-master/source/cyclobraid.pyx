@@ -295,8 +295,25 @@ cdef int my_norm(braid_App app, braid_Vector u, double *norm_ptr):
     return 0
 
 cdef int my_access(braid_App app, braid_Vector u, braid_AccessStatus status):
-    print('my_access placeholder')
-    #np.savetext to dump vectors
+    cdef int index
+    braid_AccessStatusGetTIndex(status,&index);
+    cdef double[:] v1_view = <double[:control['Nx']]> u.v1
+    cdef double[:] v2_view = <double[:control['Nx']]> u.v2
+    cdef double[:] h_view = <double[:control['Nx']]> u.h
+
+    v1_arr = np.asarray(v1_view)
+    v2_arr = np.asarray(v2_view)
+    h_arr = np.asarray(h_view)
+
+    state = np.zeros((3,control['Nx']))
+    
+    ##
+    # Copy braid_Vector into state
+    state[0,:] = v1_arr[:] 
+    state[1,:] = v2_arr[:] 
+    state[2,:] = h_arr[:]
+
+    np.savetxt('cyclobraid.out-'+str(index),state)
     return 0
 
 cdef int my_bufsize(braid_App app, int *size_ptr, braid_BufferStatus status):
