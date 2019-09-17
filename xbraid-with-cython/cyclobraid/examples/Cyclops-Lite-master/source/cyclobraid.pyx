@@ -48,12 +48,21 @@ expInt = ExponentialIntegrator(control)
 st = SpectralToolbox(control['Nx'], control['Lx'])
 ICs = cyclops_base.h_init(control)
 
+# Switch to turn on/off the time-averaged coarse-grid correction due to Terry and Beth
+#HMM_METHOD = 1 #On
+HMM_METHOD = 0 #Off
+
 cdef int my_step(braid_App app, braid_Vector ustop, braid_Vector fstop, braid_Vector u, braid_StepStatus status):
     cdef double tstart
     cdef double tstop
     cdef int level
+    
     braid_StepStatusGetTstartTstop(status, &tstart, &tstop)
     braid_StepStatusGetLevel(status, &level)
+
+    #print("tstart = "+str(tstart))
+    #print("app.rank = "+str(app.rank))
+    #print('\n')
     
     ##
     # Create Python data type "memory views" of the double * arrays in braid_Vector
@@ -86,12 +95,18 @@ cdef int my_step(braid_App app, braid_Vector ustop, braid_Vector fstop, braid_Ve
 
     control['final_time'] = tstop
     control['start_time'] = tstart
-    if level == 0:
+
+    if (HMM_METHOD):
+        if level == 0:
+            control['fine_timestep'] = tstop - tstart
+            output = RSWE_direct.solve(control, expInt, st, state, solver = 'fine_propagator', realspace = False)
+        else:
+            control['coarse_timestep'] = tstop - tstart
+            output = RSWE_direct.solve(control, expInt, st, state, solver = 'coarse_propagator', realspace = False)
+    else:
         control['fine_timestep'] = tstop - tstart
         output = RSWE_direct.solve(control, expInt, st, state, solver = 'fine_propagator', realspace = False)
-    else:
-        control['coarse_timestep'] = tstop - tstart
-        output = RSWE_direct.solve(control, expInt, st, state, solver = 'coarse_propagator', realspace = False)
+
 
     ##
     # Copy output into braid_Vector
@@ -305,15 +320,9 @@ cdef int my_access(braid_App app, braid_Vector u, braid_AccessStatus status):
     v2_arr = np.asarray(v2_view)
     h_arr = np.asarray(h_view)
 
-    state = np.zeros((3,control['Nx']))
-    
-    ##
-    # Copy braid_Vector into state
-    state[0,:] = v1_arr[:] 
-    state[1,:] = v2_arr[:] 
-    state[2,:] = h_arr[:]
-
-    np.savetxt('cyclobraid.out-'+str(index),state)
+    np.savetxt('cyclobraid.out-v1-'+str(index),st.inverse_fft(v1_arr[:]).real)
+    np.savetxt('cyclobraid.out-v2-'+str(index),st.inverse_fft(v2_arr[:]).real) 
+    np.savetxt('cyclobraid.out-h-'+str(index), st.inverse_fft(h_arr[:]).real)
     return 0
 
 cdef int my_bufsize(braid_App app, int *size_ptr, braid_BufferStatus status):
@@ -365,10 +374,11 @@ def braid_init_py():
     cdef int ntime
     cdef int rank
  
-    ntime = 10
+    ntime = 50
     tstart = 0.0
-    tstop = tstart + ntime/2.
-    rank = 0
+    tstop = 5.0
+    MPI_Comm_rank(comm.ob_mpi, &rank)
+
     app = <my_App*>PyMem_Malloc(sizeof(my_App))
     app.rank = rank
     
@@ -378,7 +388,15 @@ def braid_init_py():
 
     braid_Init(comm.ob_mpi, comm.ob_mpi, tstart, tstop, ntime, app, my_step, my_init, my_clone, my_free, my_sum, my_norm, my_access, my_bufsize, my_bufpack, my_bufunpack, &core)
     
-    braid_SetMaxLevels(core, 1)
+    braid_SetMaxLevels(core,1)
+    braid_SetCFactor(core,-1,2)
+    #braid_SetAbsTol(core,0.0)
+    #braid_SetSeqSoln(core,1)
+    #braid_SetMaxIter(core,3)
+
+    ## Below options apply to multi-level runs
+    braid_SetNRelax(core,-1,0)
+    braid_SetSkip(core,1)
 
     braid_Drive(core)
     

@@ -1,3 +1,6 @@
+cimport mpi4py.MPI as MPI
+cimport mpi4py.libmpi as libmpi
+
 cdef extern from "braid_status.h":
 
     cdef struct _braid_Status_struct:
@@ -172,4 +175,8 @@ cdef extern from "braid.h":
     
     int braid_Destroy (braid_Core core)
 
-
+cdef extern from "mpistubs.h":
+    int MPI_Init(int *argc, char ***argv)
+    int MPI_Comm_world(libmpi.MPI_Comm comm, int *rank)
+    int MPI_Comm_size(libmpi.MPI_Comm comm, int *size)
+    int MPI_Comm_rank(libmpi.MPI_Comm comm, int *rank) 
