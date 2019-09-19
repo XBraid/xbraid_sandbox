@@ -100,62 +100,64 @@ def APinT_solver(control, st, expInt, u_init):
     end = time.time()
     print("First APinT level completed in {:.8f} seconds".format(end-start))
 
-#    # Further parareal levels computed here
-#    iterative_error = 100000000000000.
-#
+    # Further parareal levels computed here
+
     L_inf_buffer = []
     L_2_buffer = []
-#
-#    while iterative_error > control['conv_tol']:
-#        start = time.time()
-#        L_infty_err = 0.
-#        L_2_err = 0.
-#
-#        U_hat_new = np.zeros((control['Nt'], 3, control['Nx']), dtype = 'complex')
-#        U_hat_new[0,:,:] = U_hat_old[0,:,:]
-#
-#        for j in range(control['Nt']-1):  # Loop over timesteps
-#            # Compute coarse and fine timesteps (parallel-isable)
-#            U_hat_mac[j+1, :, :] = RSWE_direct.solve(control, expInt, st,
-#                                                     U_hat_old[j, :, :],
-#                                                     solver = 'coarse_propagator',
-#                                                     realspace = False)
-#
-#            U_hat_mic[j+1, :, :] = RSWE_direct.solve(control, expInt, st,
-#                                                     U_hat_old[j, :, :],
-#                                                     solver = 'fine_propagator',
-#                                                     realspace = False)
-#
-#            # Compute and apply correction (serial)
-#            U_hat_new[j+1, :, :] = RSWE_direct.solve(control, expInt, st,
-#                                                     U_hat_new[j, :, :],
-#                                                     solver = 'coarse_propagator',
-#                                                     realspace = False)
-#
-#            U_hat_new[j+1, :, :] = U_hat_new[j+1, :,:] + (U_hat_mic[j+1, :,:] - U_hat_mac[j+1, :,:])
-#
-#            # L_inf, L_2
-#            error_iteration = cyclops_base.compute_errors(U_hat_old[j+1,:,:], U_hat_new[j+1,:,:])
-#            L_infty_err = max(L_infty_err, error_iteration[0])
-#            L_2_err = max(L_2_err, error_iteration[1])
-#
-#        L_inf_buffer.append(L_infty_err)
-#        L_2_buffer.append(L_2_err)
-#
-#        # Perform convergence checks (iterative error)
-#        U_hat_old[:, :, :] = U_hat_new[:, :, :].copy()  #Overwrite previous solution for convergence tests
-#        iterative_error_old = iterative_error
-#        iterative_error = L_infty_err
-#
-#        end = time.time()
-#        print("APinT level {:>2} completed in {:.8f} seconds".format(k,end-start))
-#        print("L_infty norm = {:.6e}".format(iterative_error))
-#
-#        if iterative_error > iterative_error_old:
-#            print('Possible Numerical Instability Detected.')
-#
-#    print("APinT Computation Complete in {:>2} iterations.".format(k))
-#
+    ### COMMENT/UNCOMMENT FROM HERE TO DISABLE/ENABLE HMM METHOD
+    iterative_error = 100000000000000.
+
+    while iterative_error > control['conv_tol']:
+        start = time.time()
+        L_infty_err = 0.
+        L_2_err = 0.
+
+        U_hat_new = np.zeros((control['Nt'], 3, control['Nx']), dtype = 'complex')
+        U_hat_new[0,:,:] = U_hat_old[0,:,:]
+
+        for j in range(control['Nt']-1):  # Loop over timesteps
+            # Compute coarse and fine timesteps (parallel-isable)
+            U_hat_mac[j+1, :, :] = RSWE_direct.solve(control, expInt, st,
+                                                     U_hat_old[j, :, :],
+                                                     solver = 'coarse_propagator',
+                                                     realspace = False)
+
+            U_hat_mic[j+1, :, :] = RSWE_direct.solve(control, expInt, st,
+                                                     U_hat_old[j, :, :],
+                                                     solver = 'fine_propagator',
+                                                     realspace = False)
+
+            # Compute and apply correction (serial)
+            U_hat_new[j+1, :, :] = RSWE_direct.solve(control, expInt, st,
+                                                     U_hat_new[j, :, :],
+                                                     solver = 'coarse_propagator',
+                                                     realspace = False)
+
+            U_hat_new[j+1, :, :] = U_hat_new[j+1, :,:] + (U_hat_mic[j+1, :,:] - U_hat_mac[j+1, :,:])
+
+            # L_inf, L_2
+            error_iteration = cyclops_base.compute_errors(U_hat_old[j+1,:,:], U_hat_new[j+1,:,:])
+            L_infty_err = max(L_infty_err, error_iteration[0])
+            L_2_err = max(L_2_err, error_iteration[1])
+
+        L_inf_buffer.append(L_infty_err)
+        L_2_buffer.append(L_2_err)
+
+        # Perform convergence checks (iterative error)
+        U_hat_old[:, :, :] = U_hat_new[:, :, :].copy()  #Overwrite previous solution for convergence tests
+        iterative_error_old = iterative_error
+        iterative_error = L_infty_err
+
+        end = time.time()
+        print("APinT level {:>2} completed in {:.8f} seconds".format(k,end-start))
+        print("L_infty norm = {:.6e}".format(iterative_error))
+
+        if iterative_error > iterative_error_old:
+            print('Possible Numerical Instability Detected.')
+
+    print("APinT Computation Complete in {:>2} iterations.".format(k))
+
+   ### COMMENT/UNCOMMENT TO HERE TO DISABLE/ENABLE HMM METHOD
     return (L_inf_buffer, L_2_buffer), U_hat_new
 
 

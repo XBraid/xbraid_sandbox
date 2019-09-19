@@ -48,9 +48,13 @@ expInt = ExponentialIntegrator(control)
 st = SpectralToolbox(control['Nx'], control['Lx'])
 ICs = cyclops_base.h_init(control)
 
+if control['HMM_T0'] is None:
+    control['HMM_T0'] = control['coarse_timestep']/(control['epsilon']**0.2)
+control['HMM_M_bar'] = max(25, int(80*control['HMM_T0']))
+ 
 # Switch to turn on/off the time-averaged coarse-grid correction due to Terry and Beth
-#HMM_METHOD = 1 #On
-HMM_METHOD = 0 #Off
+HMM_METHOD = 1 #On
+#HMM_METHOD = 0 #Off
 
 cdef int my_step(braid_App app, braid_Vector ustop, braid_Vector fstop, braid_Vector u, braid_StepStatus status):
     cdef double tstart
@@ -385,10 +389,10 @@ def braid_init_py():
     # Update final_time value so Cyclops and Braid agree
     # Not sure that it's safe to overwrite other control values here 
     control['final_time'] = tstop
-
+   
     braid_Init(comm.ob_mpi, comm.ob_mpi, tstart, tstop, ntime, app, my_step, my_init, my_clone, my_free, my_sum, my_norm, my_access, my_bufsize, my_bufpack, my_bufunpack, &core)
     
-    braid_SetMaxLevels(core,1)
+    braid_SetMaxLevels(core,2)
     braid_SetCFactor(core,-1,2)
     #braid_SetAbsTol(core,0.0)
     #braid_SetSeqSoln(core,1)
