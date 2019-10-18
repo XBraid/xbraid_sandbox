@@ -84,9 +84,6 @@ def APinT_solver(control, st, expInt, u_init):
     # Create initial condition
     U_hat_new[0,:,:] = u_init
 
-    for k in range(3):
-        U_hat_new[0,k,:] = st.forward_fft(U_hat_new[0,k,:])
-
     U_hat_old[0,:,:] = U_hat_new[0,:,:]
 
     # Compute first parareal level here
@@ -95,7 +92,7 @@ def APinT_solver(control, st, expInt, u_init):
         # First parareal level by coarse timestep in serial only
         U_hat_new[j+1, :, :] = RSWE_direct.solve(control, expInt, st,
                                                  U_hat_new[j, :, :],
-                                                 solver = 'coarse_propagator',
+                                                 solver = 'fine_propagator',
                                                  realspace = False)
 
         U_hat_old[j+1,:,:] = U_hat_new[j+1, :, :]
@@ -104,10 +101,11 @@ def APinT_solver(control, st, expInt, u_init):
     print("First APinT level completed in {:.8f} seconds".format(end-start))
 
     # Further parareal levels computed here
-    iterative_error = 100000000000000.
 
     L_inf_buffer = []
     L_2_buffer = []
+    ### COMMENT/UNCOMMENT FROM HERE TO DISABLE/ENABLE HMM METHOD
+    iterative_error = 100000000000000.
 
     while iterative_error > control['conv_tol']:
         start = time.time()
@@ -159,6 +157,7 @@ def APinT_solver(control, st, expInt, u_init):
 
     print("APinT Computation Complete in {:>2} iterations.".format(k))
 
+   ### COMMENT/UNCOMMENT TO HERE TO DISABLE/ENABLE HMM METHOD
     return (L_inf_buffer, L_2_buffer), U_hat_new
 
 
@@ -192,7 +191,7 @@ if __name__ == "__main__":
     for k in range(3):
         IC_hat = np.zeros((3, control['Nx']), dtype=complex)
         IC_hat[k,:] = st.forward_fft(ICs[k,:])
-        print(IC_hat)
+        print(ICs)
 
     # Kernel. Call to solver.
     errs, U_hat_new = APinT_solver(control, st, expInt, IC_hat)
@@ -201,7 +200,7 @@ if __name__ == "__main__":
     for i in range(control['Nt']):
         for k in range(3):
             U_hat_new[i,k,:] = st.inverse_fft(U_hat_new[i,k,:])
-            print(U_hat_new[i,k,:])
+        print(U_hat_new[i,2,:])
 
     with open("{}_APinT.dat".format(control['outFileStem']), 'wb') as f:
 

@@ -60,13 +60,13 @@ def make_control():
     control['Nx'] = 64  # Number of grid points. Domain is square.
     control['Lx'] = 2.0*np.pi  # Side length of square domain
     control['coarse_timestep'] = 0.1  # Coarse timestep
-    control['fine_timestep'] = 0.1/500  # Coarse timestep
+    control['fine_timestep'] = 5./50 # Fine timestep
     control['solver'] = 'fine_propagator'
     control['outFileStem'] = 'test'  # Stem for creation of output files
     control['working_dir'] = None
 
     # Physical Parameters
-    control['epsilon'] = 1.0  # Scale separation
+    control['epsilon'] = 0.01  # Scale separation
     control['deformation_radius'] = 1.  # Rossby deformation radius (must be O(1))
     control['mu'] = 1.0e-4  # Hyperviscosity parameter
 
